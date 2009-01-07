@@ -1,0 +1,79 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<title>curvyCorners Demo</title>
+<script type="text/JavaScript" src="../curvycorners.js"></script>
+<style>
+
+.myBox
+{
+    margin: 0 auto;
+    color: #ffffff;
+    width: 400px;
+    height: 400px;
+    padding: 20px;
+    text-align: left;
+    background-image: url(crosshatch.jpg);
+    background-repeat: no-repeat;
+    border:5px solid #000;
+}
+
+html,body{
+    text-align: center;
+  	 font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+    font-size: 12px;
+    margin: 0px;
+}
+
+</style>
+<script type="text/JavaScript">
+
+  addEvent(window, 'load', initCorners);
+
+  function initCorners()
+  {
+      /*
+      The new 'validTags' setting is optional and allows
+      you to specify other HTML elements that curvyCorners
+      can attempt to round.
+
+      The value is comma separated list of html elements
+      in lowercase.
+
+      validTags: ["div", "form"]
+
+      The above example would enable curvyCorners on FORM elements.
+      */
+      settings = {
+          tl: { radius: 15 },
+          tr: { radius: 15 },
+          bl: { radius: 15 },
+          br: { radius: 15 },
+          antiAlias: true,
+          autoPad: true,
+          validTags: ["div"]
+      }
+
+      /*
+      Usage:
+
+      newCornersObj = new curvyCorners(settingsObj, classNameStr);
+      newCornersObj = new curvyCorners(settingsObj, divObj1[, divObj2[, divObj3[, . . . [, divObjN]]]]);
+      */
+      var myBoxObject = new curvyCorners(settings, "myBox");
+      myBoxObject.applyCornersToAll();
+  }
+
+</script>
+</head>
+
+<body>
+
+    <br><br><br><br>
+
+    <div class="myBox">
+
+    </div>
+
+</body>
+</html>
