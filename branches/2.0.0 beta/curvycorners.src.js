@@ -544,7 +544,7 @@ function ifBot(obj,val) {
           /*
           Loop for each corner
           */
-          for(var i in corners)
+          for(var i = 0; i < corners.length; i++)
           {
               if(i > -1 < 4)
               {
