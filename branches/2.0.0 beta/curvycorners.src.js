@@ -5,7 +5,7 @@
   *                                                              *
   *  This script generates rounded corners for your divs.        *
   *                                                              *
-  *  Version 2.0.0                                               *
+  *  Version 2.0.0 (build: 130109)                               *
   *  Copyright (c) 2008 Cameron Cooke                            *
   *  Version 2 By: Terry Riegel, Cameron Cooke and Tim Hutchison *
   *  Version 1 By: Cameron Cooke and Tim Hutchison               *
@@ -14,25 +14,6 @@
   *  Website: http://www.curvycorners.net                        *
   *  Email:   web@cameroncooke.com                               *
   *  Discuss: http://groups.google.com/group/curvycorners        *
-  *                                                              *
-  *  Changes:                                                    *
-  *                                                              *
-  *  29/10:08: Background position bug fix.                      *
-  *            (Fix by Dustin Jorge)                             *
-  *  11/08/08: Modified to work as a div replacement             *
-  *            This should work to replace any existing DIV      *
-  *            in existing HTML and not cause reflow issues      *
-  *            rounded borders will auto round based on the      *
-  *            CSS declarations (see notes below)*               *
-  *            (by Terry Riegel riegel@clearimageonline.com)     *
-  *  11/18/08: Added support for background-repeat and           *
-  *            background-position along with the existing       *
-  *            background-color and background-image             *
-  *            (by Terry Riegel riegel@clearimageonline.com)     *
-  *  11/29/08: Various reflow issues addressed by adding a DIV   *
-  *            to hold the height and width so other page        *
-  *            elements would not reflow.                        *
-  *            (by Terry Riegel riegel@clearimageonline.com)     *
   *                                                              *
   *                                                              *
   *  This library is free software; you can redistribute         *
@@ -415,8 +396,8 @@ function ifBot(obj,val) {
 
 
       if(boxPosition != "absolute") this.box.style.position = "relative";
-       this.box.style.top     = '0';
-       this.box.style.left    = '0';
+       //this.box.style.top     = '0';
+       //this.box.style.left    = '0';
        this.box.style.padding = '0';
        this.box.style.border  = 'none';
        this.box.style.backgroundColor    = 'transparent';
@@ -470,9 +451,9 @@ function ifBot(obj,val) {
        newMainContainer.style.borderBottomColor  = 'transparent';
        newMainContainer.style.backgroundColor    = this.boxColourO;
        newMainContainer.style.backgroundImage    = this.backgroundImage;
-       newMainContainer.setAttribute("id","ccshell");
+       //newMainContainer.setAttribute("id","ccshell");
        this.shell = this.box.appendChild(newMainContainer);
-       this.box.setAttribute("id","ccoriginaldiv");
+       //this.box.setAttribute("id","ccoriginaldiv");
 
 
 
@@ -919,7 +900,7 @@ temp.id="ccbrfiller";
                           if(this.topContainer)
                           {
                               // Edit by Asger Hallas: Check if settings.xx.radius is not false
-                              if(this.settings.tl.radius && this.settings.tr.radius)
+                              if(this.settings.tl.radius || this.settings.tr.radius)
                               {
                                   if (BackCompat)
                                    {newFillerBar.style.height      = 100 + topMaxRadius + "px";} else
@@ -927,10 +908,18 @@ temp.id="ccbrfiller";
                                   newFillerBar.style.marginLeft  = this.settings.tl.radius - this.borderWidthL + "px";
                                   newFillerBar.style.marginRight = this.settings.tr.radius - this.borderWidthR + "px";
                                   newFillerBar.style.borderTop   = this.borderString;
-                                  if(this.backgroundImage != "")
-                                    newFillerBar.style.backgroundPosition  = parseInt( this.backgroundPosX - (topMaxRadius - this.borderWidthL)) + "px " + parseInt( this.backgroundPosY ) + "px";
+
+                                  if(this.settings.tl.radius) {
+                                    if(this.backgroundImage != "")
+                                      newFillerBar.style.backgroundPosition  = parseInt( this.backgroundPosX - (topMaxRadius - this.borderWidthL)) + "px " + parseInt( this.backgroundPosY ) + "px";
+                                  }
+                                  else {
+                                    if(this.backgroundImage != "")
+                                      newFillerBar.style.backgroundPosition  = parseInt( this.backgroundPosX - this.borderWidthL) + "px " + parseInt( this.backgroundPosY ) + "px";
+                                  }
+
                                   temp=this.topContainer.appendChild(newFillerBar);
-temp.setAttribute("id","cctopmiddlefiller");
+                                  temp.setAttribute("id","cctopmiddlefiller");
 
                                   // Repos the boxes background image
                                   this.shell.style.backgroundPosition      = parseInt( this.backgroundPosX ) + "px " + parseInt( this.backgroundPosY - (topMaxRadius - this.borderWidthL)) + "px";
@@ -941,7 +930,7 @@ temp.setAttribute("id","cctopmiddlefiller");
                           if(this.bottomContainer)
                           {
                               // Edit by Asger Hallas: Check if settings.xx.radius is not false
-                              if(this.settings.bl.radius && this.settings.br.radius)
+                              if(this.settings.bl.radius || this.settings.br.radius)
                               {
                                   // Bottom Bar
                                   if (BackCompat && isIE)
@@ -961,10 +950,17 @@ temp.setAttribute("id","cctopmiddlefiller");
                                       }
                                   } else
                                   { if(this.backgroundImage != "")
-                                    newFillerBar.style.backgroundPosition  = parseInt( this.backgroundPosX - (botMaxRadius  - this.borderWidthL )) + "px " + parseInt( this.backgroundPosY - (this.boxHeight + this.topPadding + this.borderWidth + this.bottomPadding - botMaxRadius )) + "px";
+
+                                    if(this.settings.bl.radius) {
+                                      newFillerBar.style.backgroundPosition  = parseInt( this.backgroundPosX - (botMaxRadius  - this.borderWidthL )) + "px " + parseInt( this.backgroundPosY - (this.boxHeight + this.topPadding + this.borderWidth + this.bottomPadding - botMaxRadius )) + "px";
+                                    }
+                                    else {
+                                      newFillerBar.style.backgroundPosition  = parseInt( this.backgroundPosX - this.borderWidthL) + "px " + parseInt( this.backgroundPosY - (this.boxHeight + this.topPadding + this.borderWidth + this.bottomPadding - botMaxRadius )) + "px";
+                                    }
+
                                   }
                                   temp=this.bottomContainer.appendChild(newFillerBar);
-temp.setAttribute("id","ccbottommiddlefiller");
+                                  temp.setAttribute("id","ccbottommiddlefiller");
 
                               }
                           }
