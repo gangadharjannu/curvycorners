@@ -310,6 +310,19 @@ function ifBot(obj,val) {
       this.masterCorners    = new Array();
       this.contentDIV       = null;
 
+      if(this.settings.tl.radius === false) {
+        this.settings.tl.radius = 0;
+      }
+      if(this.settings.tr.radius === false) {
+        this.settings.tr.radius = 0;
+      }
+      if(this.settings.bl.radius === false) {
+        this.settings.bl.radius = 0;
+      }
+      if(this.settings.br.radius === false) {
+        this.settings.br.radius = 0;
+      }
+
       // Get box formatting details
       var boxHeightP      = get_style(this.box.parentNode, "height", "height");
       if(typeof boxHeightP == 'undefined') boxHeightP = 'auto';
