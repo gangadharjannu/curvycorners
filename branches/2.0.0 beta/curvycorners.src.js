@@ -1,14 +1,16 @@
+
  /****************************************************************
   *                                                              *
-  *  curvyCorners                                                *
+  *  CurvyCorners                                                *
   *  ------------                                                *
   *                                                              *
   *  This script generates rounded corners for your divs.        *
   *                                                              *
   *  Version 2.0.0 (build: 130109)                               *
-  *  Copyright (c) 2008 Cameron Cooke                            *
-  *  Version 2 By: Terry Riegel, Cameron Cooke and Tim Hutchison *
-  *  Version 1 By: Cameron Cooke and Tim Hutchison               *
+  *  Copyright (c) 2009 Cameron Cooke                            *
+  *  By: Cameron Cooke and Tim Hutchison                         *
+  *                                                              *
+  *  Version 2 By: Terry Riegel, Cameron Cooke                   *
   *                                                              *
   *                                                              *
   *  Website: http://www.curvycorners.net                        *
