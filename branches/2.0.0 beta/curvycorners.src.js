@@ -420,6 +420,7 @@ function ifBot(obj,val) {
 
 
 
+
       if(isIE)
        {if(BackCompat)
         {
@@ -466,6 +467,7 @@ function ifBot(obj,val) {
        newMainContainer.style.borderBottomColor  = 'transparent';
        newMainContainer.style.backgroundColor    = this.boxColourO;
        newMainContainer.style.backgroundImage    = this.backgroundImage;
+       newMainContainer.style.backgroundRepeat   = this.backgroundRepeat;
        //newMainContainer.setAttribute("id","ccshell");
        this.shell = this.box.appendChild(newMainContainer);
        //this.box.setAttribute("id","ccoriginaldiv");
