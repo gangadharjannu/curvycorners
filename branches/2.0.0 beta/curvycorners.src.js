@@ -954,11 +954,26 @@ temp.id="ccbrfiller";
                                   newFillerBar.style.borderBottom = this.borderStringB;
                                   if(isIE)
                                   { if(BackCompat)
-                                      { if(this.backgroundImage != "")
-                                        newFillerBar.style.backgroundPosition  = parseInt( this.backgroundPosX - (botMaxRadius  - this.borderWidthL )) + "px " + parseInt( this.backgroundPosY - (this.boxHeight + this.borderWidth - botMaxRadius )) + "px";
+                                      {
+                                        if(this.settings.bl.radius) {
+                                          if(this.backgroundImage != "")
+                                          newFillerBar.style.backgroundPosition  = parseInt( this.backgroundPosX - (botMaxRadius  - this.borderWidthL )) + "px " + parseInt( this.backgroundPosY - (this.boxHeight + this.borderWidth - botMaxRadius )) + "px";
+                                        }
+                                        else {
+                                          if(this.backgroundImage != "")
+                                          newFillerBar.style.backgroundPosition  = parseInt( this.backgroundPosX - this.borderWidthL) + "px " + parseInt( this.backgroundPosY - (this.boxHeight + this.borderWidth - botMaxRadius )) + "px";
+                                        }
                                       } else
-                                      { if(this.backgroundImage != "")
-                                      newFillerBar.style.backgroundPosition  = parseInt( this.backgroundPosX - (botMaxRadius  - this.borderWidthL )) + "px " + parseInt( ( 1 + this.topPadding ) + this.backgroundPosY - (this.boxHeight + this.borderWidth - botMaxRadius )) + "px";
+                                      {
+
+                                      if(this.settings.bl.radius) {
+                                        if(this.backgroundImage != "")
+                                        newFillerBar.style.backgroundPosition  = parseInt( this.backgroundPosX - (botMaxRadius  - this.borderWidthL )) + "px " + parseInt( ( 1 + this.topPadding ) + this.backgroundPosY - (this.boxHeight + this.borderWidth - botMaxRadius )) + "px";
+                                      }
+                                      else {
+                                        if(this.backgroundImage != "")
+                                        newFillerBar.style.backgroundPosition  = parseInt( this.backgroundPosX - this.borderWidthL) + "px " + parseInt( ( 1 + this.topPadding ) + this.backgroundPosY - (this.boxHeight + this.borderWidth - botMaxRadius )) + "px";
+                                      }
 
                                       }
                                   } else
