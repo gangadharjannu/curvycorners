@@ -1,16 +1,15 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-<title>curvyCorners Demo</title>
+<title>curvyCorners Demo 3</title>
 <script type="text/JavaScript" src="../curvycorners.js"></script>
 <style>
 
-.myBox
-{
-    margin: 0 auto;
+.myBox {
+    margin: 0.5in auto;
     color: #ffffff;
-    width: 400px;
-    height: 400px;
+    width: 410px;
+    height: 410px;
     padding: 20px;
     text-align: left;
     background-image: url(crosshatch.jpg);
@@ -20,7 +19,7 @@
 
 html,body{
     text-align: center;
-  	 font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+    font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
     font-size: 12px;
     margin: 0px;
 }
@@ -30,37 +29,34 @@ html,body{
 
   addEvent(window, 'load', initCorners);
 
-  function initCorners()
-  {
-      /*
-      The new 'validTags' setting is optional and allows
-      you to specify other HTML elements that curvyCorners
-      can attempt to round.
-
-      The value is comma separated list of html elements
-      in lowercase.
-
-      validTags: ["div", "form"]
-
-      The above example would enable curvyCorners on FORM elements.
-      */
-      settings = {
-          tl: { radius: 15 },
-          tr: { radius: 15 },
-          bl: { radius: 15 },
-          br: { radius: 15 },
+  function initCorners() {
+      var settings = {
+          tl: { radius: 20 },
+          tr: { radius: 20 },
+          bl: { radius: 20 },
+          br: { radius: 20 },
           antiAlias: true,
-          autoPad: true,
-          validTags: ["div"]
+          autoPad: true
       }
 
       /*
       Usage:
 
-      newCornersObj = new curvyCorners(settingsObj, classNameStr);
+      newCornersObj = new curvyCorners(settingsObj, selectorStr);
       newCornersObj = new curvyCorners(settingsObj, divObj1[, divObj2[, divObj3[, . . . [, divObjN]]]]);
+      
+      selectorStr ::= singleSelector [, singleSelector]...
+      singleSelector ::= idType | classType
+      idType ::= #id [classType]
+      classType ::= [tagName].className
+      tagName ::= div|p|form|blockquote|frameset // others may work
+      className : [a-z][\w]+
+      selector examples:
+        #mydiv p.rounded
+        #mypara
+        .rounded
       */
-      var myBoxObject = new curvyCorners(settings, "myBox");
+      var myBoxObject = new curvyCorners(settings, ".myBox");
       myBoxObject.applyCornersToAll();
   }
 
@@ -68,11 +64,9 @@ html,body{
 </head>
 
 <body>
-
-    <br><br><br><br>
-
+<h1>curvyCorners Demo 3</h1>
     <div class="myBox">
-
+    <!-- si monumentum requiris, circumspicite -->
     </div>
 
 </body>

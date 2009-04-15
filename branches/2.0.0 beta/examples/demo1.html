@@ -1,29 +1,32 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-<title>curvyCorners Demo</title>
+<title>curvyCorners Demo 1</title>
 <script type="text/JavaScript" src="../curvycorners.js"></script>
 <style>
 
-.myBox
-{
-    margin: 0 auto;
-    border: 0px solid #ffffff;
-    color: #ffffff;
+#myBox {
+    margin: 0.5in auto;
+    color: #fff;
     width: 60%;
     padding: 20px;
     text-align: left;
-    background-color: #ff0000;
-    border: 3px solid #ffffff;
+    background-color: #f00;
+    border: 3px solid #fff;
+}
+#myBox p {
+  padding:0;
+  margin:1ex 0;
 }
 
-html,body{
+html,body {
     height: 100%;
     text-align: center;
-  	 font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+    font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
     font-size: 12px;
     margin: 0px;
     background-image: url(pattern.gif);
+    color:#FA0;
 }
 
 </style>
@@ -31,37 +34,34 @@ html,body{
 
   addEvent(window, 'load', initCorners);
 
-  function initCorners()
-  {
-      /*
-      The new 'validTags' setting is optional and allows
-      you to specify other HTML elements that curvyCorners
-      can attempt to round.
-
-      The value is comma separated list of html elements
-      in lowercase.
-
-      validTags: ["div", "form"]
-
-      The above example would enable curvyCorners on FORM elements.
-      */
-      settings = {
+  function initCorners() {
+      var settings = {
           tl: { radius: 20 },
           tr: { radius: 20 },
           bl: { radius: 20 },
           br: { radius: 20 },
           antiAlias: true,
-          autoPad: true,
-          validTags: ["div"]
+          autoPad: true
       }
 
       /*
       Usage:
 
-      newCornersObj = new curvyCorners(settingsObj, classNameStr);
+      newCornersObj = new curvyCorners(settingsObj, selectorStr);
       newCornersObj = new curvyCorners(settingsObj, divObj1[, divObj2[, divObj3[, . . . [, divObjN]]]]);
+      
+      selectorStr ::= singleSelector [, singleSelector]...
+      singleSelector ::= idType | classType
+      idType ::= #id [classType]
+      classType ::= [tagName].className
+      tagName ::= div|p|form|blockquote|frameset // others may work
+      className : [a-z][\w]+
+      selector examples:
+        #mydiv p.rounded
+        #mypara
+        .rounded
       */
-      var myBoxObject = new curvyCorners(settings, "myBox");
+      var myBoxObject = new curvyCorners(settings, "#myBox");
       myBoxObject.applyCornersToAll();
   }
 
@@ -69,10 +69,9 @@ html,body{
 </head>
 
 <body>
+<h1>curvyCorners Demo 1</h1>
 
-    <br><br><br><br>
-
-    <div class="myBox">
+  <div id="myBox">
 
     Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Curabitur mi est, cursus sit amet, pellentesque et, ultricies a, ipsum. Nulla facilisi. Sed quis lacus. Aenean ut risus et lectus blandit gravida. Nam sed nunc. Aliquam non felis non diam aliquam gravida. Phasellus quis sem. Curabitur at velit. Vivamus libero velit, condimentum sit amet, tempus ut, aliquam sit amet, velit. Nunc hendrerit ante. Quisque egestas feugiat erat. Morbi tellus.
     <br /><br />
@@ -80,7 +79,7 @@ html,body{
     <br /><br />
     Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Nulla ac ante sit amet metus hendrerit euismod. Aenean vestibulum, lectus in eleifend tempor, quam libero iaculis dolor, pellentesque pellentesque lorem nibh ut urna. Nulla rhoncus, ante sit amet tristique interdum, eros nulla nonummy justo, eu dapibus risus quam sit amet metus. Maecenas tristique augue vel enim. Duis blandit euismod pede. Pellentesque facilisis. Fusce dapibus sapien tristique massa. Nunc accumsan. Integer pretium risus et odio. Phasellus tincidunt rhoncus velit. Donec eu neque at massa mollis iaculis. Aliquam pellentesque auctor mi. Cras ante justo, ultricies quis, iaculis eu, tincidunt ac, velit. Etiam nunc erat, tincidunt sit amet, luctus quis, interdum a, nunc. Suspendisse elit.
 
-    </div>
+  </div>
 
 
 </body>

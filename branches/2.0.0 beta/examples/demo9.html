@@ -1,43 +1,42 @@
- <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-<title>curvyCorners Demo</title>
+<title>curvyCorners Demo 9</title>
 <script type="text/JavaScript" src="../curvycorners.js"></script>
 <style>
 
-.myBox
-{
-    margin: 0 auto;
-    border: 0px solid #ffffff;
-    color: #ffffff;
+.myBox {
+    margin: 0.5in auto;
+    border: 0px solid #fff;
+    color: #fff;
     width: 300px;
     padding: 20px;
     text-align: left;
-    background-color: #ff0000;
-    border: 3px solid #ffffff;
+    background-color: #f00;
+    border: 3px solid #fff;
     margin-bottom: 10px;
 
-    /* Do rounding (native in Firefox and Safari, CC in IE) */
+    /* Do rounding (native in Firefox and Safari) */
     -webkit-border-radius: 20px;
     -moz-border-radius: 20px;
-    CCborderRadius: 20px;
 }
 
 .box2{
-    background-color: #00ff00;
+    background-color: #0f0;
 }
 
-.box3{
-    background-color: #0000ff;
+#box3{
+    background-color: #00f;
 }
 
 html,body{
     height: 100%;
     text-align: center;
     font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
-    font-size: 12px;
-    margin: 0px;
+    font-size:small;
+    margin: 0;
     background-image: url(pattern.gif);
+    color:#FA0;
 }
 
 </style>
@@ -45,7 +44,7 @@ html,body{
 
 <body>
 
-    <br><br><br><br>
+    <h1>curvyCorners Demo 9</h1>
 
     <div class="myBox">
       Box 1
@@ -55,7 +54,7 @@ html,body{
       Box 2
     </div>
 
-    <div class="myBox box3">
+    <div id="box3" class="myBox">
       Box 3
     </div>
 
