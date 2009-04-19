@@ -106,7 +106,6 @@ function browserdetect() {
       }
       return matches[0];
     };
-    this.getBoxWidth = function(box) { return box.offsetWidth; };
   }
   else {
     if (this.isSafari) {
@@ -136,7 +135,6 @@ function browserdetect() {
         return document.defaultView.getComputedStyle(obj, '').getPropertyValue(prop);
       };
     }
-    this.getBoxWidth = function(box) { return this.get_style(box, "width"); };
   }
 }
 var Browser = new browserdetect;
@@ -147,7 +145,7 @@ function curvyCnrSpec(selText) {
   this.selectorText = selText;
   this.tlR = this.trR = this.blR = this.brR = 0;
   this.tlu = this.tru = this.blu = this.bru = "";
-  this.antiAlias = this.autoPad = true; // default true
+  this.antiAlias = true; // default true
 }
 curvyCnrSpec.prototype.setcorner = function(tb, lr, radius, unit) {
   if (!tb) { // no corner specified
@@ -196,7 +194,6 @@ curvyCnrSpec.prototype.setfrom = function(obj) {
   if ('bl' in obj) this.blR = obj.bl.radius;
   if ('br' in obj) this.brR = obj.br.radius;
   if ('antiAlias' in obj) this.antiAlias = obj.antiAlias;
-  if ('autoPad' in obj) this.autoPad = obj.autoPad;
   if ('validTags' in obj && /^\.?\w+$/.test(this.selectorText)) {
     if (this.selectorText.charAt(0) != '.')
       this.selectorText = '.' + this.selectorText;
@@ -329,8 +326,7 @@ function styleit() {
             tr: { radius: makeInt(tR) },
             bl: { radius: makeInt(bL) },
             br: { radius: makeInt(bR) },
-            antiAlias: true,
-            autoPad: true
+            antiAlias: true
           };
 
           var myBoxObject = new curvyCorners(settings, selector);
@@ -437,22 +433,17 @@ function curvyObject() {
   }
 
   // Get box formatting details
-  var boxHeightP = Browser.get_style(this.box.parentNode, "height");
-  if (!boxHeightP) boxHeightP = 'auto';
   var boxHeight  = Browser.get_style(this.box, "height");
   if (!boxHeight) boxHeight = 'auto';
 
-  var boxWidth        = Browser.getBoxWidth(this.box);
+  var boxWidth        = this.box.clientWidth; // browser-independent IE-emulation (NB includes padding)
   var borderWidth     = Browser.get_style(this.box, "borderTopWidth");
   var borderWidthB    = Browser.get_style(this.box, "borderBottomWidth");
-  var borderWidthP    = Browser.get_style(this.box.parentNode, "borderTopWidth");
-  var borderWidthBP   = Browser.get_style(this.box.parentNode, "borderBottomWidth");
   var borderWidthL    = Browser.get_style(this.box, "borderLeftWidth");
   var borderWidthR    = Browser.get_style(this.box, "borderRightWidth");
   var borderColour    = Browser.get_style(this.box, "borderTopColor");
   var borderColourB   = Browser.get_style(this.box, "borderBottomColor");
   var borderColourL   = Browser.get_style(this.box, "borderLeftColor");
-  var borderColourR   = Browser.get_style(this.box, "borderRightColor");
   var boxColour       = Browser.get_style(this.box, "backgroundColor");
   var backgroundImage = Browser.get_style(this.box, "backgroundImage");
   var backgroundRepeat= Browser.get_style(this.box, "backgroundRepeat");
@@ -479,26 +470,21 @@ function curvyObject() {
   }
 
   // Set formatting properties
-  this.boxHeightP      = parseInt(((boxHeightP != "" && boxHeightP != "auto" && boxHeightP.indexOf("%") == -1) ? boxHeightP : this.box.parentNode.offsetHeight));
-  this.boxHeight       = parseInt(((boxHeight != "" && boxHeight != "auto" && boxHeight.indexOf("%") == -1) ? boxHeight : this.box.offsetHeight));
-
-  this.boxWidth = (Browser.isIE) ? boxWidth : parseInt((boxWidth != "" && boxWidth != "auto" && boxWidth.indexOf("%") == -1) ? boxWidth : this.box.offsetWidth);
+  //this.boxHeight       = parseInt(((boxHeight != "" && boxHeight != "auto" && boxHeight.indexOf("%") == -1) ? boxHeight : this.box.offsetHeight));
   this.borderWidth     = styleToNPx(borderWidth);
   this.borderWidthB    = styleToNPx(borderWidthB);
-  this.borderWidthP    = styleToNPx(borderWidthP);
-  this.borderWidthBP   = styleToNPx(borderWidthBP);
   this.borderWidthL    = styleToNPx(borderWidthL);
   this.borderWidthR    = styleToNPx(borderWidthR);
   this.boxColour       = format_colour(boxColour);
-  this.boxColourO      = boxColour;
   this.topPadding      = styleToNPx(topPadding);
   this.bottomPadding   = styleToNPx(bottomPadding);
   this.leftPadding     = styleToNPx(leftPadding);
   this.rightPadding    = styleToNPx(rightPadding);
+  this.boxWidth        = boxWidth - this.leftPadding - this.rightPadding;
+  this.boxHeight       = (((boxHeight != "" && boxHeight != "auto" && boxHeight.indexOf("%") == -1) ? parseInt(boxHeight) : this.box.clientHeight - this.topPadding - this.bottomPadding));
   this.borderColour    = format_colour(borderColour);
   this.borderColourB   = format_colour(borderColourB);
   this.borderColourL   = format_colour(borderColourL);
-  this.borderColourR   = format_colour(borderColourR);
   this.borderString    = this.borderWidth + "px" + " solid " + this.borderColour;
   this.borderStringB   = this.borderWidthB + "px" + " solid " + this.borderColourB;
   this.backgroundImage = ((backgroundImage != "none")? backgroundImage : "");
@@ -536,10 +522,7 @@ function curvyObject() {
     newMainContainer.style.height = (this.boxHeight - topMaxRadius - botMaxRadius) + 'px';
   } else {
     newMainContainer.style.width  = parseInt(this.boxWidth + this.leftPadding + this.rightPadding) + 'px';
-    newMainContainer.style.height = (Browser.isIE ?
-      this.boxHeight - topMaxRadius - botMaxRadius : 
-      this.boxHeight + this.topPadding + this.bottomPadding + this.borderWidth + this.borderWidthB - topMaxRadius - botMaxRadius
-    ) + 'px';
+    newMainContainer.style.height = (this.boxHeight + this.topPadding + this.bottomPadding + this.borderWidth + this.borderWidthB - topMaxRadius - botMaxRadius) + 'px';
   }
   newMainContainer.style.position = "relative";
   newMainContainer.style.padding  = "0";
@@ -549,8 +532,9 @@ function curvyObject() {
     newMainContainer.style.border = parseInt(this.borderWidthL) + "px solid " + this.borderColourL;
   if (topMaxRadius) newMainContainer.style.borderTopColor  = 'transparent';
   if (botMaxRadius) newMainContainer.style.borderBottomColor  = 'transparent';
-  newMainContainer.style.backgroundColor    = this.boxColourO;
+  newMainContainer.style.backgroundColor    = boxColour;
   newMainContainer.style.backgroundImage    = this.backgroundImage;
+  newMainContainer.style.backgroundRepeat   = this.backgroundRepeat;
   this.shell = this.box.appendChild(newMainContainer);
 
   var boxWidth  = Browser.get_style(this.shell, "width");
@@ -571,11 +555,7 @@ function curvyObject() {
           // Build top bar only if a top corner is to be drawn
           if (topMaxRadius) {
             newMainContainer = document.createElement("div");
-            //if (Browser.isIE) {
-             newMainContainer.style.width = this.boxWidth + "px";
-            //} else {
-            // newMainContainer.style.width = this.boxWidth + "px";
-            //}
+            newMainContainer.style.width = this.boxWidth + "px";
             newMainContainer.style.fontSize = "1px";
             newMainContainer.style.overflow = "hidden";
             newMainContainer.style.position = "absolute";
@@ -660,13 +640,13 @@ function curvyObject() {
             if (this.spec.antiAlias) {
               // For each of the pixels that need anti aliasing between the foreground and border colour draw single pixel divs
               if (this.backgroundImage != "") {
-                var borderFract = pixelFraction(intx, inty, borderRadius) * 100;
+                var borderFract = curvyObject.pixelFraction(intx, inty, borderRadius) * 100;
                 this.drawPixel(intx, inty, bcolor, 100, 1, newCorner,
                   borderFract < 30 ? 0 : -1, specRadius
                 );
               }
               else {
-                var pixelcolour = BlendColour(this.boxColour, bcolor, pixelFraction(intx, inty, borderRadius));
+                var pixelcolour = BlendColour(this.boxColour, bcolor, curvyObject.pixelFraction(intx, inty, borderRadius));
                 this.drawPixel(intx, inty, pixelcolour, 100, 1, newCorner, 0, specRadius, cc);
               }
             }
@@ -696,7 +676,7 @@ function curvyObject() {
           // Cycle the y-axis and draw the anti aliased pixels on the outside of the curve
           for (var inty = y3 + 1; inty < y4; ++inty) {
             // For each of the pixels that need anti aliasing between the foreground/border colour & background draw single pixel divs
-            this.drawPixel(intx, inty, outsideColour, (pixelFraction(intx, inty , specRadius) * 100), 1, newCorner, (this.borderWidth > 0) ? 0 : -1, specRadius);
+            this.drawPixel(intx, inty, outsideColour, (curvyObject.pixelFraction(intx, inty , specRadius) * 100), 1, newCorner, (this.borderWidth > 0) ? 0 : -1, specRadius);
           }
         }
       }
@@ -797,7 +777,6 @@ function curvyObject() {
         newFiller.style.fontSize = "1px";
         newFiller.style.overflow = "hidden";
         newFiller.style.backgroundColor = this.boxColour;
-        //newFiller.style.backgroundColor = get_random_color();
   
         // Position filler
         switch (smallerCornerType) {
@@ -848,7 +827,6 @@ function curvyObject() {
               newFillerBar.style.height = 100 + topMaxRadius - this.borderWidth + "px";
             }
             newFillerBar.style.marginLeft  = this.spec.tlR ? (this.spec.tlR - this.borderWidthL) + "px" : "0";
-            //newFillerBar.style.marginRight = this.spec.trR - this.borderWidthR + "px";
             newFillerBar.style.borderTop   = this.borderString;
             if (this.backgroundImage != "") {
               var x_offset = this.spec.tlR ?
@@ -869,15 +847,16 @@ function curvyObject() {
               newFillerBar.style.height     = botMaxRadius - this.borderWidth + "px";
             }
             newFillerBar.style.marginLeft   = this.spec.blR ? (this.spec.blR - this.borderWidthL) + "px" : "0";
-            //newFillerBar.style.marginRight  = this.spec.brR/* - this.borderWidth*/ + "px";
             newFillerBar.style.borderBottom = this.borderStringB;
             if (this.backgroundImage != "") {
               var x_offset = this.spec.blR ?
                 (this.backgroundPosX - (botMaxRadius - this.borderWidthL)) + "px " : "0 ";
               if (Browser.quirksMode) {
-                newFillerBar.style.backgroundPosition = x_offset + parseInt(this.backgroundPosY - (this.boxHeight + this.borderWidth - botMaxRadius)) + "px";
+                newFillerBar.style.backgroundPosition = x_offset + (this.backgroundPosY - (this.boxHeight + this.borderWidth - botMaxRadius)) + "px";
               } else {
-                newFillerBar.style.backgroundPosition  = x_offset + parseInt(this.backgroundPosY - (this.boxHeight + this.topPadding + this.borderWidth + this.bottomPadding - botMaxRadius)) + "px";
+                newFillerBar.style.backgroundPosition  = x_offset + (this.backgroundPosY - (this.boxHeight + this.topPadding + this.borderWidth + this.bottomPadding - botMaxRadius)) + "px";
+                //if (Browser.isIE) newFillerBar.style.backgroundPosition  = x_offset + (this.backgroundPosY + this.topPadding + this.bottomPadding - (this.boxHeight + this.borderWidth + botMaxRadius)) + "px";
+                //alert('bg pos = ' + newFillerBar.style.backgroundPosition);
               }
             }
             this.bottomContainer.appendChild(newFillerBar);
@@ -913,7 +892,7 @@ function curvyObject() {
     }
     // Apply left and right padding
     contentContainer.style.paddingLeft = (this.borderWidthL + this.leftPadding) + "px";
-    contentContainer.style.paddingRight = this.rightPadding + "px";
+    contentContainer.style.paddingRight = (this.borderWidthR + this.rightPadding) + "px";
     // Append contentContainer
     this.contentDIV = this.box.appendChild(contentContainer);
   }
@@ -964,7 +943,7 @@ function insertAfter(parent, node, referenceNode) {
   Converts a number to hexadecimal format
 */
 
-function IntToHex(strNum) {
+curvyObject.IntToHex = function(strNum) {
   var hexdig = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' ];
 
   return hexdig[strNum >>> 4] + '' + hexdig[strNum & 15];
@@ -998,7 +977,7 @@ function BlendColour(Col1, Col2, Col1Fraction) {
   if (endBlue > 255) endBlue = 255;
   if (endBlue < 0) endBlue = 0;
 
-  return "#" + IntToHex(endRed)+ IntToHex(endGreen)+ IntToHex(endBlue);
+  return "#" + curvyObject.IntToHex(endRed) + curvyObject.IntToHex(endGreen)+ curvyObject.IntToHex(endBlue);
 }
 
 /*
@@ -1006,8 +985,8 @@ function BlendColour(Col1, Col2, Col1Fraction) {
   line.  Returns a number between 0 and 1
 */
 
-function pixelFraction(x, y, r) {
-  var pixelfraction = 0;
+curvyObject.pixelFraction = function(x, y, r) {
+  var fraction = 0;
 
   /*
     determine the co-ordinates of the two points on the perimeter of the pixel that the
@@ -1046,7 +1025,7 @@ function pixelFraction(x, y, r) {
     ++point;
   }
   // y + 0 = Bottom
-  intersect = Math.sqrt(Math.pow(r,2) - Math.pow(y,2));
+  intersect = Math.sqrt(Math.pow(r, 2) - Math.pow(y, 2));
 
   if (intersect >= x && intersect < (x + 1)) {
     whatsides = whatsides + "Bottom";
@@ -1060,26 +1039,26 @@ function pixelFraction(x, y, r) {
   */
   switch (whatsides) {
     case "LeftRight":
-      pixelfraction = Math.min(yvalues[0], yvalues[1]) + ((Math.max(yvalues[0], yvalues[1]) - Math.min(yvalues[0], yvalues[1])) / 2);
+      fraction = Math.min(yvalues[0], yvalues[1]) + ((Math.max(yvalues[0], yvalues[1]) - Math.min(yvalues[0], yvalues[1])) / 2);
     break;
 
     case "TopRight":
-      pixelfraction = 1 - (((1 - xvalues[0]) * (1 - yvalues[1])) / 2);
+      fraction = 1 - (((1 - xvalues[0]) * (1 - yvalues[1])) / 2);
     break;
 
     case "TopBottom":
-      pixelfraction = Math.min(xvalues[0], xvalues[1]) + ((Math.max(xvalues[0], xvalues[1]) - Math.min(xvalues[0], xvalues[1])) / 2);
+      fraction = Math.min(xvalues[0], xvalues[1]) + ((Math.max(xvalues[0], xvalues[1]) - Math.min(xvalues[0], xvalues[1])) / 2);
     break;
 
     case "LeftBottom":
-      pixelfraction = yvalues[0] * xvalues[1] / 2;
+      fraction = yvalues[0] * xvalues[1] / 2;
     break;
 
     default:
-      pixelfraction = 1;
+      fraction = 1;
   }
 
-  return pixelfraction;
+  return fraction;
 }
 
 // This function converts CSS rgb(x, x, x) to hexadecimal
@@ -1095,7 +1074,7 @@ function rgb2Hex(rgbColour) {
     var blue  = parseInt(rgbArray[2]);
 
     // Build hex colour code
-    var hexColour = "#" + IntToHex(red) + IntToHex(green) + IntToHex(blue);
+    var hexColour = "#" + curvyObject.IntToHex(red) + curvyObject.IntToHex(green) + curvyObject.IntToHex(blue);
   }
   catch(e) {
     alert("There was an error converting the RGB value to Hexadecimal in function rgb2Hex");
@@ -1206,7 +1185,7 @@ function getElementsByClass(searchClass, node) {
   var classElements = new Array;
   if (node == null) node = document;
   searchClass = searchClass.split('.'); // see if there's a tag in there
-  tag = '*'; // prepare for no tag
+  var tag = '*'; // prepare for no tag
   if (searchClass.length == 1)
     searchClass = searchClass[0];
   else {
