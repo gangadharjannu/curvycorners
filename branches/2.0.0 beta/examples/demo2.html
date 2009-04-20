@@ -6,24 +6,24 @@
 <style>
 
 #myBox {
-    margin: 0.5in auto;
-    color: #fff;
-    width: 800px;
-    height: 550px;
-    padding: 20px;
-    text-align: left;
-    background-image: url(backtest.jpg);
-    background-repeat: no-repeat;
+  margin: 0.5in auto;
+  color: #fff;
+  width: 800px;
+  height: 550px;
+  padding: 20px;
+  text-align: left;
+  background-image: url(backtest.jpg);
+  background-repeat: no-repeat;
 }
 
-html,body{
-    height: 100%;
-    text-align: center;
-  	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
-    font-size:small;
-    margin: 0px;
-    background-image: url(pattern.gif);
-    color:#FA0;
+html,body {
+  height: 100%;
+  text-align: center;
+	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+  font-size:small;
+  margin: 0px;
+  background-image: url(pattern.gif);
+  color:#FA0;
 }
 
 </style>
@@ -32,34 +32,32 @@ html,body{
   addEvent(window, 'load', initCorners);
 
   function initCorners() {
-      var settings = {
-          tl: { radius: 20 },
-          tr: { radius: 20 },
-          bl: { radius: 20 },
-          br: { radius: 20 },
-          antiAlias: true,
-          autoPad: true
-      }
+    var settings = {
+      tl: { radius: 20 },
+      tr: { radius: 20 },
+      bl: { radius: 20 },
+      br: { radius: 20 },
+      antiAlias: true
+    }
 
-      /*
-      Usage:
+    /*
+    Usage:
 
-      newCornersObj = new curvyCorners(settingsObj, selectorStr);
-      newCornersObj = new curvyCorners(settingsObj, divObj1[, divObj2[, divObj3[, . . . [, divObjN]]]]);
-      
-      selectorStr ::= singleSelector [, singleSelector]...
-      singleSelector ::= idType | classType
-      idType ::= #id [classType]
-      classType ::= [tagName].className
-      tagName ::= div|p|form|blockquote|frameset // others may work
-      className : [a-z][\w]+
-      selector examples:
-        #mydiv p.rounded
-        #mypara
-        .rounded
-      */
-      var myBoxObject = new curvyCorners(settings, "#myBox");
-      myBoxObject.applyCornersToAll();
+    curvyCorners(settingsObj, selectorStr);
+    curvyCorners(settingsObj, Obj1[, Obj2[, Obj3[, . . . [, ObjN]]]]);
+    
+    selectorStr ::= singleSelector [, singleSelector]...
+    singleSelector ::= idType | classType
+    idType ::= #id [classType]
+    classType ::= [tagName].className
+    tagName ::= div|p|form|blockquote|frameset // others may work
+    className : [a-z][\w]+
+    selector examples:
+      #mydiv p.rounded
+      #mypara
+      .rounded
+    */
+    curvyCorners(settings, "#myBox");
   }
 
 </script>
@@ -67,8 +65,9 @@ html,body{
 
 <body>
 <h1>curvyCorners Demo 2</h1>
-    <div id="myBox">
-    </div>
-
+  <div id="myBox">
+  </div>
+  <p>Believe it or not, in IE you need to add something like this to see the
+  bottom corners.</p>
 </body>
 </html>

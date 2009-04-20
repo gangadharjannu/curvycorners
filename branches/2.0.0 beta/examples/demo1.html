@@ -35,34 +35,32 @@ html,body {
   addEvent(window, 'load', initCorners);
 
   function initCorners() {
-      var settings = {
-          tl: { radius: 20 },
-          tr: { radius: 20 },
-          bl: { radius: 20 },
-          br: { radius: 20 },
-          antiAlias: true,
-          autoPad: true
-      }
+    var settings = {
+      tl: { radius: 20 },
+      tr: { radius: 20 },
+      bl: { radius: 20 },
+      br: { radius: 20 },
+      antiAlias: true
+    }
 
-      /*
-      Usage:
+    /*
+    Usage:
 
-      newCornersObj = new curvyCorners(settingsObj, selectorStr);
-      newCornersObj = new curvyCorners(settingsObj, divObj1[, divObj2[, divObj3[, . . . [, divObjN]]]]);
-      
-      selectorStr ::= singleSelector [, singleSelector]...
-      singleSelector ::= idType | classType
-      idType ::= #id [classType]
-      classType ::= [tagName].className
-      tagName ::= div|p|form|blockquote|frameset // others may work
-      className : [a-z][\w]+
-      selector examples:
-        #mydiv p.rounded
-        #mypara
-        .rounded
-      */
-      var myBoxObject = new curvyCorners(settings, "#myBox");
-      myBoxObject.applyCornersToAll();
+    curvyCorners(settingsObj, selectorStr);
+    curvyCorners(settingsObj, Obj1[, Obj2[, Obj3[, . . . [, ObjN]]]]);
+    
+    selectorStr ::= singleSelector [, singleSelector]...
+    singleSelector ::= idType | classType
+    idType ::= #id [classType]
+    classType ::= [tagName].className
+    tagName ::= div|p|form|blockquote|frameset // others may work
+    className : [a-z][\w]+
+    selector examples:
+      #mydiv p.rounded
+      #mypara
+      .rounded
+    */
+    curvyCorners(settings, "#myBox");
   }
 
 </script>
@@ -77,7 +75,7 @@ html,body {
     <br /><br />
     Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Nulla ac ante sit amet metus hendrerit euismod. Aenean vestibulum, lectus in eleifend tempor, quam libero iaculis dolor, pellentesque pellentesque lorem nibh ut urna. Nulla rhoncus, ante sit amet tristique interdum, eros nulla nonummy justo, eu dapibus risus quam sit amet metus. Maecenas tristique augue vel enim. Duis blandit euismod pede. Pellentesque facilisis. Fusce dapibus sapien tristique massa. Nunc accumsan. Integer pretium risus et odio. Phasellus tincidunt rhoncus velit. Donec eu neque at massa mollis iaculis. Aliquam pellentesque auctor mi. Cras ante justo, ultricies quis, iaculis eu, tincidunt ac, velit. Etiam nunc erat, tincidunt sit amet, luctus quis, interdum a, nunc. Suspendisse elit.
     <br /><br />
-    Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Nulla ac ante sit amet metus hendrerit euismod. Aenean vestibulum, lectus in eleifend tempor, quam libero iaculis dolor, pellentesque pellentesque lorem nibh ut urna. Nulla rhoncus, ante sit amet tristique interdum, eros nulla nonummy justo, eu dapibus risus quam sit amet metus. Maecenas tristique augue vel enim. Duis blandit euismod pede. Pellentesque facilisis. Fusce dapibus sapien tristique massa. Nunc accumsan. Integer pretium risus et odio. Phasellus tincidunt rhoncus velit. Donec eu neque at massa mollis iaculis. Aliquam pellentesque auctor mi. Cras ante justo, ultricies quis, iaculis eu, tincidunt ac, velit. Etiam nunc erat, tincidunt sit amet, luctus quis, interdum a, nunc. Suspendisse elit.
+    Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Nulla ac ante sit amet metus hendrerit euismod. Aenean vestibulum, lectus in eleifend tempor, quam libero iaculis dolor, pellentesque pellentesque lorem nibh ut urna. Nulla rhoncus, ante sit amet tristique interdum, eros nulla nonummy justo, eu dapibus risus quam sit amet metus. Maecenas tristique augue vel enim. Duis blandit euismod pede. Pellentesque facilisis. Fusce dapibus sapien tristique massa. Nunc accumsan. Integer pretium risus et odio. Phasellus tincidunt rhoncus velit. Donec eu neque at massa mollis iaculis. Aliquam pellentesque auctor mi. Reading this stuff will rot your mind. Cras ante justo, ultricies quis, iaculis eu, tincidunt ac, velit. Etiam nunc erat, tincidunt sit amet, luctus quis, interdum a, nunc. Suspendisse elit.
 
   </div>
 

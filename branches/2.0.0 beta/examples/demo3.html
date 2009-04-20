@@ -6,22 +6,22 @@
 <style>
 
 .myBox {
-    margin: 0.5in auto;
-    color: #ffffff;
-    width: 410px;
-    height: 410px;
-    padding: 20px;
-    text-align: left;
-    background-image: url(crosshatch.jpg);
-    background-repeat: no-repeat;
-    border:5px solid #000;
+  margin: 0.5in auto;
+  color: #ffffff;
+  width: 410px;
+  height: 410px;
+  padding: 20px;
+  text-align: left;
+  background-image: url(crosshatch.jpg);
+  background-repeat: no-repeat;
+  border:5px solid #000;
 }
 
 html,body{
-    text-align: center;
-    font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
-    font-size: 12px;
-    margin: 0px;
+  text-align: center;
+  font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+  font-size: 12px;
+  margin: 0px;
 }
 
 </style>
@@ -30,34 +30,32 @@ html,body{
   addEvent(window, 'load', initCorners);
 
   function initCorners() {
-      var settings = {
-          tl: { radius: 20 },
-          tr: { radius: 20 },
-          bl: { radius: 20 },
-          br: { radius: 20 },
-          antiAlias: true,
-          autoPad: true
-      }
+    var settings = {
+      tl: { radius: 20 },
+      tr: { radius: 20 },
+      bl: { radius: 20 },
+      br: { radius: 20 },
+      antiAlias: true
+    }
 
-      /*
-      Usage:
+    /*
+    Usage:
 
-      newCornersObj = new curvyCorners(settingsObj, selectorStr);
-      newCornersObj = new curvyCorners(settingsObj, divObj1[, divObj2[, divObj3[, . . . [, divObjN]]]]);
-      
-      selectorStr ::= singleSelector [, singleSelector]...
-      singleSelector ::= idType | classType
-      idType ::= #id [classType]
-      classType ::= [tagName].className
-      tagName ::= div|p|form|blockquote|frameset // others may work
-      className : [a-z][\w]+
-      selector examples:
-        #mydiv p.rounded
-        #mypara
-        .rounded
-      */
-      var myBoxObject = new curvyCorners(settings, ".myBox");
-      myBoxObject.applyCornersToAll();
+    newCornersObj = new curvyCorners(settingsObj, selectorStr);
+    newCornersObj = new curvyCorners(settingsObj, divObj1[, divObj2[, divObj3[, . . . [, divObjN]]]]);
+    
+    selectorStr ::= singleSelector [, singleSelector]...
+    singleSelector ::= idType | classType
+    idType ::= #id [classType]
+    classType ::= [tagName].className
+    tagName ::= div|p|form|blockquote|frameset // others may work
+    className : [a-z][\w]+
+    selector examples:
+      #mydiv p.rounded
+      #mypara
+      .rounded
+    */
+    curvyCorners(settings, ".myBox");
   }
 
 </script>

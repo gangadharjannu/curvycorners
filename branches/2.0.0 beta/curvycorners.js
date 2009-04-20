@@ -202,6 +202,37 @@ curvyCnrSpec.prototype.setfrom = function(obj) {
     this.selectorText = nst.join();
   }
 };
+curvyCnrSpec.prototype.cloneOn = function(box) { // not needed by IE
+  var props = ['tl', 'tr', 'bl', 'br'];
+  var converted = 0;
+  var i, propu;
+
+  for (i in props) {
+    propu = this[props[i] + 'u'];
+    if (propu !== '' && propu !== 'px') {
+      converted = new curvyCnrSpec;
+      break;
+    }
+  }
+  if (!converted)
+    converted = this; // no need to clone
+  else {
+    var propi, propR, save = Browser.get_style(box, 'left');
+    for (i in props) {
+      propi = props[i];
+      propu = this[propi + 'u'];
+      propR = this[propi + 'R'];
+      if (propu !== 'px') {
+        box.style.left = propR + propu;
+        propR = document.defaultView.getComputedStyle(box, '').getPropertyValue('left');
+      }
+      converted[propi + 'R'] = propR;
+      converted[propi + 'u'] = 'px';
+    }
+    box.style.left = save;
+  }
+  return converted;
+}
 curvyCnrSpec.prototype.radiusSum = function(tb) {
   if (tb !== 't' && tb !== 'b') throw new Error("Param must be 't' or 'b'");
   return this[tb + 'lR'] + this[tb + 'rR'];
@@ -252,50 +283,6 @@ operasheet.contains_border_radius = function(sheetnumber) {
   return /border-((top|bottom)-(left|right)-)?radius/.test(document.styleSheets.item(sheetnumber).ownerNode.text);
 }
 
-// Dean Edwards/Matthias Miller/John Resig
-
-function init() {
-  // quit if this function has already been called
-  if (arguments.callee.done) return;
-
-  // flag this function so we don't do the same thing twice
-  arguments.callee.done = true;
-
-  // kill the timer
-  if (Browser.isWebKit && init.timer) {
-    clearInterval(init.timer);
-    init.timer = null;
-  }
-
-  // do stuff
-  styleit();
-}
-
-/* for Internet Explorer */
-/*@cc_on @*/
-/*@if (@_win32 || @_win64)
-  document.write("<script id=__ie_onload defer src=javascript:void(0)><\/script>");
-  var script = document.getElementById("__ie_onload");
-  script.onreadystatechange = function() {
-    if (this.readyState == "complete") {
-      init('IE'); // call the onload handler
-    }
-  };
-@else @*/
-
-if (document.addEventListener) { // Mozilla/Opera9/FireFox/Safari 4/Chrome
-  if (Browser.isOp) document.addEventListener("DOMContentLoaded", init, false);
-}
-else if (Browser.isWebKit) { // ? for old Safari?
-  init.timer = setInterval(function() {
-    if (/loaded|complete/.test(document.readyState)) {
-      init('WebKit'); // call the onload handler
-    }
-  }, 10);
-}
-else window.onload = init; // other browsers
-/*@end @*/
-
 /*
 Usage:
 
@@ -305,52 +292,8 @@ selectorStr::= "<selector>[, <selector>]..."
 selector::= "[<elementname>].classname" | "#id"
 */
 
-function styleit() {
-  function makeInt(num) {
-    return isNaN(num = parseInt(num)) ? 0 : num;
-  }
-
-  if (Browser.isIE) {
-    for (var t = 0; t < document.styleSheets.length; ++t) {
-      for (var i = 0; i < document.styleSheets[t].rules.length; ++i) {
-        var allR = document.styleSheets[t].rules[i].style['-moz-border-radius'] || 0;
-        var tR   = document.styleSheets[t].rules[i].style['-moz-border-radius-topright']  || allR;
-        var tL   = document.styleSheets[t].rules[i].style['-moz-border-radius-topleft']  || allR;
-        var bR   = document.styleSheets[t].rules[i].style['-moz-border-radius-bottomright']  || allR;
-        var bL   = document.styleSheets[t].rules[i].style['-moz-border-radius-bottomleft']  || allR;
-        if (allR || tR || tR || bR || bL) {
-          var selector = document.styleSheets[t].rules[i].selectorText;
-
-          var settings = {
-            tl: { radius: makeInt(tL) },
-            tr: { radius: makeInt(tR) },
-            bl: { radius: makeInt(bL) },
-            br: { radius: makeInt(bR) },
-            antiAlias: true
-          };
-
-          var myBoxObject = new curvyCorners(settings, selector);
-          myBoxObject.applyCornersToAll();
-        }
-      }
-    }
-  }
-  else if (Browser.isOp) {
-    for (var t = 0; t < document.styleSheets.length; ++t) {
-      if (operasheet.contains_border_radius(t)) {
-        var settings = new operasheet(t);
-        for (var i in settings.rules) {
-          var myBoxObject = new curvyCorners(settings.rules[i]);
-          myBoxObject.applyCornersToAll();
-        }
-      }
-    }
-  }
-  else alert('Wasting my time!');
-}
-
 function curvyCorners() {
-  var i, j, boxCol, settings;
+  var i, j, boxCol, settings, startIndex;
   // Check parameters
   if (typeof arguments[0] !== "object") throw newCurvyError("First parameter of curvyCorners() must be an object.");
   if (arguments[0] instanceof curvyCnrSpec) {
@@ -366,7 +309,7 @@ function curvyCorners() {
 
   // Get object(s)
   if (settings.selectorText) {
-    var startIndex = 0;
+    startIndex = 0;
     var args = settings.selectorText.replace(/\s+$/,'').split(/,\s*/); // handle comma-separated selector list
     boxCol = new Array;
     for (i = 0; i < args.length; ++i) {
@@ -382,38 +325,27 @@ function curvyCorners() {
           }
         break;
         default :
-          boxCol = boxCol.concat(getElementsByClass(args[i]));
+          boxCol = boxCol.concat(curvyCorners.getElementsByClass(args[i]));
         //break;
       }
     }
   }
   else {
     // Get objects
-    var startIndex = 1;
+    startIndex = 1;
     boxCol = arguments;
   }
-  // Create return collection/object
-  var curvyCornersCol = new Array;
 
   // Loop through each argument
   for (i = startIndex, j = boxCol.length; i < j; ++i) {
-    // Current element tag name
-    var currentTag = boxCol[i].tagName.toLowerCase();
     if (!('IEborderRadius' in boxCol[i].style) || boxCol[i].style.IEborderRadius != 'set') {
       boxCol[i].style.IEborderRadius = 'set';
-      curvyCornersCol[curvyCornersCol.length] = new curvyObject(arguments[0], boxCol[i]);
+      var obj = new curvyObject(settings, boxCol[i]);
+      obj.applyCorners();
     }
   }
-
-  this.objects = curvyCornersCol;
-
-  // Applies the curvyCorners to all objects
-  this.applyCornersToAll = function() {
-    for (var x = 0, k = this.objects.length; x < k; ++x) {
-      this.objects[x].applyCorners();
-    }
-  };
 }
+curvyCorners.prototype.applyCornersToAll = function () {}; // now redundant
 
 // curvyCorners object (can be called directly)
 
@@ -424,18 +356,15 @@ function curvyObject() {
   this.topContainer     = null;
   this.bottomContainer  = null;
   this.shell            = null;
-  this.contentDIV       = null;
   if (arguments[0] instanceof curvyCnrSpec)
-    this.spec = arguments[0];
+    this.spec = arguments[0].cloneOn(this.box); // convert non-pixel units
   else {
     this.spec = new curvyCnrSpec('');
-    this.spec.setfrom(this.settings);
+    this.spec.setfrom(this.settings); // no need for unit conversion
   }
 
   // Get box formatting details
-  var boxHeight  = Browser.get_style(this.box, "height");
-  if (!boxHeight) boxHeight = 'auto';
-
+  var boxHeight  = Browser.get_style(this.box, "height") || 'auto';
   var boxWidth        = this.box.clientWidth; // browser-independent IE-emulation (NB includes padding)
   var borderWidth     = Browser.get_style(this.box, "borderTopWidth");
   var borderWidthB    = Browser.get_style(this.box, "borderBottomWidth");
@@ -499,19 +428,16 @@ function curvyObject() {
   this.box.innerHTML = "";
 
   if (boxPosition != "absolute") this.box.style.position = "relative";
-  this.box.style.top     = '0';
-  this.box.style.left    = '0';
-  this.box.style.padding = '0';
-  this.box.style.border  = 'none';
-  this.box.style.backgroundColor    = 'transparent';
-  this.box.style.backgroundImage    = 'none';
+  this.box.style.top = this.box.style.left = this.box.style.padding = '0';
+  this.box.style.border = this.box.style.backgroundImage = 'none';
+  this.box.style.backgroundColor = 'transparent';
 
   if (Browser.quirksMode) {
-    this.box.style.width   = parseInt(this.boxWidth ) + 'px';
-    this.box.style.height  = parseInt(this.boxHeight) + 'px';
+    this.box.style.width   = this.boxWidth + 'px';
+    this.box.style.height  = this.boxHeight + 'px';
   } else {
-    this.box.style.width   = parseInt(this.boxWidth + this.leftPadding + this.rightPadding  + this.borderWidthL + this.borderWidthR) + 'px';
-    this.box.style.height  = parseInt(this.boxHeight + this.topPadding + this.bottomPadding + this.borderWidth + this.borderWidthB) + 'px';
+    this.box.style.width   = (this.boxWidth + this.leftPadding + this.rightPadding  + this.borderWidthL + this.borderWidthR) + 'px';
+    this.box.style.height  = (this.boxHeight + this.topPadding + this.bottomPadding + this.borderWidth + this.borderWidthB) + 'px';
   }
 
   // Ok we add an inner div to actually put things into this will allow us to keep the height
@@ -521,15 +447,21 @@ function curvyObject() {
     newMainContainer.style.width  = this.boxWidth + 'px';
     newMainContainer.style.height = (this.boxHeight - topMaxRadius - botMaxRadius) + 'px';
   } else {
-    newMainContainer.style.width  = parseInt(this.boxWidth + this.leftPadding + this.rightPadding) + 'px';
+    newMainContainer.style.width  = (this.boxWidth + this.leftPadding + this.rightPadding) + 'px';
     newMainContainer.style.height = (this.boxHeight + this.topPadding + this.bottomPadding + this.borderWidth + this.borderWidthB - topMaxRadius - botMaxRadius) + 'px';
   }
   newMainContainer.style.position = "relative";
   newMainContainer.style.padding  = "0";
-  newMainContainer.style.top    = parseInt(topMaxRadius - this.borderWidth) + "px";
+  newMainContainer.style.top    = (topMaxRadius - this.borderWidth) + "px";
   newMainContainer.style.left   = "0";
   if (this.borderWidthL)
-    newMainContainer.style.border = parseInt(this.borderWidthL) + "px solid " + this.borderColourL;
+    newMainContainer.style.borderLeft = this.borderWidthL + "px solid " + this.borderColourL;
+  if (this.borderWidth)
+    newMainContainer.style.borderTop = this.borderWidth + "px solid " + this.borderColour;
+  if (this.borderWidthR)
+    newMainContainer.style.borderRight = this.borderWidthR + "px solid " + this.borderColourL;
+  if (this.borderWidthB)
+    newMainContainer.style.borderBottom = this.borderWidthB + "px solid " + this.borderColourB;
   if (topMaxRadius) newMainContainer.style.borderTopColor  = 'transparent';
   if (botMaxRadius) newMainContainer.style.borderBottomColor  = 'transparent';
   newMainContainer.style.backgroundColor    = boxColour;
@@ -538,7 +470,7 @@ function curvyObject() {
   this.shell = this.box.appendChild(newMainContainer);
 
   var boxWidth  = Browser.get_style(this.shell, "width");
-  this.boxWidth = parseInt((boxWidth != "" && boxWidth != "auto" && boxWidth.indexOf("%") == -1) ? boxWidth : this.shell.offsetWidth);
+  this.boxWidth = (boxWidth != "" && boxWidth != "auto" && boxWidth.indexOf("%") == -1) ? parseInt(boxWidth) : this.shell.offsetWidth;
 
   /*
     This method creates the corners and
@@ -894,7 +826,7 @@ function curvyObject() {
     contentContainer.style.paddingLeft = (this.borderWidthL + this.leftPadding) + "px";
     contentContainer.style.paddingRight = (this.borderWidthR + this.rightPadding) + "px";
     // Append contentContainer
-    this.contentDIV = this.box.appendChild(contentContainer);
+    this.box.appendChild(contentContainer);
   }
 }
 
@@ -1181,7 +1113,7 @@ function format_colour(colour) {
 
 // Get elements by class by Dustin Diaz / CPKS
 
-function getElementsByClass(searchClass, node) {
+curvyCorners.getElementsByClass = function(searchClass, node) {
   var classElements = new Array;
   if (node == null) node = document;
   searchClass = searchClass.split('.'); // see if there's a tag in there
@@ -1206,4 +1138,96 @@ function getElementsByClass(searchClass, node) {
 
 function newCurvyError(errorMessage) {
   return new Error("curvyCorners Error:\n" + errorMessage)
+}
+
+// autoscan code
+
+curvyCorners.scanStyles = function() {
+  function makeInt(num) {
+    return isNaN(num = parseInt(num)) ? 0 : num;
+  }
+
+  if (Browser.isIE) {
+    for (var t = 0; t < document.styleSheets.length; ++t) {
+      for (var i = 0; i < document.styleSheets[t].rules.length; ++i) {
+        var allR = document.styleSheets[t].rules[i].style['-moz-border-radius'] || 0;
+        var tR   = document.styleSheets[t].rules[i].style['-moz-border-radius-topright']  || allR;
+        var tL   = document.styleSheets[t].rules[i].style['-moz-border-radius-topleft']  || allR;
+        var bR   = document.styleSheets[t].rules[i].style['-moz-border-radius-bottomright']  || allR;
+        var bL   = document.styleSheets[t].rules[i].style['-moz-border-radius-bottomleft']  || allR;
+        if (allR || tR || tR || bR || bL) {
+          var selector = document.styleSheets[t].rules[i].selectorText;
+
+          var settings = {
+            tl: { radius: makeInt(tL) },
+            tr: { radius: makeInt(tR) },
+            bl: { radius: makeInt(bL) },
+            br: { radius: makeInt(bR) },
+            antiAlias: true
+          };
+
+          var myBoxObject = new curvyCorners(settings, selector);
+          myBoxObject.applyCornersToAll();
+        }
+      }
+    }
+  }
+  else if (Browser.isOp) {
+    for (var t = 0; t < document.styleSheets.length; ++t) {
+      if (operasheet.contains_border_radius(t)) {
+        var settings = new operasheet(t);
+        for (var i in settings.rules) {
+          var myBoxObject = new curvyCorners(settings.rules[i]);
+          myBoxObject.applyCornersToAll();
+        }
+      }
+    }
+  }
+  else alert('Wasting my time!');
+}
+
+// Dean Edwards/Matthias Miller/John Resig
+
+curvyCorners.init = function() {
+  // quit if this function has already been called
+  if (arguments.callee.done) return;
+
+  // flag this function so we don't do the same thing twice
+  arguments.callee.done = true;
+
+  // kill the timer
+  if (Browser.isWebKit && curvyCorners.init.timer) {
+    clearInterval(curvyCorners.init.timer);
+    curvyCorners.init.timer = null;
+  }
+
+  // do stuff
+  curvyCorners.scanStyles();
+}
+
+if (typeof curvyCornersNoAutoScan === 'undefined' || curvyCornersNoAutoScan === false) {
+  /* for Internet Explorer */
+  /*@cc_on @*/
+  /*@if (@_win32 || @_win64)
+    document.write("<script id=__ie_onload defer src=javascript:void(0)><\/script>");
+    var script = document.getElementById("__ie_onload");
+    script.onreadystatechange = function() {
+      if (this.readyState == "complete") {
+        curvyCorners.init(); // call the onload handler
+      }
+    };
+  @else @*/
+  
+  if (document.addEventListener) { // Mozilla/Opera9/FireFox/Safari 4/Chrome
+    if (Browser.isOp) document.addEventListener("DOMContentLoaded", curvyCorners.init, false);
+  }
+  else if (Browser.isWebKit) { // ? for old Safari?
+    curvyCorners.init.timer = setInterval(function() {
+      if (/loaded|complete/.test(document.readyState)) {
+        curvyCorners.init('WebKit'); // call the onload handler
+      }
+    }, 10);
+  }
+  else window.onload = curvyCorners.init; // other browsers
+  /*@end @*/
 }
