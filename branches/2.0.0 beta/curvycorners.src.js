@@ -99,7 +99,7 @@ function browserdetect() {
         var style = obj.style.left;
         var rtStyle = obj.runtimeStyle.left;
         obj.runtimeStyle.left = obj.currentStyle.left;
-        obj.style.left = matches[1] || 0;
+        obj.style.left = matches[1] + matches[2];
         matches[0] = obj.style.pixelLeft;
         obj.style.left = style;
         obj.runtimeStyle.left = rtStyle;
@@ -286,10 +286,10 @@ operasheet.contains_border_radius = function(sheetnumber) {
 /*
 Usage:
 
-newCornersObj = new curvyCorners(settingsObj, "selectorStr");
-newCornersObj = new curvyCorners(settingsObj, divObj1[, divObj2[, divObj3[, . . . [, divObjN]]]]);
-selectorStr::= "<selector>[, <selector>]..."
-selector::= "[<elementname>].classname" | "#id"
+  curvyCorners(settingsObj, "selectorStr");
+  curvyCorners(settingsObj, domObj1[, domObj2[, domObj3[, . . . [, domObjN]]]]);
+  selectorStr::= "<selector>[, <selector>]..."
+  selector::= "[<elementname>].classname" | "#id"
 */
 
 function curvyCorners() {
@@ -1150,11 +1150,11 @@ curvyCorners.scanStyles = function() {
   if (Browser.isIE) {
     for (var t = 0; t < document.styleSheets.length; ++t) {
       for (var i = 0; i < document.styleSheets[t].rules.length; ++i) {
-        var allR = document.styleSheets[t].rules[i].style['-moz-border-radius'] || 0;
-        var tR   = document.styleSheets[t].rules[i].style['-moz-border-radius-topright']  || allR;
-        var tL   = document.styleSheets[t].rules[i].style['-moz-border-radius-topleft']  || allR;
-        var bR   = document.styleSheets[t].rules[i].style['-moz-border-radius-bottomright']  || allR;
-        var bL   = document.styleSheets[t].rules[i].style['-moz-border-radius-bottomleft']  || allR;
+        var allR = document.styleSheets[t].rules[i].style['-webkit-border-radius'] || 0;
+        var tR   = document.styleSheets[t].rules[i].style['-webkit-border-top-right-radius']  || allR;
+        var tL   = document.styleSheets[t].rules[i].style['-webkit-border-top-left-radius']  || allR;
+        var bR   = document.styleSheets[t].rules[i].style['-webkit-border-bottom-right-radius']  || allR;
+        var bL   = document.styleSheets[t].rules[i].style['-webkit-border-bottom-left-radius']  || allR;
         if (allR || tR || tR || bR || bL) {
           var selector = document.styleSheets[t].rules[i].selectorText;
 
@@ -1166,8 +1166,7 @@ curvyCorners.scanStyles = function() {
             antiAlias: true
           };
 
-          var myBoxObject = new curvyCorners(settings, selector);
-          myBoxObject.applyCornersToAll();
+          curvyCorners(settings, selector);
         }
       }
     }
@@ -1176,10 +1175,7 @@ curvyCorners.scanStyles = function() {
     for (var t = 0; t < document.styleSheets.length; ++t) {
       if (operasheet.contains_border_radius(t)) {
         var settings = new operasheet(t);
-        for (var i in settings.rules) {
-          var myBoxObject = new curvyCorners(settings.rules[i]);
-          myBoxObject.applyCornersToAll();
-        }
+        for (var i in settings.rules) curvyCorners(settings.rules[i]);
       }
     }
   }
