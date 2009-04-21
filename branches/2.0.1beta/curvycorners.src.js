@@ -5,7 +5,7 @@
   *                                                              *
   *  This script generates rounded corners for your boxes.       *
   *                                                              *
-  *  Version 2.0.0                                               *
+  *  Version 2.0.1                                               *
   *  Copyright (c) 2008 Cameron Cooke                            *
   *  Version 2 By: Terry Riegel, Cameron Cooke and Tim Hutchison *
   *  Version 1 By: Cameron Cooke and Tim Hutchison               *
@@ -356,6 +356,7 @@ function curvyCorners() {
 curvyCorners.prototype.applyCornersToAll = function () {}; // now redundant
 
 curvyCorners.redraw = function() {
+  if (!Browser.isOP && !Browser.isIE) return;
   if (!curvyCorners.redrawList) throw newCurvyError('curvyCorners.redraw() has nothing to redraw.');
   for (var i in curvyCorners.redrawList) {
     var o = curvyCorners.redrawList[i];
@@ -371,6 +372,7 @@ curvyCorners.redraw = function() {
   }
 }
 curvyCorners.adjust = function(obj, prop, newval) {
+  if (!Browser.isOP && !Browser.isIE) return;
   if (!curvyCorners.redrawList) throw newCurvyError('curvyCorners.adjust() has nothing to adjust.');
   var i, j = curvyCorners.redrawList.length;
   for (i = 0; i < j; ++i) if (curvyCorners.redrawList[i].node === obj) break;
