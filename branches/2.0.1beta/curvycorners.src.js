@@ -339,6 +339,14 @@ function curvyCorners() {
   // Loop through each argument
   for (i = startIndex, j = boxCol.length; i < j; ++i) {
     if (!('IEborderRadius' in boxCol[i].style) || boxCol[i].style.IEborderRadius != 'set') {
+      if (boxCol[i].className && boxCol[i].className.indexOf('curvyRedraw') !== -1) {
+        if (typeof curvyCorners.redrawList === 'undefined') curvyCorners.redrawList = new Array;
+        curvyCorners.redrawList.push({
+          node : boxCol[i],
+          spec : settings,
+          copy : boxCol[i].cloneNode(false)
+        });
+      }
       boxCol[i].style.IEborderRadius = 'set';
       var obj = new curvyObject(settings, boxCol[i]);
       obj.applyCorners();
@@ -347,15 +355,52 @@ function curvyCorners() {
 }
 curvyCorners.prototype.applyCornersToAll = function () {}; // now redundant
 
+curvyCorners.redraw = function() {
+  if (!curvyCorners.redrawList) throw newCurvyError('curvyCorners.redraw() has nothing to redraw.');
+  for (var i in curvyCorners.redrawList) {
+    var o = curvyCorners.redrawList[i];
+    if (!o.node.clientWidth) continue; // don't resize hidden boxes
+    var newchild = o.copy.cloneNode(false);
+    for (var contents = o.node.firstChild; contents != null; contents = contents.nextSibling)
+      if (contents.className === 'autoPadDiv') break;
+    if (!contents) throw newCurvyError("Couldn't find autoPad div"); //DEBUG
+    o.node.parentNode.replaceChild(newchild, o.node);
+    while (contents.firstChild) newchild.appendChild(contents.removeChild(contents.firstChild));
+    o = new curvyObject(o.spec, o.node = newchild);
+    o.applyCorners();
+  }
+}
+curvyCorners.adjust = function(obj, prop, newval) {
+  if (!curvyCorners.redrawList) throw newCurvyError('curvyCorners.adjust() has nothing to adjust.');
+  var i, j = curvyCorners.redrawList.length;
+  for (i = 0; i < j; ++i) if (curvyCorners.redrawList[i].node === obj) break;
+  if (i === j) throw newCurvyError('Object not redrawable');
+  if (prop.indexOf('.') === -1)
+    curvyCorners.redrawList[i].copy[prop] = newval;
+  else eval('curvyCorners.redrawList[i].copy.' + prop + "='" + newval + "'");
+}
+
 // curvyCorners object (can be called directly)
 
 function curvyObject() {
-  // Setup Globals
   this.box              = arguments[1];
   this.settings         = arguments[0];
-  this.topContainer     = null;
-  this.bottomContainer  = null;
-  this.shell            = null;
+  this.topContainer = this.bottomContainer = this.shell = boxDisp = null;
+  var boxWidth = this.box.clientWidth; // browser-independent IE-emulation (NB includes padding)
+  if (!boxWidth) {
+    boxDisp = this.box;
+    do {
+      boxDisp = boxDisp.parentNode;
+      if (!boxDisp) throw newCurvyError("curvyyObject box with no parent!");
+      if (!boxDisp || boxDisp.tagName === 'BODY') {
+        this.applyCorners = function() {}
+        alert("zero-width box with no accountable parent");
+        return;
+      }
+    } while ((typeof boxDisp.style === 'undefined') || boxDisp.style.display !== 'none');
+    boxDisp.style.display = 'block';
+    boxWidth = this.box.clientWidth;
+  }
   if (arguments[0] instanceof curvyCnrSpec)
     this.spec = arguments[0].cloneOn(this.box); // convert non-pixel units
   else {
@@ -365,7 +410,6 @@ function curvyObject() {
 
   // Get box formatting details
   var boxHeight  = Browser.get_style(this.box, "height") || 'auto';
-  var boxWidth        = this.box.clientWidth; // browser-independent IE-emulation (NB includes padding)
   var borderWidth     = Browser.get_style(this.box, "borderTopWidth");
   var borderWidthB    = Browser.get_style(this.box, "borderBottomWidth");
   var borderWidthL    = Browser.get_style(this.box, "borderLeftWidth");
@@ -469,7 +513,7 @@ function curvyObject() {
   newMainContainer.style.backgroundRepeat   = this.backgroundRepeat;
   this.shell = this.box.appendChild(newMainContainer);
 
-  var boxWidth  = Browser.get_style(this.shell, "width");
+  boxWidth = Browser.get_style(this.shell, "width");
   this.boxWidth = (boxWidth != "" && boxWidth != "auto" && boxWidth.indexOf("%") == -1) ? parseInt(boxWidth) : this.shell.offsetWidth;
 
   /*
@@ -827,6 +871,7 @@ function curvyObject() {
     contentContainer.style.paddingRight = (this.borderWidthR + this.rightPadding) + "px";
     // Append contentContainer
     this.box.appendChild(contentContainer);
+    if (boxDisp) boxDisp.style.display = 'none';
   }
 }
 
