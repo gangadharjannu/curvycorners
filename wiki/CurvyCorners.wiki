@@ -1,0 +1,16 @@
+#summary One-sentence summary of this page.
+#labels Featured
+curvyCorners is a script to round box corners for those browsers still unable to render them natively.
+== Introduction ==
+
+Rounded boxes are a stock-in-trade of modern web page design. Unfortunately, some browsers still don't support them natively. This has obliged ingenious web designers to come up with alternative solutions. Typically these involve the cumbersome generation of specialized images, or alternatively javascript that needs special style-related parameters. Both these solutions involve a reduplication or scattering of style information. Many fail to support the various combinations of CSS border styles.
+
+By contrast, curvyCorners provides a painless way to support legacy browsers, whilst at the same time enabling page designers to specify their styles entirely in CSS.
+
+== Details ==
+
+For those browsers with native rounded corners support, curvyCorners delegates all styling to the browser. For the rest, curvyCorners interprets the CSS and applies the styles at page load time, creating high-quality anti-aliased box corners on boxes surrounded by, and containing, image background content.
+
+curvyCorners supports fluid width and height, background-image and background-repeat on the rounded box and its parent, almost all solid border configurations, and (with a modicum of script support) dynamic redrawing.
+
+Typically, there is no need to generate extra script or background images. Simply design your page for Webkit/Safari/Chrome, and include the curvyCorners script. If a page requires certain items to be dynamically redrawn, the curvyCorners API makes this simple.
