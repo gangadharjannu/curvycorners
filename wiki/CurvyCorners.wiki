@@ -1,6 +1,11 @@
 #summary One-sentence summary of this page.
 #labels Featured
-curvyCorners is a script to round box corners for those browsers still unable to render them natively.
+A free javascript library for creating neat rounded corners for HTML box elements. Supports anti-aliasing, borders and background images.
+
+== Official Website ==
+
+http://curvycorners.net
+
 == Introduction ==
 
 Rounded boxes are a stock-in-trade of modern web page design. Unfortunately, some browsers still don't support them natively. This has obliged ingenious web designers to come up with alternative solutions. Typically these involve the cumbersome generation of specialized images, or alternatively javascript that needs special style-related parameters. Both these solutions involve a reduplication or scattering of style information. Many fail to support the various combinations of CSS border styles.
@@ -14,3 +19,29 @@ For those browsers with native rounded corners support, curvyCorners delegates a
 curvyCorners supports fluid width and height, background-image and background-repeat on the rounded box and its parent, almost all solid border configurations, and (with a modicum of script support) dynamic redrawing.
 
 Typically, there is no need to generate extra script or background images. Simply design your page for Webkit/Safari/Chrome, and include the curvyCorners script. If a page requires certain items to be dynamically redrawn, the curvyCorners API makes this simple.
+
+== Using it ==
+
+There is a tutorial available at http://curvycorners.net. It is recommended that you read it to get started.
+
+For updates, see UsingCurvyCorners.
+
+== Contributing ==
+
+curvyCorners is an open source project. If you want to contribute changes to the source code or make improvements etc. then please email me via the email address under Project Owners on the right.
+
+== Downloading ==
+
+You can download the latest version from the Downloads tab above. Make sure you download the file with the highest version number.
+
+== Discussion ==
+
+We have a Google Group! If you need help then I recommend you visit the Google group at http://groups.google.com/group/curvyCorners .
+
+== Issues and Bugs ==
+
+If you have an issue or have found a bug with the software please click on the Issues tab above and report it.
+
+== Members ==
+
+If you plan on making changes to the code please copy the files in trunk to a sub-folder under branches. You can then checkout from there. Once you are happy with your changes and want them merged back into the trunk please request a code review by clicking the Request Code Review link under the source tab.
