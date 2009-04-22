@@ -270,10 +270,10 @@ function operasheet(sheetnumber) {
   var pat = new RegExp("^([\\w.#][\\w.#, ]+)[\\n\\s]*\\{([^}]+border-((top|bottom)-(left|right)-)?radius[^}]*)\\}", "mg");
   var matches;
   this.rules = [];
-  while (matches = pat.exec(txt)) {
+  while ((matches = pat.exec(txt)) !== null) {
     var pat2 = new RegExp("border-((top|bottom)-(left|right)-)?radius:\\s*([\\d.]+)(in|em|px|ex|pt)", "g");
     var submatches, cornerspec = new curvyCnrSpec(matches[1]);
-    while (submatches = pat2.exec(matches[2]))
+    while ((submatches = pat2.exec(matches[2])) !== null)
       cornerspec.setcorner(submatches[2], submatches[3], submatches[4], submatches[5]);
     this.rules.push(cornerspec);
   }
@@ -545,7 +545,7 @@ function curvyObject() {
             this.topContainer = this.shell.appendChild(newMainContainer);
           }
         break;
-  
+
         case 1: // Bottom
           // Build bottom bar only if a bottom corner is to be drawn
           if (botMaxRadius) {
@@ -568,9 +568,9 @@ function curvyObject() {
         break;
       }
     }
-  
+
     var corners = this.spec.cornerNames();  // array of available corners
-  
+
     /*
     Loop for each corner
     */
@@ -660,7 +660,7 @@ function curvyObject() {
       }
       // END OF CORNER CREATION
       // ---------------------------------------------------- END
-  
+
       /*
       Now we have a new corner we need to reposition all the pixels unless
       the current corner is the bottom right.
@@ -681,7 +681,7 @@ function curvyObject() {
           pixelBar.style.top =  (specRadius - pixelBarHeight - pixelBarTop) + "px"; // Top
         }
         pixelBar.style.backgroundRepeat = this.backgroundRepeat;
-  
+
         if (this.backgroundImage != "") switch(cc) {
           case "tr":
             if (Browser.quirksMode) {
@@ -709,7 +709,7 @@ function curvyObject() {
           break;
         }
       }
-  
+
       // Position the container
       switch (cc) {
         case "tl":
@@ -730,23 +730,23 @@ function curvyObject() {
         //break;
       }
     }
-  
+
     /*
       The last thing to do is draw the rest of the filler DIVs.
     */
-  
+
     // Find out which corner has the bigger radius and get the difference amount
     var radiusDiff = {
       t : this.spec.radiusdiff('t'),
       b : this.spec.radiusdiff('b')
     };
-  
+
     for (z in radiusDiff) {
       if (!this.spec.get(z + 'R')) continue; // no need if no corners
       if (radiusDiff[z]) {
         // Get the type of corner that is the smaller one
         var smallerCornerType = (this.spec[z + "lR"] < this.spec[z + "rR"]) ? z + "l" : z + "r";
-  
+
         // First we need to create a DIV for the space under the smaller corner
         var newFiller = document.createElement("div");
         newFiller.style.height = radiusDiff[z] + "px";
@@ -755,7 +755,7 @@ function curvyObject() {
         newFiller.style.fontSize = "1px";
         newFiller.style.overflow = "hidden";
         newFiller.style.backgroundColor = this.boxColour;
-  
+
         // Position filler
         switch (smallerCornerType) {
           case "tl":
@@ -784,7 +784,7 @@ function curvyObject() {
           break;
         }
       }
-  
+
       // Create the bar to fill the gap between each corner horizontally
       var newFillerBar = document.createElement("div");
       newFillerBar.style.position = "relative";
@@ -794,7 +794,7 @@ function curvyObject() {
       newFillerBar.style.backgroundColor = this.boxColour;
       newFillerBar.style.backgroundImage = this.backgroundImage;
       newFillerBar.style.backgroundRepeat= this.backgroundRepeat;
-  
+
       switch (z) {
         case "t":
           // Top Bar
@@ -842,7 +842,7 @@ function curvyObject() {
         break;
       }
     }
-  
+
     // Create content container
     var contentContainer = document.createElement("div");
     // Set contentContainer's properties
@@ -1260,7 +1260,7 @@ if (typeof curvyCornersNoAutoScan === 'undefined' || curvyCornersNoAutoScan === 
       }
     };
   @else @*/
-  
+
   if (document.addEventListener) { // Mozilla/Opera9/FireFox/Safari 4/Chrome
     if (Browser.isOp) document.addEventListener("DOMContentLoaded", curvyCorners.init, false);
   }
