@@ -198,7 +198,8 @@ curvyCnrSpec.prototype.setfrom = function(obj) {
     if (this.selectorText.charAt(0) != '.')
       this.selectorText = '.' + this.selectorText;
     var nst = [];
-    for (var i in obj.validTags) nst.push(obj.validTags[i] + this.selectorText);
+    for (var i in obj.validTags) if (typeof validTags[i] !== 'function')
+      nst.push(obj.validTags[i] + this.selectorText);
     this.selectorText = nst.join();
   }
 };
@@ -207,7 +208,7 @@ curvyCnrSpec.prototype.cloneOn = function(box) { // not needed by IE
   var converted = 0;
   var i, propu;
 
-  for (i in props) {
+  for (i in props) if (typeof props[i] !== 'function') {
     propu = this[props[i] + 'u'];
     if (propu !== '' && propu !== 'px') {
       converted = new curvyCnrSpec;
@@ -218,7 +219,7 @@ curvyCnrSpec.prototype.cloneOn = function(box) { // not needed by IE
     converted = this; // no need to clone
   else {
     var propi, propR, save = Browser.get_style(box, 'left');
-    for (i in props) {
+    for (i in props) if (typeof props[i] !== 'function') {
       propi = props[i];
       propu = this[propi + 'u'];
       propR = this[propi + 'R'];
@@ -358,7 +359,7 @@ curvyCorners.prototype.applyCornersToAll = function () {}; // now redundant
 curvyCorners.redraw = function() {
   if (!Browser.isOP && !Browser.isIE) return;
   if (!curvyCorners.redrawList) throw newCurvyError('curvyCorners.redraw() has nothing to redraw.');
-  for (var i in curvyCorners.redrawList) {
+  for (var i in curvyCorners.redrawList) if (typeof curvyCorners.redrawList[i] !== 'function') {
     var o = curvyCorners.redrawList[i];
     if (!o.node.clientWidth) continue; // don't resize hidden boxes
     var newchild = o.copy.cloneNode(false);
@@ -574,7 +575,7 @@ function curvyObject() {
     /*
     Loop for each corner
     */
-    for (var i in corners) {
+    for (var i in corners) if (typeof corners[i] !== 'function') {
       // Get current corner type from array
       var cc = corners[i];
       // Has the user requested the currentCorner be round?
@@ -1222,7 +1223,8 @@ curvyCorners.scanStyles = function() {
     for (var t = 0; t < document.styleSheets.length; ++t) {
       if (operasheet.contains_border_radius(t)) {
         var settings = new operasheet(t);
-        for (var i in settings.rules) curvyCorners(settings.rules[i]);
+        for (var i in settings.rules) if (typeof settings.rules[i] !== 'function')
+          curvyCorners(settings.rules[i]);
       }
     }
   }
