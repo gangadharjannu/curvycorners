@@ -194,21 +194,13 @@ curvyCnrSpec.prototype.setfrom = function(obj) {
   if ('bl' in obj) this.blR = obj.bl.radius;
   if ('br' in obj) this.brR = obj.br.radius;
   if ('antiAlias' in obj) this.antiAlias = obj.antiAlias;
-  if ('validTags' in obj && /^\.?\w+$/.test(this.selectorText)) {
-    if (this.selectorText.charAt(0) != '.')
-      this.selectorText = '.' + this.selectorText;
-    var nst = [];
-    for (var i in obj.validTags) if (typeof validTags[i] !== 'function')
-      nst.push(obj.validTags[i] + this.selectorText);
-    this.selectorText = nst.join();
-  }
 };
 curvyCnrSpec.prototype.cloneOn = function(box) { // not needed by IE
   var props = ['tl', 'tr', 'bl', 'br'];
   var converted = 0;
   var i, propu;
 
-  for (i in props) if (typeof props[i] !== 'function') {
+  for (i in props) if (!isNaN(i)) {
     propu = this[props[i] + 'u'];
     if (propu !== '' && propu !== 'px') {
       converted = new curvyCnrSpec;
@@ -219,7 +211,7 @@ curvyCnrSpec.prototype.cloneOn = function(box) { // not needed by IE
     converted = this; // no need to clone
   else {
     var propi, propR, save = Browser.get_style(box, 'left');
-    for (i in props) if (typeof props[i] !== 'function') {
+    for (i in props) if (!isNaN(i)) {
       propi = props[i];
       propu = this[propi + 'u'];
       propR = this[propi + 'R'];
@@ -359,7 +351,8 @@ curvyCorners.prototype.applyCornersToAll = function () {}; // now redundant
 curvyCorners.redraw = function() {
   if (!Browser.isOP && !Browser.isIE) return;
   if (!curvyCorners.redrawList) throw newCurvyError('curvyCorners.redraw() has nothing to redraw.');
-  for (var i in curvyCorners.redrawList) if (typeof curvyCorners.redrawList[i] !== 'function') {
+  for (var i in curvyCorners.redrawList) {
+    if (isNaN(i)) continue; // in case of added prototype methods
     var o = curvyCorners.redrawList[i];
     if (!o.node.clientWidth) continue; // don't resize hidden boxes
     var newchild = o.copy.cloneNode(false);
@@ -373,14 +366,16 @@ curvyCorners.redraw = function() {
   }
 }
 curvyCorners.adjust = function(obj, prop, newval) {
-  if (!Browser.isOP && !Browser.isIE) return;
-  if (!curvyCorners.redrawList) throw newCurvyError('curvyCorners.adjust() has nothing to adjust.');
-  var i, j = curvyCorners.redrawList.length;
-  for (i = 0; i < j; ++i) if (curvyCorners.redrawList[i].node === obj) break;
-  if (i === j) throw newCurvyError('Object not redrawable');
+  if (Browser.isOP || Browser.isIE) {
+    if (!curvyCorners.redrawList) throw newCurvyError('curvyCorners.adjust() has nothing to adjust.');
+    var i, j = curvyCorners.redrawList.length;
+    for (i = 0; i < j; ++i) if (curvyCorners.redrawList[i].node === obj) break;
+    if (i === j) throw newCurvyError('Object not redrawable');
+    obj = curvyCorners.redrawList[i].copy;
+  }
   if (prop.indexOf('.') === -1)
-    curvyCorners.redrawList[i].copy[prop] = newval;
-  else eval('curvyCorners.redrawList[i].copy.' + prop + "='" + newval + "'");
+    obj[prop] = newval;
+  else eval('obj.' + prop + "='" + newval + "'");
 }
 
 // curvyCorners object (can be called directly)
@@ -575,7 +570,7 @@ function curvyObject() {
     /*
     Loop for each corner
     */
-    for (var i in corners) if (typeof corners[i] !== 'function') {
+    for (var i in corners) if (!isNaN(i)) {
       // Get current corner type from array
       var cc = corners[i];
       // Has the user requested the currentCorner be round?
@@ -872,6 +867,11 @@ function curvyObject() {
     // Apply left and right padding
     contentContainer.style.paddingLeft = (this.borderWidthL + this.leftPadding) + "px";
     contentContainer.style.paddingRight = (this.borderWidthR + this.rightPadding) + "px";
+    // Apply text align
+    contentContainer.style.width = (this.boxWidth - this.leftPadding - this.rightPadding) + "px";
+    contentContainer.style.textAlign = Browser.get_style(this.box, 'textAlign');
+    //alert('Set content align from ' + this.box.style.textAlign);
+    this.box.style.textAlign = 'left'; // important otherwise layout goes wild
     // Append contentContainer
     this.box.appendChild(contentContainer);
     if (boxDisp) boxDisp.style.display = 'none';
@@ -1223,7 +1223,7 @@ curvyCorners.scanStyles = function() {
     for (var t = 0; t < document.styleSheets.length; ++t) {
       if (operasheet.contains_border_radius(t)) {
         var settings = new operasheet(t);
-        for (var i in settings.rules) if (typeof settings.rules[i] !== 'function')
+        for (var i in settings.rules) if (!isNaN(i))
           curvyCorners(settings.rules[i]);
       }
     }

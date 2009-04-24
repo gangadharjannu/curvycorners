@@ -133,26 +133,26 @@ div.subpage {
   -moz-border-radius-bottomright: 20px;
 }
 .demo5 {
-    margin: 0 auto;
-    color: #fff;
-    width: 300px;
-    padding: 20px;
-    text-align: left;
-    background-color: #f00;
-    border: 3px solid #fff;
-    margin-bottom: 10px;
-
-    /* Do rounding (native in Firefox and Safari) */
-    -webkit-border-radius: 20px;
-    -moz-border-radius: 20px;
+  margin: 0 auto;
+  color: #fff;
+  width: 300px;
+  padding: 20px;
+  text-align: left;
+  background-color: #f00;
+  border: 3px solid #000;
+  margin-bottom: 10px;
+  -webkit-border-radius: 20px;
+  -moz-border-radius: 20px;
 }
 
 .box2{
-    background-color: #0f0;
+  background-color: #0f0;
+  text-align:center;
 }
 
 .box3{
-    background-color: #00f;
+  background-color: #00f;
+  text-align:right;
 }
 
 /*]]>*/
@@ -184,11 +184,11 @@ function tabclick(n) {
 </div>
 <div id="tabrow">
  <ul>
-  <li id="tab0" onclick="tabclick(0);" class="select curvyRedraw">Tab 1</li>
-  <li id="tab1" onclick="tabclick(1);" class="curvyRedraw">Tab 2</li>
-  <li id="tab2" onclick="tabclick(2);" class="curvyRedraw">Tab 3 (note fluid width)</li>
-  <li id="tab3" onclick="tabclick(3);" class="curvyRedraw">Tab 4</li>
-  <li id="tab4" onclick="tabclick(4);" class="curvyRedraw">Tab 5</li>
+  <li id="tab0" onclick="tabclick(0);" class="select curvyRedraw">Intro</li>
+  <li id="tab1" onclick="tabclick(1);" class="curvyRedraw">RepeatX</li>
+  <li id="tab2" onclick="tabclick(2);" class="curvyRedraw">Photo background</li>
+  <li id="tab3" onclick="tabclick(3);" class="curvyRedraw">Opposite corners</li>
+  <li id="tab4" onclick="tabclick(4);" class="curvyRedraw">Text alignment</li>
   <li id="tab5" onclick="tabclick(5);" class="curvyRedraw">Tab 6</li>
  </ul>
 </div>
@@ -196,13 +196,15 @@ function tabclick(n) {
 <div id="page0" class="subpage">
 <p>These demos show how curvyCorners copes in a more complex styling
 environment, where units are expressed in font-relative or real-world units.</p>
-<p>Currently (as of SVN rev. 26) corners cannot be expressed other than in
+<p>Currently (as at SVN rev. 34) corners cannot be expressed other than in
 pixels, although it is hoped to address this shortly.</p>
-<p>The contents of this box will change depending on which tab you click.
+<p>Note that the tabs above have fluid width. curvyCorners can cope with both
+fixed-width and fluid boxes.</p>
+<p>The contents of this page area will change depending on which tab you click.
 This is accomplished by a piece of javascript which hides the currently
-selected page body, sets the tab styles to reflect the new current tab,
+selected page area, sets the tab styles to reflect the new current tab,
 calls curvyCorners to re-draw the tabs, and finally un-hides the appropriate
-new page body.</p>
+new page area.</p>
 <p>In a little more detail: whenever a box needs to be redrawn (perhaps because
 its contents will change, or because it needs to be re-styled), this must be
 indicated by using the special class name "curvyRedraw". Then, if properties
@@ -272,20 +274,22 @@ mostly common sense, about box styling.
 For example, it makes no sense to style a box
 with rounded top corners, a top border but no side border; and the results
 can be relied upon to look odd!</p>
-<p>Bearing in mind the tabs, you can of course have rounded top corners with
-a border to left, top and right (but none on the bottom).</p>
+<p>You can of course have rounded top corners with
+a border to left, top and right (but none on the bottom).
+That is how the tabs are styled.</p>
 </div>
 </div>
 <div id="page4" class="subpage" style="display:none">
 <h2>Page 5</h2>
-  <div class="demo5">Box 1</div>
-  <div class="demo5 box2">Box 2</div>
-  <div class="demo5 box3">Box 3</div>
-<p>These boxes have fluid height and fixed width.</p>
+  <div class="demo5">Left aligned</div>
+  <div class="demo5 box2">Centered</div>
+  <div class="demo5 box3">Right aligned</div>
+<p>These boxes have fluid height and fixed width. curvyCorners correctly
+applies text alignment styles.</p>
 </div>
 <div id="page5" class="subpage" style="display:none">
 <h2>Page 6</h2>
-<p>We hope you find these demonstrations illuminating.</p>
+<p>We hope you find these demonstrations helpful.</p>
 <p>For further information about curvyCorners, visit the
 <a href="http://curvycorners.net/">web site</a>.</p>
 <p>Latest builds are available from the repository at
