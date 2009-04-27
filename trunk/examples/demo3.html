@@ -41,15 +41,16 @@ html,body{
     /*
     Usage:
 
-    newCornersObj = new curvyCorners(settingsObj, selectorStr);
-    newCornersObj = new curvyCorners(settingsObj, divObj1[, divObj2[, divObj3[, . . . [, divObjN]]]]);
+    curvyCorners(settingsObj, selectorStr);
+    curvyCorners(settingsObj, Obj1[, Obj2[, Obj3[, . . . [, ObjN]]]]);
     
-    selectorStr ::= singleSelector [, singleSelector]...
+    selectorStr ::= complexSelector [, complexSelector]...
+    complexSelector ::= singleSelector[ singleSelector]
     singleSelector ::= idType | classType
-    idType ::= #id [classType]
+    idType ::= #id
     classType ::= [tagName].className
     tagName ::= div|p|form|blockquote|frameset // others may work
-    className : [a-z][\w]+
+    className : .name
     selector examples:
       #mydiv p.rounded
       #mypara

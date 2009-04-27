@@ -5,7 +5,7 @@
   *                                                              *
   *  This script generates rounded corners for your boxes.       *
   *                                                              *
-  *  Version 2.0.1                                               *
+  *  Version 2.0.2                                               *
   *  Copyright (c) 2008 Cameron Cooke                            *
   *  Version 2 By: Terry Riegel, Cameron Cooke and Tim Hutchison *
   *  Version 1 By: Cameron Cooke and Tim Hutchison               *
@@ -281,22 +281,26 @@ Usage:
 
   curvyCorners(settingsObj, "selectorStr");
   curvyCorners(settingsObj, domObj1[, domObj2[, domObj3[, . . . [, domObjN]]]]);
-  selectorStr::= "<selector>[, <selector>]..."
+  selectorStr::= "<complexSelector>[, <complexSelector>]..."
+  complexSelector::= <selector>[ <selector]
   selector::= "[<elementname>].classname" | "#id"
 */
 
 function curvyCorners() {
   var i, j, boxCol, settings, startIndex;
   // Check parameters
-  if (typeof arguments[0] !== "object") throw newCurvyError("First parameter of curvyCorners() must be an object.");
+  if (typeof arguments[0] !== "object") throw curvyCorners.newError("First parameter of curvyCorners() must be an object.");
   if (arguments[0] instanceof curvyCnrSpec) {
     settings = arguments[0];
     if (!settings.selectorText && typeof arguments[1] === 'string')
       settings.selectorText = arguments[1];
   }
   else {
-    if (typeof arguments[1] !== "object" && typeof arguments[1] !== "string") throw newCurvyError("Second parameter of curvyCorners() must be an object or a class name.");
-    settings = new curvyCnrSpec((typeof arguments[1] === 'string') ? arguments[1] : '');
+    if (typeof arguments[1] !== "object" && typeof arguments[1] !== "string") throw curvyCorners.newError("Second parameter of curvyCorners() must be an object or a class name.");
+    j = arguments[1];
+    if (typeof j !== 'string') j = '';
+    if (j !== '' && j.charAt(0) !== '.' && 'autoPad' in arguments[0]) j = '.' + j; // for compatibility, prefix with dot
+    settings = new curvyCnrSpec(j);
     settings.setfrom(arguments[0]);
   }
 
@@ -305,20 +309,27 @@ function curvyCorners() {
     startIndex = 0;
     var args = settings.selectorText.replace(/\s+$/,'').split(/,\s*/); // handle comma-separated selector list
     boxCol = new Array;
+
     for (i = 0; i < args.length; ++i) {
+      var argbits = args[i].split(' ');
       switch (args[i].charAt(0)) {
         case '#' : // id
-          if (args[i].indexOf(' ') === -1)
+          if (argbits.length === 1)
             boxCol.push(document.getElementById(args[i].substr(1)));
           else {
-            args[i] = args[i].split(' ');
-            var encloser = document.getElementById(args[i][0].substr(1));
-            var objs = encloser.getElementsByTagName(args[i][1]);
-            for (j = 0; j < objs.length; ++j) boxCol.push(objs[j]);
+            var encloser = document.getElementById(argbits[0].substr(1));
+            boxCol = boxCol.concat(curvyCorners.getElementsByClass(argbits[1], encloser));
           }
         break;
         default :
-          boxCol = boxCol.concat(curvyCorners.getElementsByClass(args[i]));
+          if (argbits.length === 1)
+            boxCol = boxCol.concat(curvyCorners.getElementsByClass(args[i]));
+          else {
+            var encloser = curvyCorners.getElementsByClass(argbits[0]);
+            for (j = 0; j < encloser.length; ++j) {
+              boxCol = boxCol.concat(curvyCorners.getElementsByClass(argbits[1], encloser[k]));
+            }
+          }
         //break;
       }
     }
@@ -350,7 +361,7 @@ curvyCorners.prototype.applyCornersToAll = function () {}; // now redundant
 
 curvyCorners.redraw = function() {
   if (!Browser.isOP && !Browser.isIE) return;
-  if (!curvyCorners.redrawList) throw newCurvyError('curvyCorners.redraw() has nothing to redraw.');
+  if (!curvyCorners.redrawList) throw curvyCorners.newError('curvyCorners.redraw() has nothing to redraw.');
   for (var i in curvyCorners.redrawList) {
     if (isNaN(i)) continue; // in case of added prototype methods
     var o = curvyCorners.redrawList[i];
@@ -358,7 +369,7 @@ curvyCorners.redraw = function() {
     var newchild = o.copy.cloneNode(false);
     for (var contents = o.node.firstChild; contents != null; contents = contents.nextSibling)
       if (contents.className === 'autoPadDiv') break;
-    if (!contents) throw newCurvyError("Couldn't find autoPad div"); //DEBUG
+    if (!contents) throw curvyCorners.newError("Couldn't find autoPad div"); //DEBUG
     o.node.parentNode.replaceChild(newchild, o.node);
     while (contents.firstChild) newchild.appendChild(contents.removeChild(contents.firstChild));
     o = new curvyObject(o.spec, o.node = newchild);
@@ -367,15 +378,18 @@ curvyCorners.redraw = function() {
 }
 curvyCorners.adjust = function(obj, prop, newval) {
   if (Browser.isOP || Browser.isIE) {
-    if (!curvyCorners.redrawList) throw newCurvyError('curvyCorners.adjust() has nothing to adjust.');
+    if (!curvyCorners.redrawList) throw curvyCorners.newError('curvyCorners.adjust() has nothing to adjust.');
     var i, j = curvyCorners.redrawList.length;
     for (i = 0; i < j; ++i) if (curvyCorners.redrawList[i].node === obj) break;
-    if (i === j) throw newCurvyError('Object not redrawable');
+    if (i === j) throw curvyCorners.newError('Object not redrawable');
     obj = curvyCorners.redrawList[i].copy;
   }
   if (prop.indexOf('.') === -1)
     obj[prop] = newval;
   else eval('obj.' + prop + "='" + newval + "'");
+}
+curvyCorners.newError = function(errorMessage) {
+  return new Error("curvyCorners Error:\n" + errorMessage)
 }
 
 // curvyCorners object (can be called directly)
@@ -385,25 +399,29 @@ function curvyObject() {
   this.settings         = arguments[0];
   this.topContainer = this.bottomContainer = this.shell = boxDisp = null;
   var boxWidth = this.box.clientWidth; // browser-independent IE-emulation (NB includes padding)
+
+  // if no client width, maybe the box or a parent has 'display:none'.
+
   if (!boxWidth) {
+    if (!this.box.parentNode) throw this.newError("box has no parent!"); // unlikely...
     boxDisp = this.box;
-    do {
+    do { // search for 'display:none'
       boxDisp = boxDisp.parentNode;
-      if (!boxDisp) throw newCurvyError("curvyyObject box with no parent!");
-      if (!boxDisp || boxDisp.tagName === 'BODY') {
-        this.applyCorners = function() {}
-        alert("zero-width box with no accountable parent");
+      if (!boxDisp || boxDisp.tagName === 'BODY') { // we've hit the buffers
+        this.applyCorners = function() {} // make the error benign
+        alert(this.errmsg("zero-width box with no accountable parent", "warning"));
         return;
       }
     } while ((typeof boxDisp.style === 'undefined') || boxDisp.style.display !== 'none');
-    boxDisp.style.display = 'block';
+    // here, we've found the box whose display is set to 'none'.
+    boxDisp.style.display = 'block'; // display in order to get browser to calculate clientWidth
     boxWidth = this.box.clientWidth;
   }
   if (arguments[0] instanceof curvyCnrSpec)
     this.spec = arguments[0].cloneOn(this.box); // convert non-pixel units
   else {
     this.spec = new curvyCnrSpec('');
-    this.spec.setfrom(this.settings); // no need for unit conversion
+    this.spec.setfrom(this.settings); // no need for unit conversion, use settings param. directly
   }
 
   // Get box formatting details
@@ -433,39 +451,43 @@ function curvyObject() {
   var botMaxRadius    = this.spec.get('bR');
   var styleToNPx = function(val) {
     if (typeof val === 'number') return val;
-    if (typeof val !== 'string') throw newCurvyError('unexpected styleToNPx type ' + typeof val);
+    if (typeof val !== 'string') throw new Error('unexpected styleToNPx type ' + typeof val);
     var matches = /^[-\d.]([a-z]+)$/.exec(val);
-    if (matches && matches[1] != 'px') throw newCurvyError('Unexpected unit ' + matches[1]);
+    if (matches && matches[1] != 'px') throw new Error('Unexpected unit ' + matches[1]);
     if (isNaN(val = parseInt(val))) val = 0;
     return val;
   }
 
   // Set formatting properties
-  //this.boxHeight       = parseInt(((boxHeight != "" && boxHeight != "auto" && boxHeight.indexOf("%") == -1) ? boxHeight : this.box.offsetHeight));
-  this.borderWidth     = styleToNPx(borderWidth);
-  this.borderWidthB    = styleToNPx(borderWidthB);
-  this.borderWidthL    = styleToNPx(borderWidthL);
-  this.borderWidthR    = styleToNPx(borderWidthR);
-  this.boxColour       = format_colour(boxColour);
-  this.topPadding      = styleToNPx(topPadding);
-  this.bottomPadding   = styleToNPx(bottomPadding);
-  this.leftPadding     = styleToNPx(leftPadding);
-  this.rightPadding    = styleToNPx(rightPadding);
-  this.boxWidth        = boxWidth - this.leftPadding - this.rightPadding;
-  this.boxHeight       = (((boxHeight != "" && boxHeight != "auto" && boxHeight.indexOf("%") == -1) ? parseInt(boxHeight) : this.box.clientHeight - this.topPadding - this.bottomPadding));
-  this.borderColour    = format_colour(borderColour);
-  this.borderColourB   = format_colour(borderColourB);
-  this.borderColourL   = format_colour(borderColourL);
-  this.borderString    = this.borderWidth + "px" + " solid " + this.borderColour;
-  this.borderStringB   = this.borderWidthB + "px" + " solid " + this.borderColourB;
-  this.backgroundImage = ((backgroundImage != "none")? backgroundImage : "");
-  this.backgroundRepeat= backgroundRepeat;
-  this.backgroundPosX  = styleToNPx(backgroundPosX);
-  this.backgroundPosY  = styleToNPx(backgroundPosY);
+  try {
+    this.borderWidth     = styleToNPx(borderWidth);
+    this.borderWidthB    = styleToNPx(borderWidthB);
+    this.borderWidthL    = styleToNPx(borderWidthL);
+    this.borderWidthR    = styleToNPx(borderWidthR);
+    this.boxColour       = curvyObject.format_colour(boxColour);
+    this.topPadding      = styleToNPx(topPadding);
+    this.bottomPadding   = styleToNPx(bottomPadding);
+    this.leftPadding     = styleToNPx(leftPadding);
+    this.rightPadding    = styleToNPx(rightPadding);
+    this.boxWidth        = boxWidth - this.leftPadding - this.rightPadding;
+    this.boxHeight       = (((boxHeight != "" && boxHeight != "auto" && boxHeight.indexOf("%") == -1) ? parseInt(boxHeight) : this.box.clientHeight - this.topPadding - this.bottomPadding));
+    this.borderColour    = curvyObject.format_colour(borderColour);
+    this.borderColourB   = curvyObject.format_colour(borderColourB);
+    this.borderColourL   = curvyObject.format_colour(borderColourL);
+    this.borderString    = this.borderWidth + "px" + " solid " + this.borderColour;
+    this.borderStringB   = this.borderWidthB + "px" + " solid " + this.borderColourB;
+    this.backgroundImage = ((backgroundImage != "none")? backgroundImage : "");
+    this.backgroundRepeat= backgroundRepeat;
+    this.backgroundPosX  = styleToNPx(backgroundPosX);
+    this.backgroundPosY  = styleToNPx(backgroundPosY);
 
-  this.boxContent      = this.box.innerHTML;
-  this.topMargin       = styleToNPx(topMargin);
-  this.bottomMargin    = styleToNPx(bottomMargin);
+    this.boxContent      = this.box.innerHTML;
+    this.topMargin       = styleToNPx(topMargin);
+    this.bottomMargin    = styleToNPx(bottomMargin);
+  }
+  catch(e) {
+    throw this.newError('getMessage' in e ? e.getMessage() : e.message);
+  }
 
   this.box.innerHTML = "";
 
@@ -829,8 +851,6 @@ function curvyObject() {
                 newFillerBar.style.backgroundPosition = x_offset + (this.backgroundPosY - (this.boxHeight + this.borderWidth - botMaxRadius)) + "px";
               } else {
                 newFillerBar.style.backgroundPosition  = x_offset + (this.backgroundPosY - (this.boxHeight + this.topPadding + this.borderWidth + this.bottomPadding - botMaxRadius)) + "px";
-                //if (Browser.isIE) newFillerBar.style.backgroundPosition  = x_offset + (this.backgroundPosY + this.topPadding + this.bottomPadding - (this.boxHeight + this.borderWidth + botMaxRadius)) + "px";
-                //alert('bg pos = ' + newFillerBar.style.backgroundPosition);
               }
             }
             this.bottomContainer.appendChild(newFillerBar);
@@ -870,7 +890,6 @@ function curvyObject() {
     // Apply text align
     contentContainer.style.width = (this.boxWidth - this.leftPadding - this.rightPadding) + "px";
     contentContainer.style.textAlign = Browser.get_style(this.box, 'textAlign');
-    //alert('Set content align from ' + this.box.style.textAlign);
     this.box.style.textAlign = 'left'; // important otherwise layout goes wild
     // Append contentContainer
     this.box.appendChild(contentContainer);
@@ -898,7 +917,7 @@ curvyObject.prototype.drawPixel = function(intx, inty, colour, transAmount, heig
     pixel.style.backgroundPosition  = "-" + (this.boxWidth - (cornerRadius - intx) + this.borderWidth) + "px -" + ((this.boxHeight + topMaxRadius + inty) - this.borderWidth) + "px";
   }
   // Set opacity if the transparency is anything other than 100
-  if (transAmount != 100) setOpacity(pixel, transAmount);
+  if (transAmount != 100) curvyObject.setOpacity(pixel, transAmount);
   // Set the pixels position
   pixel.style.top = inty + "px";
   pixel.style.left = intx + "px";
@@ -907,6 +926,24 @@ curvyObject.prototype.drawPixel = function(intx, inty, colour, transAmount, heig
 curvyObject.prototype.fillerWidth = function(tb) {
   var bWidth = this.spec.radiusCount(tb) * this.borderWidth;
   return (this.boxWidth - this.spec.radiusSum(tb) + bWidth) + 'px';
+}
+curvyObject.prototype.errmsg = function(msg, gravity) {
+  var extradata = "\ntag: " + this.box.tagName;
+  if (this.box.id) extradata += "\nid: " + this.box.id;
+  if (this.box.className) extradata += "\nclass: " + this.box.className;
+  var parent;
+  if ((parent = this.box.parentNode) === null)
+    extradata += "\n(box has no parent)";
+  else {
+    extradata += "\nParent tag: " + parent.tagName;
+    if (parent.id) extradata += "\nParent ID: " + parent.id;
+    if (parent.className) extradata += "\nParent class: " + parent.className;
+  }
+  if (gravity === undefined) gravity = 'warning';
+  return 'curvyObject ' + gravity + ":\n" + msg + extradata;
+}
+curvyObject.prototype.newError = function(msg) {
+  return new Error(this.errmsg(msg, 'exception'));
 }
 
 // ------------- UTILITY FUNCTIONS
@@ -1041,12 +1078,22 @@ curvyObject.pixelFraction = function(x, y, r) {
   return fraction;
 }
 
+// Returns an array of rgb values
+
+curvyObject.rgb2Array = function(rgbColour) {
+  // Remove rgb()
+  var rgbValues = rgbColour.substring(4, rgbColour.indexOf(")"));
+
+  // Split RGB into array
+  return rgbValues.split(", ");
+}
+
 // This function converts CSS rgb(x, x, x) to hexadecimal
 
-function rgb2Hex(rgbColour) {
+curvyObject.rgb2Hex = function(rgbColour) {
   try {
     // Get array of RGB values
-    var rgbArray = rgb2Array(rgbColour);
+    var rgbArray = curvyObject.rgb2Array(rgbColour);
 
     // Get RGB values
     var red   = parseInt(rgbArray[0]);
@@ -1056,21 +1103,12 @@ function rgb2Hex(rgbColour) {
     // Build hex colour code
     var hexColour = "#" + curvyObject.IntToHex(red) + curvyObject.IntToHex(green) + curvyObject.IntToHex(blue);
   }
-  catch(e) {
-    alert("There was an error converting the RGB value to Hexadecimal in function rgb2Hex");
+  catch (e) {
+    var msg = 'getMessage' in e ? e.getMessage() : e.message;
+    throw new Error("Error (" + msg + ") converting RGB value to Hex in rgb2Hex");
   }
 
   return hexColour;
-}
-
-// Returns an array of rbg values
-
-function rgb2Array(rgbColour) {
-  // Remove rgb()
-  var rgbValues = rgbColour.substring(4, rgbColour.indexOf(")"));
-
-  // Split RGB into array
-  return rgbValues.split(", ");
 }
 
 /*
@@ -1078,12 +1116,12 @@ function rgb2Array(rgbColour) {
   Modified by Cameron Cooke adding Safari's rgba support
 */
 
-function setOpacity(obj, opacity) {
+curvyObject.setOpacity = function(obj, opacity) {
   opacity = (opacity == 100) ? 99.999 : opacity;
 
   if (Browser.isSafari && obj.tagName != "IFRAME") {
     // Get array of RGB values
-    var rgbArray = rgb2Array(obj.style.backgroundColor);
+    var rgbArray = curvyObject.rgb2Array(obj.style.backgroundColor);
 
     // Get RGB values
     var red   = parseInt(rgbArray[0]);
@@ -1137,7 +1175,7 @@ function removeEvent(obj, evType, fn, useCapture) {
 }
 */
 
-function format_colour(colour) {
+curvyObject.format_colour = function(colour) {
   var returnColour = "#ffffff";
 
   // Make sure colour is set and not transparent
@@ -1145,7 +1183,7 @@ function format_colour(colour) {
     // RGB Value?
     if (colour.substr(0, 3) === "rgb") {
       // Get HEX aquiv.
-      returnColour = rgb2Hex(colour);
+      returnColour = curvyObject.rgb2Hex(colour);
     }
     else if (colour.length === 4) {
       // 3 chr colour code add remainder
@@ -1160,32 +1198,32 @@ function format_colour(colour) {
 }
 
 // Get elements by class by Dustin Diaz / CPKS
+// NB if searchClass is a class name, it MUST be preceded by '.'
 
 curvyCorners.getElementsByClass = function(searchClass, node) {
   var classElements = new Array;
-  if (node == null) node = document;
+  if (node === undefined) node = document;
   searchClass = searchClass.split('.'); // see if there's a tag in there
   var tag = '*'; // prepare for no tag
-  if (searchClass.length == 1)
-    searchClass = searchClass[0];
+  if (searchClass.length === 1) {
+    tag = searchClass[0];
+    searchClass = false;
+  }
   else {
     if (searchClass[0]) tag = searchClass[0];
     searchClass = searchClass[1];
   }
-  if (tag == null) tag = '*';
-  var els = node.getElementsByTagName(tag);
-  var elsLen = els.length;
-  var pattern = new RegExp("(^|\\s)" + searchClass + "(\\s|$)");
-  for (var i = 0; i < elsLen; ++i) {
-    if (pattern.test(els[i].className)) classElements.push(els[i]);
+  var i, els, elsLen;
+  els = node.getElementsByTagName(tag);
+  elsLen = els.length;
+  if (searchClass) {
+    var pattern = new RegExp("(^|\\s)" + searchClass + "(\\s|$)");
+    for (i = 0; i < elsLen; ++i) {
+      if (pattern.test(els[i].className)) classElements.push(els[i]);
+    }
   }
+  else for (i = 0; i < elsLen; ++i) classElements.push(els[i]);
   return classElements;
-}
-
-// Displays error message
-
-function newCurvyError(errorMessage) {
-  return new Error("curvyCorners Error:\n" + errorMessage)
 }
 
 // autoscan code
