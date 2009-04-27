@@ -1,0 +1,344 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-GB">
+<head>
+<title>curvyCorners 2.0 - How to use it</title>
+<meta name="author" content="Cameron Cooke / CPKS"/>
+<meta name="description" content="How to use curvyCorners in your HTML pages"/>
+<style type="text/css">
+/*<![CDATA[*/
+.codeSample {
+  background-color: #ffffe0;
+  border:solid #C2C2C2 1px;
+  padding:10px;
+  font-family: "Courier New", Courier, monospace;
+  font-size: medium;
+  margin:25px 0 5px 0;
+}
+
+/*]]>*/
+</style>
+</head>
+<body>
+<h1>Instructions</h1>
+
+<h2>Getting the source</h2>
+<dl><dt>For the latest stable version:</dt>
+<dd><code>svn co http://curvycorners.googlecode.com/svn/tags/2.0.2alpha [mydir]</code></dd>
+<dt>For the latest (bleeding-edge) revision:</dt>
+<dd><code>svn co http://curvycorners.googlecode.com/svn/trunk [mydir]</code></dd>
+<dt>To browse the versions:</dt>
+<dd><a href="http://code.google.com/p/curvycorners/source/browse/#svn/tags">http://code.google.com/p/curvycorners/source/browse/#svn/tags</a></dd>
+</dl>
+
+<p>You can also download the latest version of curvyCorners from the
+<a href="downloads.php">downloads section</a>.</p>
+
+<p>Some earlier versions are also available from the
+<a href="http://code.google.com/p/curvycorners/downloads/list">Google Code
+Downloads page</a>.</p>
+
+<h2>Using curvyCorners the new way &mdash; using CSS</h2>
+<p>As from 2.0.x, curvyCorners allows you to put rounded corners on your
+page elements using <abbr title="Cascading Style Sheets">CSS</abbr>. At
+present, there are two proprietary CSS syntaxes, one for Mozilla/Firefox
+and one for the Webkit browsers, Safari and Google Chrome.</p>
+
+<p>All you need to do is to put the appropriate rounded corner styles
+into the appropriate rules, and curvyCorners will automatically draw corners
+for the affected boxes, whilst leaving it to the newer browsers to draw them
+using their native methods.</p>
+
+<h3>Example</h3>
+
+<p>Suppose that you have a DIV in your page with class <var>rounded</var>. You
+want all four corners rounded, with a radius of 20 pixels. The following CSS
+will accomplish this:</p>
+
+<div class="codeSample">
+.rounded {
+&nbsp;&nbsp;-moz-border-radius:20px;
+&nbsp;&nbsp;-webkit-border-radius:20px;
+}
+</div>
+
+<p>If you want (say) only the top left and bottom right corners rounded,
+then you can do it like this:</p>
+
+<div class="codeSample">
+.rounded {
+&nbsp;&nbsp;-moz-border-radius-topleft:20px;
+&nbsp;&nbsp;-moz-border-radius-bottomright:20px;
+&nbsp;&nbsp;-webkit-border-top-left-radius:20px;
+&nbsp;&nbsp;-webkit-border-bottom-right-radius:20px;
+}
+</div>
+
+<p>(Note that the CSS3 proposed syntax is similar to the Webkit version, but
+of course without the "-webkit-" prefix. Internally, curvyCorners looks for the
+Webkit syntax and ignores the Mozilla version.)</p>
+
+<h3 id="cssLimits">CSS Selector Limitations</h3>
+
+<p>Because of the need for the mechanism to operate across all browsers,
+the CSS selector syntax supported is necessarily limited. This sets out
+what is supported:</p>
+
+<ul><li>a selector-list, where a selector-list is <em>either</em> a single
+selector <em>or</em> a single selector followed by a comma and an optional space,
+followed by a selector-list.</li>
+<li>A single selector may be <em>either</em> a simple-selector <em>or</em> a
+simple-selector followed by a space followed by another simple-selector.</li>
+<li>A simple-selector may be <em>either</em> an ID of the form
+<code>#myID</code>, <em>or</em> a tag-class-selector.</li>
+<li>A tag-class-selector may be any one of:
+ <ol><li>a tag name (e.g. <code>div</code>);</li>
+  <li>a class name preceded by a dot (e.g. <code>.myClass</code>); <em>or</em></li>
+  <li>a tag name followed by a dot followed by a class name (e.g. <code>div.myClass</code>).</li>
+ </ol>
+</li>
+</ul>
+
+<p>The following are examples of supported selectors:</p>
+
+<ul><li>.myclass</li>
+<li>#mydiv frameset.myclass</li>
+<li>form.rounded frameset,div.rounded</li>
+</ul>
+
+<p><strong>Warning:</strong> because curvyCorners appends extra DIVs to the
+boxes you wish to round, the following selector will reliably not work:</p>
+
+<p><code>#myBox div</code></p>
+
+<p>This is because the style will be applied not just to the top-level DIVs
+within the element whose ID is <code>myBox</code>, but also to the DIVs inserted
+by curvyCorners.</p>
+
+<h3 id="dyn">Dynamic HTML</h3>
+<p>curvyCorners now has limited support for dynamic HTML. In particular, you
+may change the contents of a box and have the box re-sized (re-drawn) to fit.
+However, because of the technique curvyCorners uses to draw the corners, this
+cannot happen automatically. Instead, you must do the following:</p>
+
+<ol><li>Give the box elements to be re-drawn the (additional) special class-name
+<code>curvyRedraw</code>; and</li>
+<li>in your JavaScript, explicitly call the function
+<code>curvyCorners.redraw()</code>.</li>
+</ol>
+
+<p>An extensive example of this technique is contained in
+<a href="http://code.google.com/p/curvycorners/source/browse/trunk/examples/demo5.html">demo
+5</a>.</p>
+
+<h3>Hidden Boxes</h3>
+<p>curvyCorners supports the styling of boxes that are not currently
+displayed, i.e. which have the style <code>display:none</code>. In such cases,
+it may be necessary for curvyCorners temporarily to display the box, and
+this may cause a brief flicker as the page is loaded.</p>
+
+<h3>Other limitations</h3>
+
+<p>In some circumstances, a browser may not compute a display width for a
+box that you wish to style with rounded corners. This may either be because
+the box is not currently displayed, or because of a peculiarity in the
+browser. In this circumstance, curvyCorners will output an error message and
+continue; but it will not be able to apply corners to the box in question.
+It may be possible to correct this by applying a width or min-width style
+to the affected box element.</p>
+
+<p>In Opera v9.x, unrecognized styles (including rounded corner styles)
+are not included in the DOM tree. Therefore, curvyCorners cannot automatically
+detect them. You are therefore recommended to include the corner styling
+directly in the &lt;head&gt; section of your HTML page. This limitation does
+not affect IE7.</p>
+
+<p>Boxes styled by curvyCorners cannot be resized dynamically except by
+using the <a href="#dyn">technique described above</a>.</p>
+
+<h2>Using curvyCorners manually</h2>
+<p>The following instructions will round the corners of a DIV element with a 20
+pixel radius.</p>
+
+<p>Once you have downloaded the file, copy it to your site.
+Then copy the code below and paste it into the head section of your web page.
+If you saved the file anywhere other than the root of the site, amend the src
+location below.</p>
+
+<div class="codeSample">
+    &lt;script type="text/JavaScript" src="curvycorners.js"&gt;&lt;/script&gt;
+</div>
+
+<p>Next create a DIV element. If you already have a DIV whose corners you want
+to round then all you need to do is give the DIV an ID.</p>
+
+<div class="codeSample">
+    &lt;DIV id="myDiv"&gt;&lt;/DIV&gt;
+</div>
+
+<p>curvyCorners will automatically pick up style information from the DIV
+element. So for example if you give the DIV a 2px black border in a stylesheet,
+then the borders will be automatically added to the rounded corners.</p>
+
+<p>Next we need to add some JavaScript to load when the web page loads. In the
+HEAD section of your webpage add the following:</p>
+
+<div class="codeSample">
+  &lt;script type="text/JavaScript"&gt;
+  <br />
+  &nbsp;&nbsp;window.onload = function()&nbsp;{<br />
+  &nbsp;&nbsp;&nbsp;&nbsp;var settings = {<br />
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;tl: { radius: 20 },<br />
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;tr: { radius: 20 },<br />
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bl: { radius: 20 },<br />
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;br: { radius: 20 },<br />
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;antiAlias: true<br />
+  &nbsp;&nbsp;&nbsp;&nbsp;}
+  <br /><br />
+  &nbsp;&nbsp;&nbsp;&nbsp;var divObj = document.getElementById("myDiv");
+  <br /><br />
+  &nbsp;&nbsp;&nbsp;&nbsp;curvyCorners(settings, divObj);<br />
+  &nbsp;&nbsp;}<br />
+  <br />
+  &lt;/script&gt;
+</div>
+
+<p>That's it, run your script to give it a try.</p>
+
+<h3>Breaking it down</h3>
+
+<p>I don't have the time to write a full API so this part will try and go
+into as much detail as possible.</p>
+
+<h4>The Settings</h4>
+
+<p>The first part of the previous example creates a variable called settings;
+you can change this to any variable name you want. You will need to use this
+variable later on in the script. This variable holds all the settings needed
+for the curvyCorners object to work.</p>
+
+<p>Each line of the settings object is a particular setting:
+for example the first line <code>tl: { radius: 20 },</code> tells the script
+that you want the top right corner of your box to have a 20 pixel corner radius.</p>
+
+<p>The next three lines set the radii for the other three corners. So for
+example if you wanted the corner radii to be 20, 40, 60 and 80 from top left to
+bottom right, your settings object would look something like the example below.</p>
+
+<div class="codeSample">
+  &nbsp;&nbsp;&nbsp;&nbsp;var settings = {<br />
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;tl: { radius: <b>20</b> },<br />
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;tr: { radius: <b>40</b> },<br />
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bl: { radius: <b>60</b> },<br />
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;br: { radius: <b>80</b> },<br />
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;antiAlias: true<br />
+  &nbsp;&nbsp;&nbsp;&nbsp;}
+</div>
+
+<p>What about square corners? Say you did not want the top right and bottom left
+corners to be rounded at all and remain square, you replace the bracketed
+section to the right of each colon (:) with the keyword false.
+See example below.</p>
+
+<div class="codeSample">
+  &nbsp;&nbsp;&nbsp;&nbsp;var settings = {<br />
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;tl: { radius: <b>20</b> },<br />
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;tr: false,<br />
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bl: false,<br />
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;br: { radius: <b>80</b> },<br />
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;antiAlias: true<br />
+  &nbsp;&nbsp;&nbsp;&nbsp;}
+</div>
+
+<h5>Anti-Aliasing?</h5>
+<p>Changing the value of <var>antiAlias</var> from <code>true</code> to
+<code>false</code> will toggle the anti-aliasing. Turning off anti-aliasing will
+reduce the smoothness of the corners but will greatly reduce the rendering time
+required to draw the corners.</p>
+
+<h4>Specifying which DIVs to round.</h4>
+
+<p>The next part of the code initialises the curvyCorners object.</p>
+
+<p>The are two different ways of specifying which DIVs (or other HTML boxes)
+you want the script to
+round. The first method is to pass one or more objects when creating a new
+instance of the curvyCorners object.</p>
+
+<h5>Using DOM objects</h5>
+
+<div class="codeSample">
+  &nbsp;&nbsp;&nbsp;&nbsp;var divObj = document.getElementById("myDiv");
+  <br /><br />
+  &nbsp;&nbsp;&nbsp;&nbsp;curvyCorners(settings, divObj);<br />
+</div>
+
+<p>Let's break the code above down. The first line uses the
+<acronym title="Document Object Model">DOM</acronym>'s
+<code>document.getElementById()</code> method to return an object reference to
+<var>myDiv</var> called <var>divObj</var>. Change <var>myDiv</var> to
+the ID of the DIV element that you want to round.</p>
+
+<p>The next line calls the curvyCorners function. The first param is the
+settings object we created earlier. The second param must be an object reference
+to the DIV you want to round. We retrieved this on the first line of the above
+code sample.</p>
+
+<p><strong>Note:</strong> You can pass more than one object when calling the
+curvyCorners function. To supply additional objects just follow the API info
+below. Each additional object passed will have the same corner settings applied,
+as supplied in the first parameter. If you need additional DIVs rounded with
+different settings, then you will need to call the curvyCorners function once
+for each different setting, followed by the objects to which you wish to apply
+those settings.</p>
+
+<div class="codeSample">
+  curvyCorners(settingsObj, DOMObj1[, DOMObj2[, DOMObj3[, . . . [, DOMObjN]]]]);
+</div>
+
+<h5>Using CSS Selectors</h5>
+
+<p>The other way to specify which boxes you want to apply rounded corners to,
+is to supply a CSS selector string as the second parameter insted of the DOM
+object as described above. Any block elements that have that class applied will
+have their corners rounded. See example below.</p>
+
+<div class="codeSample">
+  curvyCorners(settings, ".myClassName");
+  <br /><br />
+  ...
+  <br /><br />
+
+  &lt;div id="myDiv" class="myClassName"&gt;<br />
+  &lt;/div&gt;
+</div>
+
+<p>(<strong>Note</strong> that unlike older versions of curvyCorners, from
+version 2.0.x you <em>must</em> put a dot in front of the class name.)</p>
+
+<p>Instead of a simple class name, you can use a tag name qualified by a
+class name, e.g. <code>div.myClassName</code> &mdash; this will affect DIV
+elements but not other elements with <var>myClassName</var> as their class.</p>
+
+<p>You can also use an ID prefixed with a hash, like this: <code>#myDiv</code></p>
+
+<p>Finally, you can restrict the range of elements by separating two simple
+selectors with a space, e.g. <code>#myDiv div.rounded</code>. This will apply
+rounded corners only to those DIVs with class name <var>rounded</var> that
+are contained <em>within</em> the DIV with ID <var>myDiv</var>.</p>
+
+<p>For further details on <abbr>CSS</abbr> selectors, see
+<a href="#cssLimits">CSS Selector Limitations</a> above.</p>
+
+<h2>Further information</h2>
+
+<p>If you need more information then just
+<a href="http://curvycorners.googlecode.com/">checkout the script's source</a>,
+it's well commented.</p>
+
+<p>If you have any questions, comments, ideas or you've found a bug, then please
+use the forum by clicking the forum tab above.</p>
+
+<p>Have fun,<br/>Cameron.</p>
+</body>
+</html>
