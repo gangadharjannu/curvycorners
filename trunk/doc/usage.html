@@ -7,13 +7,39 @@
 <meta name="description" content="How to use curvyCorners in your HTML pages"/>
 <style type="text/css">
 /*<![CDATA[*/
+body {
+  font-family:Verdana,Arial,sans-serif;
+  font-size:small;
+}
+h1 {
+  font-family:"Trebuchet MS", Verdana, Arial, sans-serif;
+  color:#84AE01;
+  font-weight:700;
+}
+a {
+  color:#008000;
+}
+code, samp {
+  font-size:small;
+}
+samp:before {
+  content: "> ";
+}
 .codeSample {
   background-color: #ffffe0;
   border:solid #C2C2C2 1px;
   padding:10px;
   font-family: "Courier New", Courier, monospace;
-  font-size: medium;
+  font-size: small;
   margin:25px 0 5px 0;
+}
+.codeSample ins, p.explain ins {
+  color:#0A0;
+  text-decoration:underline;
+}
+.codeSample del, p.explain del {
+  color:#E00;
+  text-decoration:strikethrough;
 }
 
 /*]]>*/
@@ -24,9 +50,9 @@
 
 <h2>Getting the source</h2>
 <dl><dt>For the latest stable version:</dt>
-<dd><code>svn co http://curvycorners.googlecode.com/svn/tags/2.0.2alpha [mydir]</code></dd>
+<dd><samp>svn co http://curvycorners.googlecode.com/svn/tags/2.0.2alpha [mydir]</samp></dd>
 <dt>For the latest (bleeding-edge) revision:</dt>
-<dd><code>svn co http://curvycorners.googlecode.com/svn/trunk [mydir]</code></dd>
+<dd><samp>svn co http://curvycorners.googlecode.com/svn/trunk [mydir]</samp></dd>
 <dt>To browse the versions:</dt>
 <dd><a href="http://code.google.com/p/curvycorners/source/browse/#svn/tags">http://code.google.com/p/curvycorners/source/browse/#svn/tags</a></dd>
 </dl>
@@ -56,9 +82,9 @@ want all four corners rounded, with a radius of 20 pixels. The following CSS
 will accomplish this:</p>
 
 <div class="codeSample">
-.rounded {
-&nbsp;&nbsp;-moz-border-radius:20px;
-&nbsp;&nbsp;-webkit-border-radius:20px;
+.rounded {<br/>
+&nbsp;&nbsp;-moz-border-radius:20px;<br/>
+&nbsp;&nbsp;-webkit-border-radius:20px;<br/>
 }
 </div>
 
@@ -66,11 +92,11 @@ will accomplish this:</p>
 then you can do it like this:</p>
 
 <div class="codeSample">
-.rounded {
-&nbsp;&nbsp;-moz-border-radius-topleft:20px;
-&nbsp;&nbsp;-moz-border-radius-bottomright:20px;
-&nbsp;&nbsp;-webkit-border-top-left-radius:20px;
-&nbsp;&nbsp;-webkit-border-bottom-right-radius:20px;
+.rounded {<br/>
+&nbsp;&nbsp;-moz-border-radius-topleft:20px;<br/>
+&nbsp;&nbsp;-moz-border-radius-bottomright:20px;<br/>
+&nbsp;&nbsp;-webkit-border-top-left-radius:20px;<br/>
+&nbsp;&nbsp;-webkit-border-bottom-right-radius:20px;<br/>
 }
 </div>
 
@@ -127,6 +153,28 @@ cannot happen automatically. Instead, you must do the following:</p>
 <code>curvyCorners.redraw()</code>.</li>
 </ol>
 
+<p><code>curvyCorners.redraw()</code> takes no parameters and returns no
+usable value.</p>
+
+<p>If you need to change some attributes or styling of the redrawable elements,
+this should not be done directly through the DOM. Instead, having identified the
+DOM object (e.g. with <code>document.getElementById()</code>), call</p>
+<p><code>curvyCorners.adjust(DOMObj, propertyName, newValue);</code></p>
+<p>where:</p>
+<dl>
+<dt><var>DOMObj</var></dt>
+<dd>is the element object with className curvyRedraw that needs to be changed;</dd>
+<dt><var>propertyName</var></dt>
+<dd>is the name of the property without a leading dot;
+if it is a style property, it should be
+expressed as <code>'style.property'</code>.</dd>
+<dt><var>newValue</var></dt>
+<dd>is the new value, e.g. <code>'none'</code>.</dd>
+</dl>
+
+<p><code>curvyCorners.adjust()</code> must take all three parameters described
+above. It returns no useful value.</p>
+
 <p>An extensive example of this technique is contained in
 <a href="http://code.google.com/p/curvycorners/source/browse/trunk/examples/demo5.html">demo
 5</a>.</p>
@@ -139,22 +187,31 @@ this may cause a brief flicker as the page is loaded.</p>
 
 <h3>Other limitations</h3>
 
-<p>In some circumstances, a browser may not compute a display width for a
+<ul>
+<li>Currently, corner radii may only be expressed in pixels. Because this is
+resolution-dependent, it is intended to remove this limitation in the next
+release; it is already removed in the latest repository revision.</li>
+
+<li>In some circumstances, a browser may not compute a display width for a
 box that you wish to style with rounded corners. This may either be because
 the box is not currently displayed, or because of a peculiarity in the
 browser. In this circumstance, curvyCorners will output an error message and
 continue; but it will not be able to apply corners to the box in question.
 It may be possible to correct this by applying a width or min-width style
-to the affected box element.</p>
+to the affected box element.</li>
 
-<p>In Opera v9.x, unrecognized styles (including rounded corner styles)
+<li>In Opera v9.x, unrecognized styles (including rounded corner styles)
 are not included in the DOM tree. Therefore, curvyCorners cannot automatically
 detect them. You are therefore recommended to include the corner styling
 directly in the &lt;head&gt; section of your HTML page. This limitation does
-not affect IE7.</p>
+not affect IE7.</li>
 
-<p>Boxes styled by curvyCorners cannot be resized dynamically except by
-using the <a href="#dyn">technique described above</a>.</p>
+<li>Boxes styled by curvyCorners cannot be resized dynamically except by
+using the <a href="#dyn">technique described above</a>.</li>
+
+<li>Elliptical radii (e.g. <code>border-radius:1em 2em;</code>) are not
+supported. The first dimension will be understood as the only dimension.</li>
+</ul>
 
 <h2>Using curvyCorners manually</h2>
 <p>The following instructions will round the corners of a DIV element with a 20
@@ -256,9 +313,7 @@ See example below.</p>
 reduce the smoothness of the corners but will greatly reduce the rendering time
 required to draw the corners.</p>
 
-<h4>Specifying which DIVs to round.</h4>
-
-<p>The next part of the code initialises the curvyCorners object.</p>
+<h4>Specifying which boxes to round</h4>
 
 <p>The are two different ways of specifying which DIVs (or other HTML boxes)
 you want the script to
@@ -329,6 +384,63 @@ are contained <em>within</em> the DIV with ID <var>myDiv</var>.</p>
 
 <p>For further details on <abbr>CSS</abbr> selectors, see
 <a href="#cssLimits">CSS Selector Limitations</a> above.</p>
+
+<h2>Upgrading from version 1.x</h2>
+
+<p>If you have pages that work with curvyCorners v1.x, and would like to
+upgrade them to work with v2.0.x, you have two routes: retain the explicit
+style, or migrate to the CSS style.</p>
+
+<h3>Upgrading using the explicit style</h3>
+
+<p>The changes are these:</p>
+<ol><li>If class names are passed to the curvyCorners() function, they
+<em>must</em> be prefixed with a dot.</li>
+<li>The <var>autoPad</var> member of the <var>settings</var> object is
+no longer supported (it is always <code>true</code> in 2.x).</li>
+<li>The <code>applyCornersToAll()</code> function is now deprecated and will
+be removed in a future release. It is no longer necessary to create a
+curvyCorners object: simply call the curvyCorners function as before.</li>
+</ol>
+
+<p class="explain">The following example shows the changes you should make.
+Things that you should delete are <del>shown like this</del>;
+things you should insert are <ins>shown like this</ins>.</p>
+
+<div class="codeSample">
+  &lt;script type="text/JavaScript"&gt;
+  <br /><br />
+  &nbsp;&nbsp;window.onload = function()&nbsp;{<br />
+  &nbsp;&nbsp;&nbsp;&nbsp;<ins>var</ins> settings = {<br />
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;tl: { radius: 20 },<br />
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;tr: { radius: 20 },<br />
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bl: { radius: 20 },<br />
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;br: { radius: 20 },<br />
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;antiAlias: true<del>,<br />
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;autoPad: false</del><br />
+  &nbsp;&nbsp;&nbsp;&nbsp;}
+  <br /><br />
+  &nbsp;&nbsp;&nbsp;&nbsp;<del>var cornersObj = new </del>curvyCorners(settings, "<ins>.</ins>myClassName");<br />
+  &nbsp;&nbsp;&nbsp;&nbsp;<del>cornersObj.applyCornersToAll();</del><br />
+  &nbsp;&nbsp;}<br />
+  <br />
+  &lt;/script&gt;
+</div>
+<h3>Upgrading using the implicit style</h3>
+
+<p>To use the new <abbr>CSS</abbr> style, first place appropriate CSS directives
+in the &lt;style&gt; element of the &lt;head&gt; section of your page. To
+replicate the example immediately above, do this:</p>
+
+<div class="codeSample">
+.myClassName {<br/>
+&nbsp;&nbsp;-webkit-border-radius:20px;<br/>
+&nbsp;&nbsp;-moz-border-radius:20px;<br/>
+}
+</div>
+
+<p>Then, entirely delete the <code>window.onload</code> function (or that
+part of it relating to curvyCorners).</p>
 
 <h2>Further information</h2>
 
