@@ -216,8 +216,10 @@ curvyCnrSpec.prototype.cloneOn = function(box) { // not needed by IE
       propu = this[propi + 'u'];
       propR = this[propi + 'R'];
       if (propu !== 'px') {
+        var save = box.style.left;
         box.style.left = propR + propu;
-        propR = document.defaultView.getComputedStyle(box, '').getPropertyValue('left');
+        propR = box.style.pixelLeft;
+        box.style.left = save;
       }
       converted[propi + 'R'] = propR;
       converted[propi + 'u'] = 'px';
@@ -264,10 +266,11 @@ function operasheet(sheetnumber) {
   var matches;
   this.rules = [];
   while ((matches = pat.exec(txt)) !== null) {
-    var pat2 = new RegExp("border-((top|bottom)-(left|right)-)?radius:\\s*([\\d.]+)(in|em|px|ex|pt)", "g");
+    var pat2 = new RegExp("(..)border-((top|bottom)-(left|right)-)?radius:\\s*([\\d.]+)(in|em|px|ex|pt)", "g");
     var submatches, cornerspec = new curvyCnrSpec(matches[1]);
     while ((submatches = pat2.exec(matches[2])) !== null)
-      cornerspec.setcorner(submatches[2], submatches[3], submatches[4], submatches[5]);
+      if (submatches[1] !== "z-")
+        cornerspec.setcorner(submatches[3], submatches[4], submatches[5], submatches[6]);
     this.rules.push(cornerspec);
   }
 }
@@ -1229,30 +1232,31 @@ curvyCorners.getElementsByClass = function(searchClass, node) {
 // autoscan code
 
 curvyCorners.scanStyles = function() {
-  function makeInt(num) {
-    return isNaN(num = parseInt(num)) ? 0 : num;
+  function units(num) {
+    var matches = /^\d+(\w+)$/.exec(num);
+    return matches[1];
   }
 
   if (Browser.isIE) {
     for (var t = 0; t < document.styleSheets.length; ++t) {
       for (var i = 0; i < document.styleSheets[t].rules.length; ++i) {
-        var allR = document.styleSheets[t].rules[i].style['-webkit-border-radius'] || 0;
-        var tR   = document.styleSheets[t].rules[i].style['-webkit-border-top-right-radius']  || allR;
-        var tL   = document.styleSheets[t].rules[i].style['-webkit-border-top-left-radius']  || allR;
-        var bR   = document.styleSheets[t].rules[i].style['-webkit-border-bottom-right-radius']  || allR;
-        var bL   = document.styleSheets[t].rules[i].style['-webkit-border-bottom-left-radius']  || allR;
-        if (allR || tR || tR || bR || bL) {
-          var selector = document.styleSheets[t].rules[i].selectorText;
-
-          var settings = {
-            tl: { radius: makeInt(tL) },
-            tr: { radius: makeInt(tR) },
-            bl: { radius: makeInt(bL) },
-            br: { radius: makeInt(bR) },
-            antiAlias: true
-          };
-
-          curvyCorners(settings, selector);
+        var thisstyle = document.styleSheets[t].rules[i].style;
+        var allR = thisstyle['-webkit-border-radius'] || 0;
+        var tR   = thisstyle['-webkit-border-top-right-radius'] || 0;
+        var tL   = thisstyle['-webkit-border-top-left-radius'] || 0;
+        var bR   = thisstyle['-webkit-border-bottom-right-radius'] || 0;
+        var bL   = thisstyle['-webkit-border-bottom-left-radius'] || 0;
+        if (allR || tL || tR || bR || bL) {
+          var settings = new curvyCnrSpec(document.styleSheets[t].rules[i].selectorText);
+          if (allR)
+            settings.setcorner(null, null, parseInt(allR), units(allR));
+          else {
+            if (tR) settings.setcorner('t', 'r', parseInt(tR), units(tR));
+            if (tL) settings.setcorner('t', 'l', parseInt(tL), units(tL));
+            if (bL) settings.setcorner('b', 'l', parseInt(bL), units(bL));
+            if (bR) settings.setcorner('b', 'r', parseInt(bR), units(bR));
+          } 
+          curvyCorners(settings);
         }
       }
     }
