@@ -179,6 +179,27 @@ above. It returns no useful value.</p>
 <a href="http://code.google.com/p/curvycorners/source/browse/trunk/examples/demo5.html">demo
 5</a>.</p>
 
+<h4>Delaying the curvyCorners startup code</h4>
+
+<p>If it is planned to add a number of elements to the page after it has
+loaded, and if these elements are to have rounded corners, it can be
+advantageous to delay the running of the startup code. This can be done as
+follows:</p>
+
+<ol><li><em>Before</em> the script tag that includes curvycorners.js, add the
+following in the &lt;head&gt; section of your page:
+<p class="codeSample">
+&lt;script type="text/javascript"&gt;<br/>
+var curvyCornersNoAutoScan = true;<br/>
+&lt;/script&gt;
+</p></li>
+<li>After your script to add the elements has run, invoke the startup code
+with the following statement:
+<p class="codeSample">
+curvyCorners.init();
+</p></li>
+</ol>
+
 <h3>Hidden Boxes</h3>
 <p>curvyCorners supports the styling of boxes that are not currently
 displayed, i.e. which have the style <code>display:none</code>. In such cases,
