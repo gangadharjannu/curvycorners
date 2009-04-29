@@ -1,6 +1,5 @@
-#summary One-sentence summary of this page.
+#summary A free javascript library for creating neat rounded corners for HTML box elements. Supports anti-aliasing, borders and background images.
 #labels Featured
-A free javascript library for creating neat rounded corners for HTML box elements. Supports anti-aliasing, borders and background images.
 
 == Official Website ==
 
@@ -22,9 +21,7 @@ Typically, there is no need to generate extra script or background images. Simpl
 
 == Using it ==
 
-There is a tutorial available at http://curvycorners.net. It is recommended that you read it to get started.
-
-For updates, see UsingCurvyCorners.
+There is a tutorial available at http://curvycorners.net. There is a manual, usage.html, included in the doc subdirectory of the repository.
 
 == Contributing ==
 
