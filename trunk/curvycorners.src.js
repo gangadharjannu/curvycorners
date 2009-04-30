@@ -612,8 +612,9 @@ function curvyObject() {
       // Get border radius
       var specRadius = this.spec[cc + 'R'];
       var borderRadius = specRadius - this.borderWidth;
+      var intx, inty, outsideColour;
       // Cycle the x-axis
-      for (var intx = 0; intx < specRadius; ++intx) {
+      for (intx = 0; intx < specRadius; ++intx) {
         // Calculate the value of y1 which identifies the pixels inside the border
         var y1 = (intx + 1 >= borderRadius) ? -1 : Math.floor(Math.sqrt(Math.pow(borderRadius, 2) - Math.pow(intx + 1, 2))) - 1;
         // Calculate y2 and y3 only if there is a border defined
@@ -624,53 +625,47 @@ function curvyObject() {
         // Calculate y4
         var y4 = (intx >= specRadius) ? -1 : Math.ceil(Math.sqrt(Math.pow(specRadius, 2) - Math.pow(intx, 2)));
         // Draw bar on inside of the border with foreground colour
-        if (y1 > -1) this.drawPixel(intx, 0, this.boxColour, 100, (y1 + 1), newCorner, -1, specRadius);
+        if (y1 > -1) this.drawPixel(intx, 0, this.boxColour, 100, (y1 + 1), newCorner, true, specRadius);
         // Draw border/foreground antialiased pixels and border only if there is a border defined
         if (borderRadius != specRadius) {
           // Cycle the y-axis
-          for (var inty = y1 + 1; inty < y2; ++inty) {
-            // Draw anti-alias pixels
-            if (this.spec.antiAlias) {
+          if (this.spec.antiAlias) {
+            for (inty = y1 + 1; inty < y2; ++inty) {
               // For each of the pixels that need anti aliasing between the foreground and border colour draw single pixel divs
               if (this.backgroundImage != "") {
                 var borderFract = curvyObject.pixelFraction(intx, inty, borderRadius) * 100;
-                this.drawPixel(intx, inty, bcolor, 100, 1, newCorner,
-                  borderFract < 30 ? 0 : -1, specRadius
-                );
+                this.drawPixel(intx, inty, bcolor, 100, 1, newCorner, borderFract >= 30, specRadius);
               }
               else if (this.boxColour !== 'transparent') {
                 var pixelcolour = curvyObject.BlendColour(this.boxColour, bcolor, curvyObject.pixelFraction(intx, inty, borderRadius));
-                this.drawPixel(intx, inty, pixelcolour, 100, 1, newCorner, 0, specRadius, cc);
+                this.drawPixel(intx, inty, pixelcolour, 100, 1, newCorner, false, specRadius);
               }
-              else this.drawPixel(intx, inty, bcolor, 50, 1, newCorner, 0, specRadius, cc);
+              else this.drawPixel(intx, inty, bcolor, 50, 1, newCorner, false, specRadius);
             }
-          }
-          // Draw bar for the border
-          if (this.spec.antiAlias) {
+            // Draw bar for the border
             if (y3 >= y2) {
               if (y2 == -1) y2 = 0;
-              this.drawPixel(intx, y2, bcolor, 100, (y3 - y2 + 1), newCorner, 0, 0);
+              this.drawPixel(intx, y2, bcolor, 100, (y3 - y2 + 1), newCorner, false, 0);
+            }
+            outsideColour = bcolor;  // Set the colour for the outside AA curve
+            inty = y3;               // start_pos - 1 for y-axis AA pixels
+          }
+          else { // no antiAlias
+            if (y3 > y1) { // NB condition was >=, changed to avoid zero-height divs
+              this.drawPixel(intx, (y1 + 1), bcolor, 100, (y3 - y1), newCorner, false, 0);
             }
           }
-          else {
-            if (y3 >= y1) {
-              this.drawPixel(intx, (y1 + 1), bcolor, 100, (y3 - y1), newCorner, 0, 0);
-            }
-          }
-          // Set the colour for the outside curve
-          var outsideColour = bcolor;
         }
         else {
-          // Set the colour for the outside curve
-          var outsideColour = this.boxColour;
-          var y3 = y1;
+          outsideColour = this.boxColour;  // Set the colour for the outside curve
+          inty = y1;               // start_pos - 1 for y-axis AA pixels
         }
         // Draw aa pixels?
         if (this.spec.antiAlias) {
           // Cycle the y-axis and draw the anti aliased pixels on the outside of the curve
-          for (var inty = y3 + 1; inty < y4; ++inty) {
+          while (++inty < y4) {
             // For each of the pixels that need anti aliasing between the foreground/border colour & background draw single pixel divs
-            this.drawPixel(intx, inty, outsideColour, (curvyObject.pixelFraction(intx, inty , specRadius) * 100), 1, newCorner, (this.borderWidth > 0) ? 0 : -1, specRadius);
+            this.drawPixel(intx, inty, outsideColour, (curvyObject.pixelFraction(intx, inty , specRadius) * 100), 1, newCorner, this.borderWidth <= 0, specRadius);
           }
         }
       }
@@ -860,10 +855,8 @@ function curvyObject() {
 
     // Create content container
     var contentContainer = document.createElement("div");
-    // Set contentContainer's properties
     contentContainer.style.position = "absolute";
     // contentContainer.style.border = "1px dotted #000"; // DEBUG, comment for production
-    //      contentContainer.style.width = (this.boxWidth - 180) + "px";
     contentContainer.innerHTML      = this.boxContent;
     contentContainer.className      = "autoPadDiv";
     // Get padding amounts
@@ -890,42 +883,42 @@ function curvyObject() {
     contentContainer.style.width = (this.boxWidth - this.leftPadding - this.rightPadding) + "px";
     contentContainer.style.textAlign = curvyBrowser.get_style(this.box, 'textAlign');
     this.box.style.textAlign = 'left'; // important otherwise layout goes wild
-    // Append contentContainer
+
     this.box.appendChild(contentContainer);
     if (boxDisp) boxDisp.style.display = 'none';
   }
 }
 
-/*
-  This function draws the pixels
-*/
+
+// append a pixel DIV to newCorner
+
 curvyObject.prototype.drawPixel = function(intx, inty, colour, transAmount, height, newCorner, image, cornerRadius) {
-  // Create pixel
   var pixel = document.createElement("div");
   pixel.style.height   = height + "px";
   pixel.style.width    = "1px";
   pixel.style.position = "absolute";
   pixel.style.fontSize = "1px";
   pixel.style.overflow = "hidden";
-  // Max Top Radius
   var topMaxRadius = this.spec.get('tR');
   pixel.style.backgroundColor = colour;
   // Don't apply background image to border pixels
-  if (image == -1 && this.backgroundImage != "") {
+  if (image && this.backgroundImage != "") {
     pixel.style.backgroundImage = this.backgroundImage;
     pixel.style.backgroundPosition  = "-" + (this.boxWidth - (cornerRadius - intx) + this.borderWidth) + "px -" + ((this.boxHeight + topMaxRadius + inty) - this.borderWidth) + "px";
   }
   // Set opacity if the transparency is anything other than 100
   if (transAmount != 100) curvyObject.setOpacity(pixel, transAmount);
-  // Set the pixels position
+  // Set position
   pixel.style.top = inty + "px";
   pixel.style.left = intx + "px";
   newCorner.appendChild(pixel);
 }
+
 curvyObject.prototype.fillerWidth = function(tb) {
   var bWidth = this.spec.radiusCount(tb) * this.borderWidth;
   return (this.boxWidth - this.spec.radiusSum(tb) + bWidth) + 'px';
 }
+
 curvyObject.prototype.errmsg = function(msg, gravity) {
   var extradata = "\ntag: " + this.box.tagName;
   if (this.box.id) extradata += "\nid: " + this.box.id;
@@ -941,23 +934,15 @@ curvyObject.prototype.errmsg = function(msg, gravity) {
   if (gravity === undefined) gravity = 'warning';
   return 'curvyObject ' + gravity + ":\n" + msg + extradata;
 }
+
 curvyObject.prototype.newError = function(msg) {
   return new Error(this.errmsg(msg, 'exception'));
 }
 
 // ------------- UTILITY FUNCTIONS
 
-/*
-// Inserts an element after another
+//  Convert a number 0..255 to hex
 
-function insertAfter(parent, node, referenceNode) {
-  parent.insertBefore(node, referenceNode.nextSibling);
-}
-*/
-
-/*
-  Converts a number to hexadecimal format
-*/
 
 curvyObject.IntToHex = function(strNum) {
   var hexdig = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' ];
@@ -1157,22 +1142,7 @@ function addEvent(elm, evType, fn, useCapture) {
   return false;
 }
 
-/*
-// Cross browser remove event wrapper
-
-function removeEvent(obj, evType, fn, useCapture) {
-  if (obj.removeEventListener) {
-    obj.removeEventListener(evType, fn, useCapture);
-    return true;
-  }
-  if (obj.detachEvent) {
-    var r = obj.detachEvent("on"+evType, fn);
-    return r;
-  }
-  throw new Error("Handler could not be removed");
-  return false; // we never get here, actually
-}
-*/
+// convert rgb() and #RGB to #RRGGBB
 
 curvyObject.format_colour = function(colour) {
   // Make sure colour is set and not transparent
