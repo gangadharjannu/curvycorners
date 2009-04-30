@@ -638,10 +638,11 @@ function curvyObject() {
                   borderFract < 30 ? 0 : -1, specRadius
                 );
               }
-              else {
+              else if (this.boxColour !== 'transparent') {
                 var pixelcolour = curvyObject.BlendColour(this.boxColour, bcolor, curvyObject.pixelFraction(intx, inty, borderRadius));
                 this.drawPixel(intx, inty, pixelcolour, 100, 1, newCorner, 0, specRadius, cc);
               }
+              else this.drawPixel(intx, inty, bcolor, 50, 1, newCorner, 0, specRadius, cc);
             }
           }
           // Draw bar for the border
@@ -1174,25 +1175,19 @@ function removeEvent(obj, evType, fn, useCapture) {
 */
 
 curvyObject.format_colour = function(colour) {
-  var returnColour = "#ffffff";
-
   // Make sure colour is set and not transparent
   if (colour != "" && colour != "transparent") {
     // RGB Value?
     if (colour.substr(0, 3) === "rgb") {
       // Get HEX aquiv.
-      returnColour = curvyObject.rgb2Hex(colour);
+      colour = curvyObject.rgb2Hex(colour);
     }
     else if (colour.length === 4) {
       // 3 chr colour code add remainder
-      returnColour = "#" + colour.substring(1, 2) + colour.substring(1, 2) + colour.substring(2, 3) + colour.substring(2, 3) + colour.substring(3, 4) + colour.substring(3, 4);
-    }
-    else {
-      // Normal valid hex colour
-      returnColour = colour;
+      colour = "#" + colour.charAt(1) + colour.charAt(1) + colour.charAt(2) + colour.charAt(2) + colour.charAt(3) + colour.charAt(3);
     }
   }
-  return returnColour;
+  return colour;
 }
 
 // Get elements by class by Dustin Diaz / CPKS
