@@ -222,13 +222,21 @@ It may be possible to correct this by applying a width or min-width style
 to the affected box element.</li>
 
 <li>In Opera v9.x, unrecognized styles (including rounded corner styles)
-are not included in the DOM tree. Therefore, curvyCorners cannot automatically
-detect them. You are therefore recommended to include the corner styling
-directly in the &lt;head&gt; section of your HTML page. This limitation does
-not affect IE7.</li>
+are not included in the DOM tree. curvyCorners can detect them only if it has
+access to the CSS text. It has access if the style is included in the HTML page,
+or if it is imported using the CSS @import rule. However, if the stylesheet
+is included using a &lt;link href="mystyle.css" type="stylesheet"/&gt;
+element, Opera won't be able to access it. Therefore, for cross-browser
+compatibility, always use the <code>@import</code> rule to include external
+stylesheets. (Remember: <code>@import</code> rules must occur first
+in the &lt;style&gt; section before any rules.)</li>
 
 <li>Boxes styled by curvyCorners cannot be resized dynamically except by
 using the <a href="#dyn">technique described above</a>.</li>
+
+<li>If a box styled by curvyCorners has borders, the border width must be the
+same on both sides adjacent to a round corner. The border style must always be
+<code>solid</code>: other styles are not supported.</li>
 
 <li>Elliptical radii (e.g. <code>border-radius:1em 2em;</code>) are not
 supported. The first dimension will be understood as the only dimension.</li>
