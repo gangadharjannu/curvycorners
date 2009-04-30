@@ -5,7 +5,7 @@
   *                                                              *
   *  This script generates rounded corners for your boxes.       *
   *                                                              *
-  *  Version 2.0.3                                               *
+  *  Version 2.0.3pre                                            *
   *  Copyright (c) 2008 Cameron Cooke                            *
   *  Version 2 By: Terry Riegel, Cameron Cooke and Tim Hutchison *
   *  Version 1 By: Cameron Cooke and Tim Hutchison               *
@@ -319,7 +319,9 @@ function curvyCorners() {
             boxCol.push(document.getElementById(args[i].substr(1)));
           else {
             var encloser = document.getElementById(argbits[0].substr(1));
-            boxCol = boxCol.concat(curvyCorners.getElementsByClass(argbits[1], encloser));
+            if (encloser)
+              boxCol = boxCol.concat(curvyCorners.getElementsByClass(argbits[1], encloser));
+            else curvyCorners.alert("No object with ID " + args[i] + " exists yet.\nCall curvyCorners(settings, obj) when it is created.");
           }
         break;
         default :
@@ -392,6 +394,9 @@ curvyCorners.adjust = function(obj, prop, newval) {
 curvyCorners.newError = function(errorMessage) {
   return new Error("curvyCorners Error:\n" + errorMessage)
 }
+curvyCorners.alert = function(errorMessage) {
+  if (typeof curvyCornersVerbose === 'undefined' || curvyCornersVerbose) alert(errorMessage);
+}
 
 // curvyCorners object (can be called directly)
 
@@ -410,7 +415,7 @@ function curvyObject() {
       boxDisp = boxDisp.parentNode;
       if (!boxDisp || boxDisp.tagName === 'BODY') { // we've hit the buffers
         this.applyCorners = function() {} // make the error benign
-        alert(this.errmsg("zero-width box with no accountable parent", "warning"));
+        curvyCorners.alert(this.errmsg("zero-width box with no accountable parent", "warning"));
         return;
       }
     } while ((typeof boxDisp.style === 'undefined') || boxDisp.style.display !== 'none');

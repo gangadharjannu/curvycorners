@@ -179,7 +179,7 @@ above. It returns no useful value.</p>
 <a href="http://code.google.com/p/curvycorners/source/browse/trunk/examples/demo5.html">demo
 5</a>.</p>
 
-<h4>Delaying the curvyCorners startup code</h4>
+<h4 id="delay">Delaying the curvyCorners startup code</h4>
 
 <p>If it is planned to add a number of elements to the page after it has
 loaded, and if these elements are to have rounded corners, it can be
@@ -200,6 +200,17 @@ curvyCorners.init();
 </p></li>
 </ol>
 
+<p>If you specify in CSS the ID of an element with rounded corners that is
+not yet added to the page, curvyCorners will warn of the problem by using
+alert(). To suppress this message, include the following script in your page
+before including the curvyCorners script:</p>
+
+<p class="codeSample">
+&lt;script type="text/javascript"&gt;<br/>
+var curvyCornersVerbose = false;<br/>
+&lt;/script&gt;
+</p>
+
 <h3>Hidden Boxes</h3>
 <p>curvyCorners supports the styling of boxes that are not currently
 displayed, i.e. which have the style <code>display:none</code>. In such cases,
@@ -219,7 +230,12 @@ the box is not currently displayed, or because of a peculiarity in the
 browser. In this circumstance, curvyCorners will output an error message and
 continue; but it will not be able to apply corners to the box in question.
 It may be possible to correct this by applying a width or min-width style
-to the affected box element.</li>
+to the affected box element. You can suppress the display of the error message
+by including the following in the &lt;head&gt; section of the page before
+the script tag that includes the curvyCorners script:<p class="codeSample">
+&lt;script type="text/javascript"&gt;<br/>
+var curvyCornersVerbose = false;<br/>
+&lt;/script&gt;</p></li>
 
 <li>In Opera v9.x, unrecognized styles (including rounded corner styles)
 are not included in the DOM tree. curvyCorners can detect them only if it has
@@ -470,6 +486,26 @@ replicate the example immediately above, do this:</p>
 
 <p>Then, entirely delete the <code>window.onload</code> function (or that
 part of it relating to curvyCorners).</p>
+
+<h2>curvyCorners options and settings</h2>
+
+<p>If curvyCorners detects an error that prevents onward execution, it throws
+an object of type Error.</p>
+
+<p>If curvyCorners detects an error that does not prevent onward execution, it
+issues an alert. To suppress alerts in production pages, include the following
+script in the &lt;head&gt; section of your page before the script tag that
+includes the curvyCorners script:</p>
+
+<p class="codeSample">
+&lt;script type="text/javascript"&gt;<br/>
+var curvyCornersVerbose = false;<br/>
+&lt;/script&gt;
+</p>
+
+<p>To delay or prevent execution of the curvyCorners startup code, set
+<var>curvyCornersNoAutoScan</var> <code>true</code> in the same way: see
+<a href="#delay">the explanation above</a>.</p>
 
 <h2>Further information</h2>
 
