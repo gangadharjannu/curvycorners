@@ -19,6 +19,9 @@ h1 {
 a {
   color:#008000;
 }
+.cameronOnly {
+  display:none;
+}
 code, samp {
   font-size:small;
 }
@@ -78,13 +81,13 @@ using their native methods.</p>
 <h3>Example</h3>
 
 <p>Suppose that you have a DIV in your page with class <var>rounded</var>. You
-want all four corners rounded, with a radius of 20 pixels. The following CSS
-will accomplish this:</p>
+want all four corners rounded, with a radius of one and a half ems.
+The following CSS will accomplish this:</p>
 
 <div class="codeSample">
 .rounded {<br/>
-&nbsp;&nbsp;-moz-border-radius:20px;<br/>
-&nbsp;&nbsp;-webkit-border-radius:20px;<br/>
+&nbsp;&nbsp;-moz-border-radius:3ex;<br/>
+&nbsp;&nbsp;-webkit-border-radius:3ex;<br/>
 }
 </div>
 
@@ -93,10 +96,10 @@ then you can do it like this:</p>
 
 <div class="codeSample">
 .rounded {<br/>
-&nbsp;&nbsp;-moz-border-radius-topleft:20px;<br/>
-&nbsp;&nbsp;-moz-border-radius-bottomright:20px;<br/>
-&nbsp;&nbsp;-webkit-border-top-left-radius:20px;<br/>
-&nbsp;&nbsp;-webkit-border-bottom-right-radius:20px;<br/>
+&nbsp;&nbsp;-moz-border-radius-topleft:3ex;<br/>
+&nbsp;&nbsp;-moz-border-radius-bottomright:3ex;<br/>
+&nbsp;&nbsp;-webkit-border-top-left-radius:3ex;<br/>
+&nbsp;&nbsp;-webkit-border-bottom-right-radius:3ex;<br/>
 }
 </div>
 
@@ -163,7 +166,7 @@ DOM object (e.g. with <code>document.getElementById()</code>), call</p>
 <p>where:</p>
 <dl>
 <dt><var>DOMObj</var></dt>
-<dd>is the element object with className curvyRedraw that needs to be changed;</dd>
+<dd>is the element object with className <code>curvyRedraw</code> that needs to be changed;</dd>
 <dt><var>propertyName</var></dt>
 <dd>is the name of the property without a leading dot;
 if it is a style property, it should be
@@ -220,10 +223,6 @@ this may cause a brief flicker as the page is loaded.</p>
 <h3>Other limitations</h3>
 
 <ul>
-<li>Currently, corner radii may only be expressed in pixels. Because this is
-resolution-dependent, it is intended to remove this limitation in the next
-release; it is already removed in the latest repository revision.</li>
-
 <li>In some circumstances, a browser may not compute a display width for a
 box that you wish to style with rounded corners. This may either be because
 the box is not currently displayed, or because of a peculiarity in the
@@ -241,11 +240,11 @@ var curvyCornersVerbose = false;<br/>
 are not included in the DOM tree. curvyCorners can detect them only if it has
 access to the CSS text. It has access if the style is included in the HTML page,
 or if it is imported using the CSS @import rule. However, if the stylesheet
-is included using a &lt;link href="mystyle.css" type="stylesheet"/&gt;
+is included using a <code>&lt;link href="mystyle.css" rel="stylesheet"/&gt;</code>
 element, Opera won't be able to access it. Therefore, for cross-browser
 compatibility, always use the <code>@import</code> rule to include external
 stylesheets. (Remember: <code>@import</code> rules must occur first
-in the &lt;style&gt; section before any rules.)</li>
+in the &lt;style&gt; section before any other rules.)</li>
 
 <li>Boxes styled by curvyCorners cannot be resized dynamically except by
 using the <a href="#dyn">technique described above</a>.</li>
@@ -487,7 +486,7 @@ replicate the example immediately above, do this:</p>
 <p>Then, entirely delete the <code>window.onload</code> function (or that
 part of it relating to curvyCorners).</p>
 
-<h2>curvyCorners options and settings</h2>
+<h2 id="options">curvyCorners options and settings</h2>
 
 <p>If curvyCorners detects an error that prevents onward execution, it throws
 an object of type Error.</p>
@@ -510,11 +509,16 @@ var curvyCornersVerbose = false;<br/>
 <h2>Further information</h2>
 
 <p>If you need more information then just
-<a href="http://curvycorners.googlecode.com/">checkout the script's source</a>,
-it's well commented.</p>
+<a href="http://code.google.com/p/curvycorners/source/checkout">checkout
+the script's source</a>, it's well commented.</p>
 
-<p>If you have any questions, comments, ideas or you've found a bug, then please
-use the forum by clicking the forum tab above.</p>
+<p>If you find a bug in curvyCorners, please use the
+<a href="http://code.google.com/p/curvycorners/issues/list">issue tracking system</a>
+at <a href="http://code.google.com/p/curvycorners/">Google Code</a>.</p>
+
+<p>If you have any questions, comments or ideas, then please use the 
+<a href="http://groups.google.com/group/curvycorners">forum</a><span class="cameronOnly">
+by clicking the forum tab above</span>.</p>
 
 <p>Have fun,<br/>Cameron.</p>
 </body>
