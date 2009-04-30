@@ -5,21 +5,19 @@
   *                                                              *
   *  This script generates rounded corners for your boxes.       *
   *                                                              *
-  *  Version 2.0.2                                               *
+  *  Version 2.0.3                                               *
   *  Copyright (c) 2008 Cameron Cooke                            *
   *  Version 2 By: Terry Riegel, Cameron Cooke and Tim Hutchison *
   *  Version 1 By: Cameron Cooke and Tim Hutchison               *
   *                                                              *
   *                                                              *
   *  Website: http://www.curvycorners.net                        *
+  *  SVN:     http://curvycorners.googlecode.com/                *
   *  Email:   web@cameroncooke.com                               *
   *  Discuss: http://groups.google.com/group/curvycorners        *
   *                                                              *
   *  Changes:                                                    *
-  *  15/04/09: Background position bug fix; Opera working (CPKS) *
-  *            See SVN log for details.                          *
-  *  29/10:08: Background position bug fix.                      *
-  *            (Fix by Dustin Jorge)                             *
+  *  15/04/09: CPKS changes henceforth documented in SVN.        *
   *  11/08/08: Modified to work as a div replacement             *
   *            This should work to replace any existing DIV      *
   *            in existing HTML and not cause reflow issues      *
@@ -56,26 +54,26 @@
   ****************************************************************/
 
 /*
-Will now autoMagically apply borders via the CSS declarations
-Safari, Mozilla, and Chrome all support rounded borders via
+Will now autoMagically apply borders via CSS rules.
+Safari, Chrome and Mozilla support rounded borders via
 
--webkit-border-radius, and -moz-border-radius
+-webkit-border-radius, -moz-border-radius
 
-So instead of reinventing the wheel we will let these browsers render
-their borders natively. Firefox for Windows renders non-antialiased
+We let these browsers render their borders natively.
+Firefox for Windows renders non-antialiased
 borders so they look a bit ugly. Google's Chrome will render its "ugly"
 borders as well. So if we let FireFox, Safari, and Chrome render their
-borders natively, then we only have to support IE for rounded borders.
-Fortunately IE will read CSS properties
+borders natively, then we only have to support IE and Opera
+for rounded borders. Fortunately IE reads CSS properties
 that it doesn't understand (Opera, Firefox and Safari discard them);
-so IE finds and applies -moz-border-radius and friends.
+so for IE and Opera we find and apply -webkit-border-radius and friends.
 
 So to make curvycorners work with any major browser simply add the following
 CSS declarations and it should be good to go...
 
 .round {
-  -webkit-border-radius: 25px;
-  -moz-border-radius: 25px;
+  -webkit-border-radius: 3ex;
+  -moz-border-radius: 3ex;
 }
 */
 
@@ -1228,37 +1226,45 @@ curvyCorners.scanStyles = function() {
     var matches = /^\d+(\w+)$/.exec(num);
     return matches[1];
   }
+  var t, i, j;
 
   if (curvyBrowser.isIE) {
-    for (var t = 0; t < document.styleSheets.length; ++t) {
-      for (var i = 0; i < document.styleSheets[t].rules.length; ++i) {
-        var thisstyle = document.styleSheets[t].rules[i].style;
-        var allR = thisstyle['-webkit-border-radius'] || 0;
-        var tR   = thisstyle['-webkit-border-top-right-radius'] || 0;
-        var tL   = thisstyle['-webkit-border-top-left-radius'] || 0;
-        var bR   = thisstyle['-webkit-border-bottom-right-radius'] || 0;
-        var bL   = thisstyle['-webkit-border-bottom-left-radius'] || 0;
-        if (allR || tL || tR || bR || bL) {
-          var settings = new curvyCnrSpec(document.styleSheets[t].rules[i].selectorText);
-          if (allR)
-            settings.setcorner(null, null, parseInt(allR), units(allR));
-          else {
-            if (tR) settings.setcorner('t', 'r', parseInt(tR), units(tR));
-            if (tL) settings.setcorner('t', 'l', parseInt(tL), units(tL));
-            if (bL) settings.setcorner('b', 'l', parseInt(bL), units(bL));
-            if (bR) settings.setcorner('b', 'r', parseInt(bR), units(bR));
-          } 
-          curvyCorners(settings);
-        }
+    function procIEStyles(rule) {
+      var style = rule.style;
+      var allR = style['-webkit-border-radius'] || 0;
+      var tR   = style['-webkit-border-top-right-radius'] || 0;
+      var tL   = style['-webkit-border-top-left-radius'] || 0;
+      var bR   = style['-webkit-border-bottom-right-radius'] || 0;
+      var bL   = style['-webkit-border-bottom-left-radius'] || 0;
+      if (allR || tL || tR || bR || bL) {
+        var settings = new curvyCnrSpec(rule.selectorText);
+        if (allR)
+          settings.setcorner(null, null, parseInt(allR), units(allR));
+        else {
+          if (tR) settings.setcorner('t', 'r', parseInt(tR), units(tR));
+          if (tL) settings.setcorner('t', 'l', parseInt(tL), units(tL));
+          if (bL) settings.setcorner('b', 'l', parseInt(bL), units(bL));
+          if (bR) settings.setcorner('b', 'r', parseInt(bR), units(bR));
+        } 
+        curvyCorners(settings);
       }
+    }
+    for (t = 0; t < document.styleSheets.length; ++t) {
+      if (document.styleSheets[t].imports) {
+        for (i = 0; i < document.styleSheets[t].imports.length; ++i)
+          for (j = 0; j < document.styleSheets[t].imports[i].rules.length; ++j)
+            procIEStyles(document.styleSheets[t].imports[i].rules[j]);
+      }
+      for (i = 0; i < document.styleSheets[t].rules.length; ++i)
+        procIEStyles(document.styleSheets[t].rules[i]);
     }
   }
   else if (curvyBrowser.isOp) {
-    for (var t = 0; t < document.styleSheets.length; ++t) {
+    for (t = 0; t < document.styleSheets.length; ++t) {
       if (operasheet.contains_border_radius(t)) {
-        var settings = new operasheet(t);
-        for (var i in settings.rules) if (!isNaN(i))
-          curvyCorners(settings.rules[i]);
+        j = new operasheet(t);
+        for (i in j.rules) if (!isNaN(i))
+          curvyCorners(j.rules[i]);
       }
     }
   }
