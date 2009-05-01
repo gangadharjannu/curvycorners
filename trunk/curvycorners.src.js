@@ -330,7 +330,7 @@ function curvyCorners() {
           else {
             var encloser = curvyCorners.getElementsByClass(argbits[0]);
             for (j = 0; j < encloser.length; ++j) {
-              boxCol = boxCol.concat(curvyCorners.getElementsByClass(argbits[1], encloser[k]));
+              boxCol = boxCol.concat(curvyCorners.getElementsByClass(argbits[1], encloser));
             }
           }
         //break;
@@ -1180,15 +1180,21 @@ curvyCorners.getElementsByClass = function(searchClass, node) {
     searchClass = searchClass[1];
   }
   var i, els, elsLen;
-  els = node.getElementsByTagName(tag);
-  elsLen = els.length;
-  if (searchClass) {
-    var pattern = new RegExp("(^|\\s)" + searchClass + "(\\s|$)");
-    for (i = 0; i < elsLen; ++i) {
-      if (pattern.test(els[i].className)) classElements.push(els[i]);
-    }
+  if (tag.charAt(0) === '#') {
+    els = document.getElementById(tag.substr(1));
+    if (els) classElements.push(els);
   }
-  else for (i = 0; i < elsLen; ++i) classElements.push(els[i]);
+  else {
+    els = node.getElementsByTagName(tag);
+    elsLen = els.length;
+    if (searchClass) {
+      var pattern = new RegExp("(^|\\s)" + searchClass + "(\\s|$)");
+      for (i = 0; i < elsLen; ++i) {
+        if (pattern.test(els[i].className)) classElements.push(els[i]);
+      }
+    }
+    else for (i = 0; i < elsLen; ++i) classElements.push(els[i]);
+  }
   return classElements;
 }
 
