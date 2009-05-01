@@ -401,6 +401,7 @@ curvyCorners.alert = function(errorMessage) {
 // curvyCorners object (can be called directly)
 
 function curvyObject() {
+  var boxDisp;
   this.box              = arguments[1];
   this.settings         = arguments[0];
   this.topContainer = this.bottomContainer = this.shell = boxDisp = null;
@@ -408,6 +409,10 @@ function curvyObject() {
 
   // if no client width, maybe the box or a parent has 'display:none'.
 
+  if (!boxWidth && curvyBrowser.isIE) {
+    this.box.style.zoom = 1; // can force IE to calculate width
+    boxWidth = this.box.clientWidth;
+  }
   if (!boxWidth) {
     if (!this.box.parentNode) throw this.newError("box has no parent!"); // unlikely...
     boxDisp = this.box;
@@ -568,11 +573,7 @@ function curvyObject() {
     // Build bottom bar only if a bottom corner is to be drawn
     if (botMaxRadius) {
       var newMainContainer = document.createElement("div");
-      if (curvyBrowser.isIE) {
-        newMainContainer.style.width = parseInt(this.boxWidth) + "px";
-      } else {
-        newMainContainer.style.width = parseInt(this.boxWidth) + "px"; // what if it's not PX? ~~~
-      }
+      newMainContainer.style.width = this.boxWidth + "px";
       newMainContainer.style.fontSize = "1px";
       newMainContainer.style.overflow = "hidden";
       newMainContainer.style.position = "absolute";
@@ -592,15 +593,20 @@ function curvyObject() {
     for (var i in corners) if (!isNaN(i)) {
       // Get current corner type from array
       var cc = corners[i];
+      var specRadius = this.spec[cc + 'R'];
       // Has the user requested the currentCorner be round?
       // Code to apply correct color to top or bottom
+      var bwidth, bcolor, borderRadius, borderWidthTB;
       if (cc == "tr" || cc == "tl") {
-        var bwidth = this.borderWidth;
-        var bcolor = this.borderColour;
+        bwidth = this.borderWidth;
+        bcolor = this.borderColour;
+        borderWidthTB = this.borderWidth;
       } else {
-        var bwidth = this.borderWidthB;
-        var bcolor = this.borderColourB;
+        bwidth = this.borderWidthB;
+        bcolor = this.borderColourB;
+        borderWidthTB = this.borderWidthB;
       }
+      borderRadius = specRadius - borderWidthTB;
       var newCorner = document.createElement("div");
       newCorner.style.height = this.spec.get(cc + 'Ru');
       newCorner.style.width  = this.spec.get(cc + 'Ru');
@@ -609,9 +615,6 @@ function curvyObject() {
       newCorner.style.overflow = "hidden";
       // THE FOLLOWING BLOCK OF CODE CREATES A ROUNDED CORNER
       // ---------------------------------------------------- TOP
-      // Get border radius
-      var specRadius = this.spec[cc + 'R'];
-      var borderRadius = specRadius - this.borderWidth;
       var intx, inty, outsideColour;
       // Cycle the x-axis
       for (intx = 0; intx < specRadius; ++intx) {
@@ -665,7 +668,7 @@ function curvyObject() {
           // Cycle the y-axis and draw the anti aliased pixels on the outside of the curve
           while (++inty < y4) {
             // For each of the pixels that need anti aliasing between the foreground/border colour & background draw single pixel divs
-            this.drawPixel(intx, inty, outsideColour, (curvyObject.pixelFraction(intx, inty , specRadius) * 100), 1, newCorner, this.borderWidth <= 0, specRadius);
+            this.drawPixel(intx, inty, outsideColour, (curvyObject.pixelFraction(intx, inty , specRadius) * 100), 1, newCorner, borderWidthTB <= 0, specRadius);
           }
         }
       }
@@ -834,7 +837,7 @@ function curvyObject() {
             if (curvyBrowser.quirksMode) {
               newFillerBar.style.height     = botMaxRadius + "px";
             } else {
-              newFillerBar.style.height     = botMaxRadius - this.borderWidth + "px";
+              newFillerBar.style.height     = botMaxRadius - this.borderWidthB + "px";
             }
             newFillerBar.style.marginLeft   = this.spec.blR ? (this.spec.blR - this.borderWidthL) + "px" : "0";
             newFillerBar.style.borderBottom = this.borderStringB;
@@ -860,7 +863,7 @@ function curvyObject() {
     contentContainer.innerHTML      = this.boxContent;
     contentContainer.className      = "autoPadDiv";
     // Get padding amounts
-    topPadding = this.borderWidth  + this.topPadding;
+    topPadding = this.topPadding;
     bottomPadding = this.borderWidthB + this.bottomPadding;
     // Apply top padding
     if (topMaxRadius < this.topPadding) {
@@ -915,7 +918,7 @@ curvyObject.prototype.drawPixel = function(intx, inty, colour, transAmount, heig
 }
 
 curvyObject.prototype.fillerWidth = function(tb) {
-  var bWidth = this.spec.radiusCount(tb) * this.borderWidth;
+  var bWidth = this.spec.radiusCount(tb) * this.borderWidthL;
   return (this.boxWidth - this.spec.radiusSum(tb) + bWidth) + 'px';
 }
 
