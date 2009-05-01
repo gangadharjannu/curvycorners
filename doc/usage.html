@@ -144,6 +144,15 @@ boxes you wish to round, the following selector will reliably not work:</p>
 within the element whose ID is <code>myBox</code>, but also to the DIVs inserted
 by curvyCorners.</p>
 
+<p>The following selectors may not work as expected:</p>
+<ul><li>div #mybox</li><li>div.rounded #mybox</li></ul>
+
+<p>Because an ID identifies a page element uniquely, qualifying it with an
+enclosing scope may cause the selector to fail (e.g. if <var>#mybox</var> is
+a top-level DIV, or if it is not located within a DIV of class <var>rounded</var>).
+However, curvyCorners assumes that the element is to be referenced anyway and
+will apply the appropriate rounding styles.</p>
+
 <h3 id="dyn">Dynamic HTML</h3>
 <p>curvyCorners now has limited support for dynamic HTML. In particular, you
 may change the contents of a box and have the box re-sized (re-drawn) to fit.
