@@ -308,25 +308,31 @@ function curvyCorners() {
   // Get object(s)
   if (settings.selectorText) {
     startIndex = 0;
-    var args = settings.selectorText.replace(/\s+$/,'').split(/,\s*/); // handle comma-separated selector list
+    var args = settings.selectorText.replace(/\s+$/, '').split(/,\s*/); // handle comma-separated selector list
     boxCol = new Array;
 
+    function idof(str) {
+      var ret = str.split('#');
+      return (ret.length === 2 ? "#" : "") + ret.pop();
+    }
+
     for (i = 0; i < args.length; ++i) {
-      var argbits = args[i].split(' ');
-      switch (args[i].charAt(0)) {
+      var arg = idof(args[i]);
+      var argbits = arg.split(' ');
+      switch (arg.charAt(0)) {
         case '#' : // id
           if (argbits.length === 1)
-            boxCol.push(document.getElementById(args[i].substr(1)));
+            boxCol.push(document.getElementById(arg.substr(1)));
           else {
             var encloser = document.getElementById(argbits[0].substr(1));
             if (encloser)
               boxCol = boxCol.concat(curvyCorners.getElementsByClass(argbits[1], encloser));
-            else curvyCorners.alert("No object with ID " + args[i] + " exists yet.\nCall curvyCorners(settings, obj) when it is created.");
+            else curvyCorners.alert("No object with ID " + arg + " exists yet.\nCall curvyCorners(settings, obj) when it is created.");
           }
         break;
         default :
           if (argbits.length === 1)
-            boxCol = boxCol.concat(curvyCorners.getElementsByClass(args[i]));
+            boxCol = boxCol.concat(curvyCorners.getElementsByClass(arg));
           else {
             var encloser = curvyCorners.getElementsByClass(argbits[0]);
             for (j = 0; j < encloser.length; ++j) {
