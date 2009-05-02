@@ -33,10 +33,10 @@ samp:before {
 
 <ul>
   <li><a href="#source">Getting the source</a></li>
-  <li><a href="#newWay">Using curvyCorners the new way &mdash; using CSS</a></li>
-  <li><a href="#manually">Using curvyCorners manually</a></li>
+  <li><a href="#newWay">Using CurvyCorners the new way &mdash; using CSS</a></li>
+  <li><a href="#manually">Using CurvyCorners manually</a></li>
   <li><a href="#upgrading">Upgrading from version 1.x</a></li>
-  <li><a href="#options">curvyCorners options and settings</a></li>
+  <li><a href="#options">CurvyCorners options and settings</a></li>
   <li><a href="#further">Further information</a></li>
 </ul>
 
@@ -49,21 +49,21 @@ samp:before {
 <dd><a href="http://code.google.com/p/curvycorners/source/browse/#svn/tags">http://code.google.com/p/curvycorners/source/browse/#svn/tags</a></dd>
 </dl>
 
-<p>You can also download the latest version of curvyCorners from the
+<p>You can also download the latest version of CurvyCorners from the
 <a href="downloads.php">downloads section</a>.</p>
 
 <p>Some earlier versions are also available from the
 <a href="http://code.google.com/p/curvycorners/downloads/list">Google Code
 Downloads page</a>.</p>
 
-<a name="newWay"></a><h2>Using curvyCorners the new way &mdash; using CSS</h2>
-<p>As from 2.0.x, curvyCorners allows you to put rounded corners on your
+<a name="newWay"></a><h2>Using CurvyCorners the new way &mdash; using CSS</h2>
+<p>As from 2.0.x, CurvyCorners allows you to put rounded corners on your
 page elements using <abbr title="Cascading Style Sheets">CSS</abbr>. At
 present, there are two proprietary CSS syntaxes, one for Mozilla/Firefox
 and one for the Webkit browsers, Safari and Google Chrome.</p>
 
 <p>All you need to do is to put the appropriate rounded corner styles
-into the appropriate rules, and curvyCorners will automatically draw corners
+into the appropriate rules, and CurvyCorners will automatically draw corners
 for the affected boxes, whilst leaving it to the newer browsers to draw them
 using their native methods.</p>
 
@@ -93,7 +93,7 @@ then you can do it like this:</p>
 </div>
 
 <p>(Note that the CSS3 proposed syntax is similar to the Webkit version, but
-of course without the "-webkit-" prefix. Internally, curvyCorners looks for the
+of course without the "-webkit-" prefix. Internally, CurvyCorners looks for the
 Webkit syntax and ignores the Mozilla version.)</p>
 
 <h3 id="cssLimits">CSS Selector Limitations</h3>
@@ -124,14 +124,14 @@ simple-selector followed by a space followed by another simple-selector.</li>
 <li>form.rounded frameset,div.rounded</li>
 </ul>
 
-<p><strong>Warning:</strong> because curvyCorners appends extra DIVs to the
+<p><strong>Warning:</strong> because CurvyCorners appends extra DIVs to the
 boxes you wish to round, the following selector will reliably not work:</p>
 
 <p><code>#myBox div</code></p>
 
 <p>This is because the style will be applied not just to the top-level DIVs
 within the element whose ID is <code>myBox</code>, but also to the DIVs inserted
-by curvyCorners.</p>
+by CurvyCorners.</p>
 
 <p>The following selectors may not work as expected:</p>
 <ul><li>div #mybox</li><li>div.rounded #mybox</li></ul>
@@ -139,13 +139,13 @@ by curvyCorners.</p>
 <p>Because an ID identifies a page element uniquely, qualifying it with an
 enclosing scope may cause the selector to fail (e.g. if <var>#mybox</var> is
 a top-level DIV, or if it is not located within a DIV of class <var>rounded</var>).
-However, curvyCorners assumes that the element is to be referenced anyway and
+However, CurvyCorners assumes that the element is to be referenced anyway and
 will apply the appropriate rounding styles.</p>
 
 <h3 id="dyn">Dynamic HTML</h3>
-<p>curvyCorners now has limited support for dynamic HTML. In particular, you
+<p>CurvyCorners now has limited support for dynamic HTML. In particular, you
 may change the contents of a box and have the box re-sized (re-drawn) to fit.
-However, because of the technique curvyCorners uses to draw the corners, this
+However, because of the technique CurvyCorners uses to draw the corners, this
 cannot happen automatically. Instead, you must do the following:</p>
 
 <ol><li>Give the box elements to be re-drawn the (additional) special class-name
@@ -180,7 +180,7 @@ above. It returns no useful value.</p>
 <a href="http://code.google.com/p/curvycorners/source/browse/trunk/examples/demo5.html">demo
 5</a>.</p>
 
-<h4 id="delay">Delaying the curvyCorners startup code</h4>
+<h4 id="delay">Delaying the CurvyCorners startup code</h4>
 
 <p>If it is planned to add a number of elements to the page after it has
 loaded, and if these elements are to have rounded corners, it can be
@@ -202,9 +202,9 @@ curvyCorners.init();
 </ol>
 
 <p>If you specify in CSS the ID of an element with rounded corners that is
-not yet added to the page, curvyCorners will warn of the problem by using
+not yet added to the page, CurvyCorners will warn of the problem by using
 alert(). To suppress this message, include the following script in your page
-before including the curvyCorners script:</p>
+before including the CurvyCorners script:</p>
 
 <p class="codeSample">
 &lt;script type="text/javascript"&gt;<br/>
@@ -213,9 +213,9 @@ var curvyCornersVerbose = false;<br/>
 </p>
 
 <h3>Hidden Boxes</h3>
-<p>curvyCorners supports the styling of boxes that are not currently
+<p>CurvyCorners supports the styling of boxes that are not currently
 displayed, i.e. which have the style <code>display:none</code>. In such cases,
-it may be necessary for curvyCorners temporarily to display the box, and
+it may be necessary for CurvyCorners temporarily to display the box, and
 this may cause a brief flicker as the page is loaded.</p>
 
 <h3>Other limitations</h3>
@@ -224,18 +224,18 @@ this may cause a brief flicker as the page is loaded.</p>
 <li>In some circumstances, a browser may not compute a display width for a
 box that you wish to style with rounded corners. This may either be because
 the box is not currently displayed, or because of a peculiarity in the
-browser. In this circumstance, curvyCorners will output an error message and
+browser. In this circumstance, CurvyCorners will output an error message and
 continue; but it will not be able to apply corners to the box in question.
 It may be possible to correct this by applying a width or min-width style
 to the affected box element. You can suppress the display of the error message
 by including the following in the &lt;head&gt; section of the page before
-the script tag that includes the curvyCorners script:<p class="codeSample">
+the script tag that includes the CurvyCorners script:<p class="codeSample">
 &lt;script type="text/javascript"&gt;<br/>
 var curvyCornersVerbose = false;<br/>
 &lt;/script&gt;</p></li>
 
 <li>In Opera v9.x, unrecognized styles (including rounded corner styles)
-are not included in the DOM tree. curvyCorners can detect them only if it has
+are not included in the DOM tree. CurvyCorners can detect them only if it has
 access to the CSS text. It has access if the style is included in the HTML page,
 or if it is imported using the CSS @import rule. However, if the stylesheet
 is included using a <code>&lt;link href="mystyle.css" rel="stylesheet"/&gt;</code>
@@ -244,10 +244,10 @@ compatibility, always use the <code>@import</code> rule to include external
 stylesheets. (Remember: <code>@import</code> rules must occur first
 in the &lt;style&gt; section before any other rules.)</li>
 
-<li>Boxes styled by curvyCorners cannot be resized dynamically except by
+<li>Boxes styled by CurvyCorners cannot be resized dynamically except by
 using the <a href="#dyn">technique described above</a>.</li>
 
-<li>If a box styled by curvyCorners has borders, the border width must be the
+<li>If a box styled by CurvyCorners has borders, the border width must be the
 same on both sides adjacent to a round corner. The border style must always be
 <code>solid</code>: other styles are not supported.</li>
 
@@ -255,7 +255,7 @@ same on both sides adjacent to a round corner. The border style must always be
 supported. The first dimension will be understood as the only dimension.</li>
 </ul>
 
-<a name="manually"></a><h2>Using curvyCorners manually</h2>
+<a name="manually"></a><h2>Using CurvyCorners manually</h2>
 <p>The following instructions will round the corners of a DIV element with a 20
 pixel radius.</p>
 
@@ -275,7 +275,7 @@ to round then all you need to do is give the DIV an ID.</p>
     &lt;DIV id="myDiv"&gt;&lt;/DIV&gt;
 </div>
 
-<p>curvyCorners will automatically pick up style information from the DIV
+<p>CurvyCorners will automatically pick up style information from the DIV
 element. So for example if you give the DIV a 2px black border in a stylesheet,
 then the borders will be automatically added to the rounded corners.</p>
 
@@ -410,7 +410,7 @@ have their corners rounded. See example below.</p>
   &lt;/div&gt;
 </div>
 
-<p>(<strong>Note</strong> that unlike older versions of curvyCorners, from
+<p>(<strong>Note</strong> that unlike older versions of CurvyCorners, from
 version 2.0.x you <em>must</em> put a dot in front of the class name.)</p>
 
 <p>Instead of a simple class name, you can use a tag name qualified by a
@@ -429,7 +429,7 @@ are contained <em>within</em> the DIV with ID <var>myDiv</var>.</p>
 
 <a name="upgrading"></a><h2>Upgrading from version 1.x</h2>
 
-<p>If you have pages that work with curvyCorners v1.x, and would like to
+<p>If you have pages that work with CurvyCorners v1.x, and would like to
 upgrade them to work with v2.0.x, you have two routes: retain the explicit
 style, or migrate to the CSS style.</p>
 
@@ -482,17 +482,17 @@ replicate the example immediately above, do this:</p>
 </div>
 
 <p>Then, entirely delete the <code>window.onload</code> function (or that
-part of it relating to curvyCorners).</p>
+part of it relating to CurvyCorners).</p>
 
-<a name="options"></a><h2 id="options">curvyCorners options and settings</h2>
+<a name="options"></a><h2 id="options">CurvyCorners options and settings</h2>
 
-<p>If curvyCorners detects an error that prevents onward execution, it throws
+<p>If CurvyCorners detects an error that prevents onward execution, it throws
 an object of type Error.</p>
 
-<p>If curvyCorners detects an error that does not prevent onward execution, it
+<p>If CurvyCorners detects an error that does not prevent onward execution, it
 issues an alert. To suppress alerts in production pages, include the following
 script in the &lt;head&gt; section of your page before the script tag that
-includes the curvyCorners script:</p>
+includes the CurvyCorners script:</p>
 
 <p class="codeSample">
 &lt;script type="text/javascript"&gt;<br/>
@@ -500,7 +500,7 @@ var curvyCornersVerbose = false;<br/>
 &lt;/script&gt;
 </p>
 
-<p>To delay or prevent execution of the curvyCorners startup code, set
+<p>To delay or prevent execution of the CurvyCorners startup code, set
 <var>curvyCornersNoAutoScan</var> <code>true</code> in the same way: see
 <a href="#delay">the explanation above</a>.</p>
 
@@ -510,7 +510,7 @@ var curvyCornersVerbose = false;<br/>
 <a href="http://code.google.com/p/curvycorners/source/checkout">checkout
 the script's source</a>, it's well commented.</p>
 
-<p>If you find a bug in curvyCorners, please use the
+<p>If you find a bug in CurvyCorners, please use the
 <a href="http://code.google.com/p/curvycorners/issues/list">issue tracking system</a>
 at <a href="http://code.google.com/p/curvycorners/">Google Code</a>.</p>
 
