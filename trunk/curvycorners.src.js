@@ -753,7 +753,7 @@ function curvyObject() {
       if (!this.spec.get(z + 'R')) continue; // no need if no corners
       if (radiusDiff[z]) {
         // check unsupported feature and warn if necessary
-        if (this.backgroundImage && this.spec.radiusSum(z) !== radiusdiff[z])
+        if (this.backgroundImage && this.spec.radiusSum(z) !== radiusDiff[z])
           curvyCorners.alert(this.errmsg('Not supported: unequal non-zero top/bottom radii with background image')); 
         // Get the type of corner that is the smaller one
         var smallerCornerType = (this.spec[z + "lR"] < this.spec[z + "rR"]) ? z + "l" : z + "r";
