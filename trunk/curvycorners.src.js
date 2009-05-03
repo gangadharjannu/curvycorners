@@ -308,7 +308,7 @@ function curvyCorners() {
   // Get object(s)
   if (settings.selectorText) {
     startIndex = 0;
-    var args = settings.selectorText.replace(/\s+$/, '').split(/,\s*/); // handle comma-separated selector list
+    var args = settings.selectorText.replace(/\s+$/,'').split(/,\s*/); // handle comma-separated selector list
     boxCol = new Array;
 
     function idof(str) {
@@ -421,15 +421,14 @@ function curvyObject() {
   }
   if (!boxWidth) {
     if (!this.box.parentNode) throw this.newError("box has no parent!"); // unlikely...
-    boxDisp = this.box;
-    do { // search for 'display:none'
-      boxDisp = boxDisp.parentNode;
+    for (boxDisp = this.box; ; boxDisp = boxDisp.parentNode) {
       if (!boxDisp || boxDisp.tagName === 'BODY') { // we've hit the buffers
         this.applyCorners = function() {} // make the error benign
         curvyCorners.alert(this.errmsg("zero-width box with no accountable parent", "warning"));
         return;
       }
-    } while ((typeof boxDisp.style === 'undefined') || boxDisp.style.display !== 'none');
+      if (boxDisp.style.display === 'none') break;
+    }
     // here, we've found the box whose display is set to 'none'.
     boxDisp.style.display = 'block'; // display in order to get browser to calculate clientWidth
     boxWidth = this.box.clientWidth;
@@ -442,7 +441,6 @@ function curvyObject() {
   }
 
   // Get box formatting details
-  var boxHeight  = curvyBrowser.get_style(this.box, "height") || 'auto';
   var borderWidth     = curvyBrowser.get_style(this.box, "borderTopWidth");
   var borderWidthB    = curvyBrowser.get_style(this.box, "borderBottomWidth");
   var borderWidthL    = curvyBrowser.get_style(this.box, "borderLeftWidth");
@@ -461,8 +459,6 @@ function curvyObject() {
   var leftPadding     = curvyBrowser.get_style(this.box, "paddingLeft");
   var rightPadding    = curvyBrowser.get_style(this.box, "paddingRight");
   var border          = curvyBrowser.get_style(this.box, "border");
-  var topMargin       = curvyBrowser.get_style(this.box, "marginTop");
-  var bottomMargin    = curvyBrowser.get_style(this.box, "marginBottom");
 
   var topMaxRadius    = this.spec.get('tR');
   var botMaxRadius    = this.spec.get('bR');
@@ -486,8 +482,8 @@ function curvyObject() {
     this.bottomPadding   = styleToNPx(bottomPadding);
     this.leftPadding     = styleToNPx(leftPadding);
     this.rightPadding    = styleToNPx(rightPadding);
-    this.boxWidth        = boxWidth - this.leftPadding - this.rightPadding;
-    this.boxHeight       = (((boxHeight != "" && boxHeight != "auto" && boxHeight.indexOf("%") == -1) ? parseInt(boxHeight) : this.box.clientHeight - this.topPadding - this.bottomPadding));
+    this.boxWidth        = boxWidth;
+    this.boxHeight       = this.box.clientHeight;
     this.borderColour    = curvyObject.format_colour(borderColour);
     this.borderColourB   = curvyObject.format_colour(borderColourB);
     this.borderColourL   = curvyObject.format_colour(borderColourL);
@@ -499,11 +495,17 @@ function curvyObject() {
     this.backgroundPosY  = styleToNPx(backgroundPosY);
 
     this.boxContent      = this.box.innerHTML;
-    this.topMargin       = styleToNPx(topMargin);
-    this.bottomMargin    = styleToNPx(bottomMargin);
   }
   catch(e) {
     throw this.newError('getMessage' in e ? e.getMessage() : e.message);
+  }
+  var clientHeight = this.boxHeight;
+  var clientWidth = boxWidth; // save it as it gets trampled on later
+  if (curvyBrowser.quirksMode) {
+  }
+  else {
+    this.boxWidth -= this.leftPadding + this.rightPadding;
+    this.boxHeight -= this.topPadding + this.bottomPadding;
   }
 
   this.box.innerHTML = "";
@@ -513,45 +515,38 @@ function curvyObject() {
   this.box.style.border = this.box.style.backgroundImage = 'none';
   this.box.style.backgroundColor = 'transparent';
 
-  if (curvyBrowser.quirksMode) {
-    this.box.style.width   = this.boxWidth + 'px';
-    this.box.style.height  = this.boxHeight + 'px';
-  } else {
-    this.box.style.width   = (this.boxWidth + this.leftPadding + this.rightPadding  + this.borderWidthL + this.borderWidthR) + 'px';
-    this.box.style.height  = (this.boxHeight + this.topPadding + this.bottomPadding + this.borderWidth + this.borderWidthB) + 'px';
-  }
+  this.box.style.width   = (clientWidth + this.borderWidthL + this.borderWidthR) + 'px';
+  this.box.style.height  = (clientHeight + this.borderWidth + this.borderWidthB) + 'px';
 
   // Ok we add an inner div to actually put things into this will allow us to keep the height
 
   var newMainContainer = document.createElement("div");
+  newMainContainer.style.position = "absolute";
   if (curvyBrowser.quirksMode) {
-    newMainContainer.style.width  = this.boxWidth + 'px';
-    newMainContainer.style.height = (this.boxHeight - topMaxRadius - botMaxRadius) + 'px';
+    newMainContainer.style.width  = (clientWidth + this.borderWidthL + this.borderWidthR) + 'px';
   } else {
-    newMainContainer.style.width  = (this.boxWidth + this.leftPadding + this.rightPadding) + 'px';
-    newMainContainer.style.height = (this.boxHeight + this.topPadding + this.bottomPadding + this.borderWidth + this.borderWidthB - topMaxRadius - botMaxRadius) + 'px';
+    newMainContainer.style.width  = clientWidth + 'px';
   }
-  newMainContainer.style.position = "relative";
+  newMainContainer.style.height = (clientHeight + this.borderWidth + this.borderWidthB - topMaxRadius - botMaxRadius) + 'px';
   newMainContainer.style.padding  = "0";
-  newMainContainer.style.top    = (topMaxRadius - this.borderWidth) + "px";
+  newMainContainer.style.top    = topMaxRadius + "px";
   newMainContainer.style.left   = "0";
   if (this.borderWidthL)
     newMainContainer.style.borderLeft = this.borderWidthL + "px solid " + this.borderColourL;
-  if (this.borderWidth)
+  if (this.borderWidth && !topMaxRadius)
     newMainContainer.style.borderTop = this.borderWidth + "px solid " + this.borderColour;
   if (this.borderWidthR)
     newMainContainer.style.borderRight = this.borderWidthR + "px solid " + this.borderColourL;
-  if (this.borderWidthB)
+  if (this.borderWidthB && !botMaxRadius)
     newMainContainer.style.borderBottom = this.borderWidthB + "px solid " + this.borderColourB;
-  if (topMaxRadius) newMainContainer.style.borderTopColor  = 'transparent';
-  if (botMaxRadius) newMainContainer.style.borderBottomColor  = 'transparent';
   newMainContainer.style.backgroundColor    = boxColour;
   newMainContainer.style.backgroundImage    = this.backgroundImage;
   newMainContainer.style.backgroundRepeat   = this.backgroundRepeat;
   this.shell = this.box.appendChild(newMainContainer);
 
   boxWidth = curvyBrowser.get_style(this.shell, "width");
-  this.boxWidth = (boxWidth != "" && boxWidth != "auto" && boxWidth.indexOf("%") == -1) ? parseInt(boxWidth) : this.shell.offsetWidth;
+  if (boxWidth === "" || boxWidth === "auto" || boxWidth.indexOf("%") !== -1) alert('Shell width is ' + boxWidth);
+  this.boxWidth = (boxWidth != "" && boxWidth != "auto" && boxWidth.indexOf("%") == -1) ? parseInt(boxWidth) : this.shell.clientWidth;
 
   /*
     This method creates the corners and
@@ -572,8 +567,8 @@ function curvyObject() {
       newMainContainer.style.paddingLeft  = this.borderWidth + "px";
       newMainContainer.style.paddingRight = this.borderWidth + "px";
       newMainContainer.style.height = topMaxRadius + "px";
-      newMainContainer.style.top    = (0 - topMaxRadius) + "px";
-      newMainContainer.style.left   = (0 - this.borderWidthL) + "px";
+      newMainContainer.style.top    = -topMaxRadius + "px";
+      newMainContainer.style.left   = -this.borderWidthL + "px";
       this.topContainer = this.shell.appendChild(newMainContainer);
     }
     // Build bottom bar only if a bottom corner is to be drawn
@@ -586,8 +581,8 @@ function curvyObject() {
       newMainContainer.style.paddingLeft  = this.borderWidthB + "px";
       newMainContainer.style.paddingRight = this.borderWidthB + "px";
       newMainContainer.style.height   =  botMaxRadius + "px";
-      newMainContainer.style.bottom   = (0 - botMaxRadius) + "px";
-      newMainContainer.style.left     = (0 - this.borderWidthL) + "px";
+      newMainContainer.style.bottom   = -botMaxRadius + "px";
+      newMainContainer.style.left     = -this.borderWidthL + "px";
       this.bottomContainer = this.shell.appendChild(newMainContainer);
     }
 
@@ -702,12 +697,13 @@ function curvyObject() {
         }
         pixelBar.style.backgroundRepeat = this.backgroundRepeat;
 
-        if (this.backgroundImage != "") switch(cc) {
+        if (this.backgroundImage) switch(cc) {
           case "tr":
             if (curvyBrowser.quirksMode) {
-              pixelBar.style.backgroundPosition = parseInt(this.backgroundPosX - Math.abs(0 - this.borderWidthL + this.boxWidth - specRadius + pixelBarLeft)) + "px " + parseInt(this.backgroundPosY - Math.abs(specRadius - pixelBarHeight - pixelBarTop - this.borderWidth)) + "px";
+              //pixelBar.style.backgroundPosition = (this.backgroundPosX - Math.abs(0 - this.borderWidthL + this.boxWidth - specRadius + pixelBarLeft)) + "px " + (this.backgroundPosY - Math.abs(specRadius - pixelBarHeight - pixelBarTop - this.borderWidth)) + "px";
+              pixelBar.style.backgroundPosition = (this.backgroundPosX + this.borderWidthL + specRadius - this.boxWidth - pixelBarLeft) + "px " + (this.backgroundPosY + pixelBarHeight + pixelBarTop + this.borderWidth - specRadius) + "px";
             } else {
-              pixelBar.style.backgroundPosition = parseInt(this.backgroundPosX - Math.abs(this.borderWidthR - this.borderWidthL + (this.boxWidth - specRadius + this.borderWidthR) + pixelBarLeft)) + "px " + parseInt(this.backgroundPosY - Math.abs(specRadius - pixelBarHeight - pixelBarTop - this.borderWidth)) + "px";
+              pixelBar.style.backgroundPosition = (this.backgroundPosX - Math.abs(this.borderWidthR - this.borderWidthL + this.boxWidth - specRadius + this.borderWidthR + pixelBarLeft)) + "px " + (this.backgroundPosY - Math.abs(specRadius - pixelBarHeight - pixelBarTop - this.borderWidth)) + "px";
             }
           break;
           case "tl":
@@ -715,16 +711,17 @@ function curvyObject() {
           break;
           case "bl":
             if (curvyBrowser.quirksMode) {
-              pixelBar.style.backgroundPosition = parseInt(this.backgroundPosX - Math.abs((specRadius - pixelBarLeft - 1) - this.borderWidthL)) + "px " + parseInt(this.backgroundPosY - Math.abs((this.boxHeight + (this.borderWidth - this.topPadding - 1) - specRadius + pixelBarTop))) + "px";
+              pixelBar.style.backgroundPosition = (this.backgroundPosX - Math.abs((specRadius - pixelBarLeft - 1) - this.borderWidthL)) + "px " + (this.backgroundPosY - clientHeight - this.borderWidth + pixelBarTop + specRadius) + "px";
             } else {
               pixelBar.style.backgroundPosition = parseInt(this.backgroundPosX - Math.abs((specRadius - pixelBarLeft - 1) - this.borderWidthL)) + "px " + parseInt(this.backgroundPosY - Math.abs((this.boxHeight + (this.borderWidth + this.topPadding + this.bottomPadding) - specRadius + pixelBarTop))) + "px";
             }
           break;
           case "br":
             if (curvyBrowser.quirksMode) {
-              pixelBar.style.backgroundPosition = parseInt(this.backgroundPosX - Math.abs(1 + this.leftPadding - this.borderWidthL + this.boxWidth - specRadius + pixelBarLeft)) + "px " + parseInt(this.backgroundPosY - Math.abs((this.boxHeight + (this.borderWidth - this.topPadding - 1) - specRadius + pixelBarTop))) + "px";
+//              pixelBar.style.backgroundPosition = (this.backgroundPosX - Math.abs(1 + this.leftPadding - this.borderWidthL + this.boxWidth - specRadius + pixelBarLeft)) + "px " + (this.backgroundPosY - Math.abs(this.boxHeight + (this.borderWidth - this.topPadding - 1) - specRadius + pixelBarTop)) + "px";
+                pixelBar.style.backgroundPosition = (this.backgroundPosX - 1 + this.borderWidthL - clientWidth + specRadius - pixelBarLeft) + "px " + (this.backgroundPosY - clientHeight - this.borderWidth + pixelBarTop + specRadius) + "px";
             } else {
-              pixelBar.style.backgroundPosition = parseInt(this.backgroundPosX - Math.abs(this.borderWidthR - this.borderWidthL + (this.boxWidth - specRadius + this.borderWidthR) + pixelBarLeft)) + "px " + parseInt(this.backgroundPosY - Math.abs((this.boxHeight + (this.borderWidth + this.topPadding + this.bottomPadding) - specRadius + pixelBarTop))) + "px";
+              pixelBar.style.backgroundPosition = (this.backgroundPosX - (this.borderWidthR - this.borderWidthL + this.boxWidth - specRadius + this.borderWidthR + pixelBarLeft)) + "px " + (this.backgroundPosY - Math.abs((this.boxHeight + (this.borderWidth + this.topPadding + this.bottomPadding) - specRadius + pixelBarTop))) + "px";
             }
           //break;
         }
@@ -827,14 +824,14 @@ function curvyObject() {
             }
             newFillerBar.style.marginLeft  = this.spec.tlR ? (this.spec.tlR - this.borderWidthL) + "px" : "0";
             newFillerBar.style.borderTop   = this.borderString;
-            if (this.backgroundImage != "") {
+            if (this.backgroundImage) {
               var x_offset = this.spec.tlR ?
                 (this.backgroundPosX - (topMaxRadius - this.borderWidthL)) + "px " : "0 ";
               newFillerBar.style.backgroundPosition  = x_offset + this.backgroundPosY + "px";
             }
             this.topContainer.appendChild(newFillerBar);
             // Reposition the box's background image
-            this.shell.style.backgroundPosition = parseInt(this.backgroundPosX) + "px " + parseInt(this.backgroundPosY - (topMaxRadius - this.borderWidthL)) + "px";
+            this.shell.style.backgroundPosition = this.backgroundPosX + "px " + (this.backgroundPosY - topMaxRadius + this.borderWidthL) + "px";
           }
         break;
         case "b":
@@ -847,14 +844,10 @@ function curvyObject() {
             }
             newFillerBar.style.marginLeft   = this.spec.blR ? (this.spec.blR - this.borderWidthL) + "px" : "0";
             newFillerBar.style.borderBottom = this.borderStringB;
-            if (this.backgroundImage != "") {
+            if (this.backgroundImage) {
               var x_offset = this.spec.blR ?
-                (this.backgroundPosX - (botMaxRadius - this.borderWidthL)) + "px " : "0 ";
-              if (curvyBrowser.quirksMode) {
-                newFillerBar.style.backgroundPosition = x_offset + (this.backgroundPosY - (this.boxHeight + this.borderWidth - botMaxRadius)) + "px";
-              } else {
-                newFillerBar.style.backgroundPosition  = x_offset + (this.backgroundPosY - (this.boxHeight + this.topPadding + this.borderWidth + this.bottomPadding - botMaxRadius)) + "px";
-              }
+                (this.backgroundPosX + this.borderWidthL - botMaxRadius) + "px " : this.backgroundPosX + "px ";
+              newFillerBar.style.backgroundPosition = x_offset + (this.backgroundPosY - clientHeight - this.borderWidth + botMaxRadius) + "px";
             }
             this.bottomContainer.appendChild(newFillerBar);
           }
@@ -866,30 +859,20 @@ function curvyObject() {
     var contentContainer = document.createElement("div");
     contentContainer.style.position = "absolute";
     // contentContainer.style.border = "1px dotted #000"; // DEBUG, comment for production
-    contentContainer.innerHTML      = this.boxContent;
-    contentContainer.className      = "autoPadDiv";
+    contentContainer.innerHTML    = this.boxContent;
+    contentContainer.className    = "autoPadDiv";
+    contentContainer.style.left   = this.borderWidthL + "px";
     // Get padding amounts
-    topPadding = this.topPadding;
-    bottomPadding = this.borderWidthB + this.bottomPadding;
     // Apply top padding
-    if (topMaxRadius < this.topPadding) {
-      //contentContainer.style.paddingTop = (topPadding - topMaxRadius) + "px";
-      contentContainer.style.top = topPadding + "px";
-    } else {
-      contentContainer.style.paddingTop = "0";
-      contentContainer.style.top = topPadding + "px";
-    }
-    // Apply Bottom padding
-    if (botMaxRadius < this.bottomPadding) {
-      contentContainer.style.paddingBottom = (bottomPadding - botMaxRadius) + "px";
-    } else {
-      contentContainer.style.paddingBottom = "0";
-    }
+    contentContainer.style.paddingTop = this.topPadding;
+    contentContainer.style.top = this.borderWidth + "px";
+    // skip bottom padding - it doesn't show!
     // Apply left and right padding
-    contentContainer.style.paddingLeft = (this.borderWidthL + this.leftPadding) + "px";
-    contentContainer.style.paddingRight = (this.borderWidthR + this.rightPadding) + "px";
-    // Apply text align
-    contentContainer.style.width = (this.boxWidth - this.leftPadding - this.rightPadding) + "px";
+    contentContainer.style.paddingLeft = this.leftPadding + "px";
+    contentContainer.style.paddingRight = this.rightPadding + "px";
+    z = clientWidth;
+    if (!curvyBrowser.quirksMode) z -= this.leftPadding + this.rightPadding;
+    contentContainer.style.width = z + "px";
     contentContainer.style.textAlign = curvyBrowser.get_style(this.box, 'textAlign');
     this.box.style.textAlign = 'left'; // important otherwise layout goes wild
 
@@ -920,11 +903,12 @@ curvyObject.prototype.drawPixel = function(intx, inty, colour, transAmount, heig
   // Set position
   pixel.style.top = inty + "px";
   pixel.style.left = intx + "px";
+  //pixel.nodeValue = ' ';
   newCorner.appendChild(pixel);
 }
 
 curvyObject.prototype.fillerWidth = function(tb) {
-  var bWidth = this.spec.radiusCount(tb) * this.borderWidthL;
+  var bWidth = curvyBrowser.quirksMode ? 0 : this.spec.radiusCount(tb) * this.borderWidthL;
   return (this.boxWidth - this.spec.radiusSum(tb) + bWidth) + 'px';
 }
 
