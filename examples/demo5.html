@@ -15,6 +15,11 @@ body {
   font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
 }
 
+#page0 pre {
+  background:#DDD;
+  border:dashed #A00 1px;
+  padding-left:1em;
+}
 /* tab styles */
 #tabrow {
  margin:0;
@@ -197,8 +202,6 @@ function tabclick(n) {
 <div id="page0" class="subpage">
 <p>These demos show how curvyCorners copes in a more complex styling
 environment, where units are expressed in font-relative or real-world units.</p>
-<p>Currently (as at SVN rev. 34) corners cannot be expressed other than in
-pixels, although it is hoped to address this shortly.</p>
 <p>Note that the tabs above have fluid width. curvyCorners can cope with both
 fixed-width and fluid boxes.</p>
 <p>The contents of this page area will change depending on which tab you click.
@@ -216,6 +219,24 @@ follows:</p>
 <p>Finally, a call to <code>curvyCorners.redraw()</code> will redraw all the
 redrawable objects on the page. In this demo, all the tab boxes, and the
 lower main box, are all redrawn when a tab is clicked.</p>
+<p>Here's the script for this page:</p>
+<pre><code>
+var selectedTab = 0;
+
+function tabclick(n) {
+  if (n === selectedTab) return; // nothing to do.
+  var li = document.getElementById('tab' + selectedTab);
+  curvyCorners.adjust(li, 'className', ''); // Remove the 'select' style
+  li = document.getElementById('page' + selectedTab);
+  li.style.display = 'none';                // hide the currently selected sub-page
+  li = document.getElementById('page' + n);
+  li.style.display = 'block';               // show the new sub-page
+  li = document.getElementById('tab' + n);  // get the new (clicked) tab
+  curvyCorners.adjust(li, 'className', 'select'); // and update its style
+  curvyCorners.redraw();        // Redraw all elements with className curvyRedraw
+  selectedTab = n;              // store for future reference
+}
+</code></pre>
 </div>
 <div id="page1" class="subpage" style="display:none">
 <h2>Page 2</h2>
