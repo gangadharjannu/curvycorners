@@ -699,24 +699,19 @@ function curvyObject() {
 
         if (this.backgroundImage) switch(cc) {
           case "tr":
-            pixelBar.style.backgroundPosition = (this.backgroundPosX + (curvyBrowser.quirksMode ? this.borderWidthL : -this.borderWidthL) + specRadius - this.boxWidth - pixelBarLeft) + "px " + (this.backgroundPosY + pixelBarHeight + pixelBarTop + this.borderWidth - specRadius) + "px";
+            pixelBar.style.backgroundPosition = (this.backgroundPosX + (curvyBrowser.quirksMode ? 0 : this.borderWidthL) + specRadius - clientWidth - pixelBarLeft) + "px " + (this.backgroundPosY + pixelBarHeight + pixelBarTop + this.borderWidth - specRadius) + "px";
           break;
           case "tl":
-            pixelBar.style.backgroundPosition = (this.backgroundPosX - Math.abs((specRadius - pixelBarLeft - 1)  - this.borderWidthL)) + "px " + (this.backgroundPosY - Math.abs(specRadius - pixelBarHeight - pixelBarTop - this.borderWidth)) + "px";
+            pixelBar.style.backgroundPosition = (this.backgroundPosX - specRadius + pixelBarLeft - this.borderWidthL) + "px " + (this.backgroundPosY - specRadius + pixelBarHeight + pixelBarTop + this.borderWidth) + "px";
           break;
           case "bl":
-            if (curvyBrowser.quirksMode) {
-              pixelBar.style.backgroundPosition = (this.backgroundPosX - Math.abs((specRadius - pixelBarLeft - 1) - this.borderWidthL)) + "px " + (this.backgroundPosY - clientHeight - this.borderWidth + pixelBarTop + specRadius) + "px";
-            } else {
-              pixelBar.style.backgroundPosition = parseInt(this.backgroundPosX - Math.abs((specRadius - pixelBarLeft - 1) - this.borderWidthL)) + "px " + parseInt(this.backgroundPosY - Math.abs((this.boxHeight + (this.borderWidth + this.topPadding + this.bottomPadding) - specRadius + pixelBarTop))) + "px";
-            }
+            pixelBar.style.backgroundPosition = (this.backgroundPosX - specRadius + pixelBarLeft + 1 - this.borderWidthL) + "px " + (this.backgroundPosY - clientHeight - this.borderWidth + (curvyBrowser.quirksMode ? pixelBarTop : -pixelBarTop) + specRadius) + "px";
           break;
           case "br":
             if (curvyBrowser.quirksMode) {
-//              pixelBar.style.backgroundPosition = (this.backgroundPosX - Math.abs(1 + this.leftPadding - this.borderWidthL + this.boxWidth - specRadius + pixelBarLeft)) + "px " + (this.backgroundPosY - Math.abs(this.boxHeight + (this.borderWidth - this.topPadding - 1) - specRadius + pixelBarTop)) + "px";
-                pixelBar.style.backgroundPosition = (this.backgroundPosX - 1 + this.borderWidthL - clientWidth + specRadius - pixelBarLeft) + "px " + (this.backgroundPosY - clientHeight - this.borderWidth + pixelBarTop + specRadius) + "px";
+              pixelBar.style.backgroundPosition = (this.backgroundPosX /*- 1*/ + this.borderWidthL - clientWidth + specRadius - pixelBarLeft) + "px " + (this.backgroundPosY - clientHeight - this.borderWidth + pixelBarTop + specRadius) + "px";
             } else {
-              pixelBar.style.backgroundPosition = (this.backgroundPosX - (this.borderWidthR - this.borderWidthL + this.boxWidth - specRadius + this.borderWidthR + pixelBarLeft)) + "px " + (this.backgroundPosY - this.boxHeight - this.borderWidth - this.topPadding - this.bottomPadding + specRadius - pixelBarTop) + "px";
+              pixelBar.style.backgroundPosition = (this.backgroundPosX - clientWidth + specRadius - pixelBarLeft) + "px " + (this.backgroundPosY - clientHeight - this.borderWidth + specRadius - pixelBarTop) + "px";
             }
           //break;
         }
@@ -758,7 +753,8 @@ function curvyObject() {
       if (!this.spec.get(z + 'R')) continue; // no need if no corners
       if (radiusDiff[z]) {
         // check unsupported feature and warn if necessary
-        if (this.backgroundImage) curvyCorners.alert(this.errmsg('Not supported: unequal top/bottom radii with background image')); 
+        if (this.backgroundImage && this.spec.radiusSum(z) !== radiusdiff[z])
+          curvyCorners.alert(this.errmsg('Not supported: unequal non-zero top/bottom radii with background image')); 
         // Get the type of corner that is the smaller one
         var smallerCornerType = (this.spec[z + "lR"] < this.spec[z + "rR"]) ? z + "l" : z + "r";
 
