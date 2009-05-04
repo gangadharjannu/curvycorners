@@ -180,6 +180,8 @@ function tabclick(n) {
   curvyCorners.redraw();        // Redraw all elements with className curvyRedraw
   selectedTab = n;              // store for future reference
 }
+
+addEvent(window, 'resize', function() { curvyCorners.redraw(); });
 //]]>
 </script>
 </head>
