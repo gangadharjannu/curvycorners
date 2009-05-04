@@ -1,38 +1,21 @@
-/****************************************************************
+ /****************************************************************
   *                                                              *
-  *  curvyCorners                                                *
+  *  CurvyCorners                                                *
   *  ------------                                                *
   *                                                              *
   *  This script generates rounded corners for your boxes.       *
   *                                                              *
   *  Version 2.0.3pre                                            *
-  *  Copyright (c) 2008 Cameron Cooke                            *
-  *  Version 2 By: Terry Riegel, Cameron Cooke and Tim Hutchison *
-  *  Version 1 By: Cameron Cooke and Tim Hutchison               *
-  *                                                              *
+  *  Copyright (c) 2009 Cameron Cooke                            *
+  *  Contributors: Tim Hutchison, CPK Smithies, Terry Rigel      *
   *                                                              *
   *  Website: http://www.curvycorners.net                        *
   *  SVN:     http://curvycorners.googlecode.com/                *
-  *  Email:   web@cameroncooke.com                               *
+  *  Email:   cameron@curvycorners.net                           *
   *  Discuss: http://groups.google.com/group/curvycorners        *
   *                                                              *
-  *  Changes:                                                    *
-  *  15/04/09: CPKS changes henceforth documented in SVN.        *
-  *  11/08/08: Modified to work as a div replacement             *
-  *            This should work to replace any existing DIV      *
-  *            in existing HTML and not cause reflow issues      *
-  *            rounded borders will auto round based on the      *
-  *            CSS declarations (see notes below)*               *
-  *            (by Terry Riegel riegel@clearimageonline.com)     *
-  *  11/18/08: Added support for background-repeat and           *
-  *            background-position along with the existing       *
-  *            background-color and background-image             *
-  *            (by Terry Riegel riegel@clearimageonline.com)     *
-  *  11/29/08: Various reflow issues addressed by adding a DIV   *
-  *            to hold the height and width so other page        *
-  *            elements would not reflow.                        *
-  *            (by Terry Riegel riegel@clearimageonline.com)     *
-  *                                                              *
+  *  Please consult the SVN for a list of changes since the last *
+  *  revision.                                                   *
   *                                                              *
   *  This library is free software; you can redistribute         *
   *  it and/or modify it under the terms of the GNU              *
