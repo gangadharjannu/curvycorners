@@ -66,7 +66,7 @@ function browserdetect() {
   this.isMoz     = document.implementation && document.implementation.createDocument;
   //this.isMoz     = agent.indexOf('firefox') != -1;
   this.isSafari  = agent.indexOf('safari') != -1;
-  this.quirksMode= this.isIE && document.compatMode.indexOf("BackCompat") > -1;
+  this.quirksMode= this.isIE && (!document.compatMode || document.compatMode.indexOf("BackCompat") > -1);
   this.isOp      = window.opera ? true : false;
   this.isWebKit  = agent.indexOf('webkit') != -1;
   if (this.isIE) {
