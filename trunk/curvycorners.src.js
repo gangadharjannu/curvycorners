@@ -682,7 +682,7 @@ function curvyObject() {
 
         if (this.backgroundImage) switch(cc) {
           case "tr":
-            pixelBar.style.backgroundPosition = (this.backgroundPosX + (curvyBrowser.quirksMode ? 0 : this.borderWidthL) + specRadius - clientWidth - pixelBarLeft) + "px " + (this.backgroundPosY + pixelBarHeight + pixelBarTop + this.borderWidth - specRadius) + "px";
+            pixelBar.style.backgroundPosition = (this.backgroundPosX - this.borderWidthL + specRadius - clientWidth - pixelBarLeft) + "px " + (this.backgroundPosY + pixelBarHeight + pixelBarTop + this.borderWidth - specRadius) + "px";
           break;
           case "tl":
             pixelBar.style.backgroundPosition = (this.backgroundPosX - specRadius + pixelBarLeft - this.borderWidthL) + "px " + (this.backgroundPosY - specRadius + pixelBarHeight + pixelBarTop + this.borderWidth) + "px";
