@@ -63,6 +63,7 @@ CSS declarations and it should be good to go...
 function browserdetect() {
   var agent = navigator.userAgent.toLowerCase();
   this.isIE      = agent.indexOf("msie") > -1;
+  this.ieVer     = /msie\s(\d\.\d);/.exec(agent)[1];
   this.isMoz     = document.implementation && document.implementation.createDocument;
   //this.isMoz     = agent.indexOf('firefox') != -1;
   this.isSafari  = agent.indexOf('safari') != -1;
@@ -119,6 +120,14 @@ function browserdetect() {
   }
 }
 var curvyBrowser = new browserdetect;
+
+/* Force caching of bg images in IE6 */
+if(curvyBrowser.isIE) {
+  try {
+    document.execCommand("BackgroundImageCache", false, true);
+  }
+  catch(e) {};
+}
 
 // object that parses border-radius properties for a box
 
@@ -737,7 +746,7 @@ function curvyObject() {
       if (radiusDiff[z]) {
         // check unsupported feature and warn if necessary
         if (this.backgroundImage && this.spec.radiusSum(z) !== radiusDiff[z])
-          curvyCorners.alert(this.errmsg('Not supported: unequal non-zero top/bottom radii with background image')); 
+          curvyCorners.alert(this.errmsg('Not supported: unequal non-zero top/bottom radii with background image'));
         // Get the type of corner that is the smaller one
         var smallerCornerType = (this.spec[z + "lR"] < this.spec[z + "rR"]) ? z + "l" : z + "r";
 
@@ -1176,20 +1185,21 @@ curvyCorners.scanStyles = function() {
   if (curvyBrowser.isIE) {
     function procIEStyles(rule) {
       var style = rule.style;
-      /*@cc_on@*/
-      /*@if (@_jscript_version > 5.6)
-      var allR = style['-webkit-border-radius'] || 0;
-      var tR   = style['-webkit-border-top-right-radius'] || 0;
-      var tL   = style['-webkit-border-top-left-radius'] || 0;
-      var bR   = style['-webkit-border-bottom-right-radius'] || 0;
-      var bL   = style['-webkit-border-bottom-left-radius'] || 0;
-      @else @*/
-      var allR = style['webkit-border-radius'] || 0;
-      var tR   = style['webkit-border-top-right-radius'] || 0;
-      var tL   = style['webkit-border-top-left-radius'] || 0;
-      var bR   = style['webkit-border-bottom-right-radius'] || 0;
-      var bL   = style['webkit-border-bottom-left-radius'] || 0;
-      /*@end @*/
+
+      if(curvyBrowser.ieVer > 6.0) {
+        var allR = style['-webkit-border-radius'] || 0;
+        var tR   = style['-webkit-border-top-right-radius'] || 0;
+        var tL   = style['-webkit-border-top-left-radius'] || 0;
+        var bR   = style['-webkit-border-bottom-right-radius'] || 0;
+        var bL   = style['-webkit-border-bottom-left-radius'] || 0;
+      }
+      else {
+        var allR = style['webkit-border-radius'] || 0;
+        var tR   = style['webkit-border-top-right-radius'] || 0;
+        var tL   = style['webkit-border-top-left-radius'] || 0;
+        var bR   = style['webkit-border-bottom-right-radius'] || 0;
+        var bL   = style['webkit-border-bottom-left-radius'] || 0;
+      }
       if (allR || tL || tR || bR || bL) {
         var settings = new curvyCnrSpec(rule.selectorText);
         if (allR)
@@ -1199,7 +1209,7 @@ curvyCorners.scanStyles = function() {
           if (tL) settings.setcorner('t', 'l', parseInt(tL), units(tL));
           if (bL) settings.setcorner('b', 'l', parseInt(bL), units(bL));
           if (bR) settings.setcorner('b', 'r', parseInt(bR), units(bR));
-        } 
+        }
         curvyCorners(settings);
       }
     }
@@ -1246,8 +1256,7 @@ curvyCorners.init = function() {
 
 if (typeof curvyCornersNoAutoScan === 'undefined' || curvyCornersNoAutoScan === false) {
   /* for Internet Explorer */
-  /*@cc_on @*/
-  /*@if (@_jscript_version > 5.6)
+  if(curvyBrowser.isIE) {
     document.write("<script id=__ie_onload defer src=javascript:void(0)><\/script>");
     var script = document.getElementById("__ie_onload");
     script.onreadystatechange = function() {
@@ -1255,18 +1264,19 @@ if (typeof curvyCornersNoAutoScan === 'undefined' || curvyCornersNoAutoScan === 
         curvyCorners.init(); // call the onload handler
       }
     };
-  @else @*/
+  }
+  else {
 
-  if (document.addEventListener) { // Mozilla/Opera9/FireFox/Safari 4/Chrome
-    if (curvyBrowser.isOp) document.addEventListener("DOMContentLoaded", curvyCorners.init, false);
+    if (document.addEventListener) { // Mozilla/Opera9/FireFox/Safari 4/Chrome
+      if (curvyBrowser.isOp) document.addEventListener("DOMContentLoaded", curvyCorners.init, false);
+    }
+    else if (curvyBrowser.isWebKit) { // ? for old Safari?
+      curvyCorners.init.timer = setInterval(function() {
+        if (/loaded|complete/.test(document.readyState)) {
+          curvyCorners.init('WebKit'); // call the onload handler
+        }
+      }, 10);
+    }
+    else window.onload = curvyCorners.init; // other browsers inc. IE6
   }
-  else if (curvyBrowser.isWebKit) { // ? for old Safari?
-    curvyCorners.init.timer = setInterval(function() {
-      if (/loaded|complete/.test(document.readyState)) {
-        curvyCorners.init('WebKit'); // call the onload handler
-      }
-    }, 10);
-  }
-  else window.onload = curvyCorners.init; // other browsers inc. IE6
-  /*@end @*/
 }
