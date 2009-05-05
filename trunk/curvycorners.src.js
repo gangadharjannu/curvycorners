@@ -63,7 +63,8 @@ CSS declarations and it should be good to go...
 function browserdetect() {
   var agent = navigator.userAgent.toLowerCase();
   this.isIE      = agent.indexOf("msie") > -1;
-  this.ieVer     = /msie\s(\d\.\d);/.exec(agent)[1];
+  var verMatches = /msie\s(\d\.\d);/.exec(agent);
+  this.ieVer     = (verMatches != null? verMatches[1] : 0);
   this.isMoz     = document.implementation && document.implementation.createDocument;
   //this.isMoz     = agent.indexOf('firefox') != -1;
   this.isSafari  = agent.indexOf('safari') != -1;
