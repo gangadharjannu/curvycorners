@@ -1176,11 +1176,20 @@ curvyCorners.scanStyles = function() {
   if (curvyBrowser.isIE) {
     function procIEStyles(rule) {
       var style = rule.style;
+      /*@cc_on@*/
+      /*@if (@_jscript_version > 5.6)
       var allR = style['-webkit-border-radius'] || 0;
       var tR   = style['-webkit-border-top-right-radius'] || 0;
       var tL   = style['-webkit-border-top-left-radius'] || 0;
       var bR   = style['-webkit-border-bottom-right-radius'] || 0;
       var bL   = style['-webkit-border-bottom-left-radius'] || 0;
+      @else @*/
+      var allR = style['webkit-border-radius'] || 0;
+      var tR   = style['webkit-border-top-right-radius'] || 0;
+      var tL   = style['webkit-border-top-left-radius'] || 0;
+      var bR   = style['webkit-border-bottom-right-radius'] || 0;
+      var bL   = style['webkit-border-bottom-left-radius'] || 0;
+      /*@end @*/
       if (allR || tL || tR || bR || bL) {
         var settings = new curvyCnrSpec(rule.selectorText);
         if (allR)
@@ -1238,7 +1247,7 @@ curvyCorners.init = function() {
 if (typeof curvyCornersNoAutoScan === 'undefined' || curvyCornersNoAutoScan === false) {
   /* for Internet Explorer */
   /*@cc_on @*/
-  /*@if (@_win32 || @_win64)
+  /*@if (@_jscript_version > 5.6)
     document.write("<script id=__ie_onload defer src=javascript:void(0)><\/script>");
     var script = document.getElementById("__ie_onload");
     script.onreadystatechange = function() {
@@ -1258,6 +1267,6 @@ if (typeof curvyCornersNoAutoScan === 'undefined' || curvyCornersNoAutoScan === 
       }
     }, 10);
   }
-  else window.onload = curvyCorners.init; // other browsers
+  else window.onload = curvyCorners.init; // other browsers inc. IE6
   /*@end @*/
 }
