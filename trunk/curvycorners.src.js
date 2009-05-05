@@ -63,8 +63,7 @@ CSS declarations and it should be good to go...
 function browserdetect() {
   var agent = navigator.userAgent.toLowerCase();
   this.isIE      = agent.indexOf("msie") > -1;
-  var verMatches = /msie\s(\d\.\d);/.exec(agent);
-  this.ieVer     = (verMatches != null? verMatches[1] : 0);
+  this.ieVer = this.isIE ? /msie\s(\d\.\d)/.exec(agent)[1] : 0;
   this.isMoz     = document.implementation && document.implementation.createDocument;
   //this.isMoz     = agent.indexOf('firefox') != -1;
   this.isSafari  = agent.indexOf('safari') != -1;
@@ -695,16 +694,16 @@ function curvyObject() {
             pixelBar.style.backgroundPosition = (this.backgroundPosX - this.borderWidthL + specRadius - clientWidth - pixelBarLeft) + "px " + (this.backgroundPosY + pixelBarHeight + pixelBarTop + this.borderWidth - specRadius) + "px";
           break;
           case "tl":
-            pixelBar.style.backgroundPosition = (this.backgroundPosX - specRadius + pixelBarLeft - this.borderWidthL) + "px " + (this.backgroundPosY - specRadius + pixelBarHeight + pixelBarTop + this.borderWidth) + "px";
+            pixelBar.style.backgroundPosition = (this.backgroundPosX - specRadius + pixelBarLeft + this.borderWidthL) + "px " + (this.backgroundPosY - specRadius + pixelBarHeight + pixelBarTop + this.borderWidth) + "px";
           break;
           case "bl":
-            pixelBar.style.backgroundPosition = (this.backgroundPosX - specRadius + pixelBarLeft + 1 - this.borderWidthL) + "px " + (this.backgroundPosY - clientHeight - this.borderWidth + (curvyBrowser.quirksMode ? pixelBarTop : -pixelBarTop) + specRadius) + "px";
+            pixelBar.style.backgroundPosition = (this.backgroundPosX - specRadius + pixelBarLeft + 1 + this.borderWidthL) + "px " + (this.backgroundPosY - clientHeight - this.borderWidth + (curvyBrowser.quirksMode ? pixelBarTop : -pixelBarTop) + specRadius) + "px";
           break;
           case "br":
             if (curvyBrowser.quirksMode) {
-              pixelBar.style.backgroundPosition = (this.backgroundPosX /*- 1*/ + this.borderWidthL - clientWidth + specRadius - pixelBarLeft) + "px " + (this.backgroundPosY - clientHeight - this.borderWidth + pixelBarTop + specRadius) + "px";
+              pixelBar.style.backgroundPosition = (this.backgroundPosX + this.borderWidthL - clientWidth + specRadius - pixelBarLeft) + "px " + (this.backgroundPosY - clientHeight - this.borderWidth + pixelBarTop + specRadius) + "px";
             } else {
-              pixelBar.style.backgroundPosition = (this.backgroundPosX - clientWidth + specRadius - pixelBarLeft) + "px " + (this.backgroundPosY - clientHeight - this.borderWidth + specRadius - pixelBarTop) + "px";
+              pixelBar.style.backgroundPosition = (this.backgroundPosX - this.borderWidthL - clientWidth + specRadius - pixelBarLeft) + "px " + (this.backgroundPosY - clientHeight - this.borderWidth + specRadius - pixelBarTop) + "px";
             }
           //break;
         }
