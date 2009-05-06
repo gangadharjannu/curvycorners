@@ -136,7 +136,7 @@ simple-selector followed by a space followed by another simple-selector.</li>
 </ul>
 
 <p><strong>Warning:</strong> because CurvyCorners appends extra DIVs to the
-boxes you wish to round, the following selector will reliably not work:</p>
+boxes you wish to round, the following selector will reliably <em>not</em> work:</p>
 
 <p><code>#myBox div</code></p>
 
@@ -247,13 +247,13 @@ var curvyCornersVerbose = false;<br/>
 
 <li>In Opera v9.x, unrecognized styles (including rounded corner styles)
 are not included in the DOM tree. CurvyCorners can detect them only if it has
-access to the CSS text. It has access if the style is included in the HTML page,
-or if it is imported using the CSS @import rule. However, if the stylesheet
+access to the CSS text.
+If the stylesheet
 is included using a <code>&lt;link href="mystyle.css" rel="stylesheet"/&gt;</code>
-element, Opera won't be able to access it. Therefore, for cross-browser
-compatibility, always use the <code>@import</code> rule to include external
-stylesheets. (Remember: <code>@import</code> rules must occur first
-in the &lt;style&gt; section before any other rules.)</li>
+element, Opera won't be able to access it.
+It has access only if the style is included in the HTML page itself.
+We hope to address this limitation in the next release.
+</li>
 
 <li>Boxes styled by CurvyCorners cannot be resized dynamically except by
 using the <a href="http://www.curvycorners.net/instructions/#dyn">technique described above</a>.</li>
@@ -264,6 +264,25 @@ same on both sides adjacent to a round corner. The border style must always be
 
 <li>Elliptical radii (e.g. <code>border-radius:1em 2em;</code>) are not
 supported. The first dimension will be understood as the only dimension.</li>
+
+<li>If a box has an image background, and the two top or bottom radii are
+of different non-zero values, the box will not render correctly. Your
+top and bottom corner radii must be either equal, or one of them must be
+zero (square).</li>
+
+<li>A recent limitation, non-support of colour names such as "white",
+has recently been removed. In the next revisions, warning messages may
+(but should not) appear when these are used. Please let us know if you
+see these warnings occur. They can be suppressed: see
+<a href="#options">options</a> below. If an unrecognized colour name
+is used, curvyCorners will throw an informative error. curvyCorners
+understands colour names spelled in the international fashion, e.g.
+"grey"; but browsers may not.</li>
+
+<li>In legacy browsers, when using image backgrounds, the lower part
+of the box may be out by 1 pixel. We are investigating this issue,
+which seems unpredictable and may be an artifact of certain ancient
+rendering engines.</li>
 </ul>
 
 <h2 id="manually">Using CurvyCorners manually</h2>

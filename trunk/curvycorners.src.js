@@ -5,7 +5,7 @@
   *                                                              *
   *  This script generates rounded corners for your boxes.       *
   *                                                              *
-  *  Version 2.0.3pre                                            *
+  *  Version 2.0.3rc1                                            *
   *  Copyright (c) 2009 Cameron Cooke                            *
   *  Contributors: Tim Hutchison, CPK Smithies, Terry Rigel      *
   *                                                              *
@@ -37,7 +37,7 @@
   ****************************************************************/
 
 /*
-Will now autoMagically apply borders via CSS rules.
+Version 2.x now autoMagically applies borders via CSS rules.
 Safari, Chrome and Mozilla support rounded borders via
 
 -webkit-border-radius, -moz-border-radius
@@ -58,14 +58,16 @@ CSS declarations and it should be good to go...
   -webkit-border-radius: 3ex;
   -moz-border-radius: 3ex;
 }
+
+NB at present you must (for Opera's sake) include these styles in
+the page itself.
 */
 
 function browserdetect() {
   var agent = navigator.userAgent.toLowerCase();
   this.isIE      = agent.indexOf("msie") > -1;
   this.ieVer = this.isIE ? /msie\s(\d\.\d)/.exec(agent)[1] : 0;
-  this.isMoz     = document.implementation && document.implementation.createDocument;
-  //this.isMoz     = agent.indexOf('firefox') != -1;
+  this.isMoz     = agent.indexOf('firefox') != -1;
   this.isSafari  = agent.indexOf('safari') != -1;
   this.quirksMode= this.isIE && (!document.compatMode || document.compatMode.indexOf("BackCompat") > -1);
   this.isOp      = window.opera ? true : false;
@@ -122,7 +124,7 @@ function browserdetect() {
 var curvyBrowser = new browserdetect;
 
 /* Force caching of bg images in IE6 */
-if(curvyBrowser.isIE) {
+if (curvyBrowser.isIE) {
   try {
     document.execCommand("BackgroundImageCache", false, true);
   }
@@ -928,6 +930,154 @@ curvyObject.IntToHex = function(strNum) {
   return hexdig[strNum >>> 4] + '' + hexdig[strNum & 15];
 }
 
+curvyObject.colourNames = {
+aliceblue: '#F0F8FF',
+antiquewhite: '#FAEBD7',
+aqua: '#00FFFF',
+aquamarine: '#7FFFD4',
+azure: '#F0FFFF',
+beige: '#F5F5DC',
+bisque: '#FFE4C4',
+black: '#000000',
+blanchedalmond: '#FFEBCD',
+blue: '#0000FF',
+blueviolet: '#8A2BE2',
+brown: '#A52A2A',
+burlywood: '#DEB887',
+cadetblue: '#5F9EA0',
+chartreuse: '#7FFF00',
+chocolate: '#D2691E',
+coral: '#FF7F50',
+cornflowerblue: '#6495ED',
+cornsilk: '#FFF8DC',
+crimson: '#DC143C',
+cyan: '#00FFFF',
+darkblue: '#00008B',
+darkcyan: '#008B8B',
+darkgoldenrod: '#B8860B',
+darkgray: '#A9A9A9',
+darkgrey: '#A9A9A9',
+darkgreen: '#006400',
+darkkhaki: '#BDB76B',
+darkmagenta: '#8B008B',
+darkolivegreen: '#556B2F',
+darkorange: '#FF8C00',
+darkorchid: '#9932CC',
+darkred: '#8B0000',
+darksalmon: '#E9967A',
+darkseagreen: '#8FBC8F',
+darkslateblue: '#483D8B',
+darkslategray: '#2F4F4F',
+darkturquoise: '#00CED1',
+darkviolet: '#9400D3',
+deeppink: '#FF1493',
+deepskyblue: '#00BFFF',
+dimgray: '#696969',
+dodgerblue: '#1E90FF',
+firebrick: '#B22222',
+floralwhite: '#FFFAF0',
+forestgreen: '#228B22',
+fuchsia: '#FF00FF',
+gainsboro: '#DCDCDC',
+ghostwhite: '#F8F8FF',
+gold: '#FFD700',
+goldenrod: '#DAA520',
+gray: '#808080',
+grey: '#808080',
+green: '#008000',
+greenyellow: '#ADFF2F',
+honeydew: '#F0FFF0',
+hotpink: '#FF69B4',
+indianred: '#CD5C5C',
+indigo: '#4B0082',
+ivory: '#FFFFF0',
+khaki: '#F0E68C',
+lavender: '#E6E6FA',
+lavenderblush: '#FFF0F5',
+lawngreen: '#7CFC00',
+lemonchiffon: '#FFFACD',
+lightblue: '#ADD8E6',
+lightcoral: '#F08080',
+lightcyan: '#E0FFFF',
+lightgoldenrodyellow: '#FAFAD2',
+lightgray: '#D3D3D3',
+lightgrey: '#D3D3D3',
+lightgreen: '#90EE90',
+lightpink: '#FFB6C1',
+lightsalmon: '#FFA07A',
+lightseagreen: '#20B2AA',
+lightskyblue: '#87CEFA',
+lightslategray: '#778899',
+lightslategrey: '#778899',
+lightsteelblue: '#B0C4DE',
+lightyellow: '#FFFFE0',
+lime: '#00FF00',
+limegreen: '#32CD32',
+linen: '#FAF0E6',
+magenta: '#FF00FF',
+maroon: '#800000',
+mediumaquamarine: '#66CDAA',
+mediumblue: '#0000CD',
+mediumorchid: '#BA55D3',
+mediumpurple: '#9370D8',
+mediumseagreen: '#3CB371',
+mediumslateblue: '#7B68EE',
+mediumspringgreen: '#00FA9A',
+mediumturquoise: '#48D1CC',
+mediumvioletred: '#C71585',
+midnightblue: '#191970',
+mintcream: '#F5FFFA',
+mistyrose: '#FFE4E1',
+moccasin: '#FFE4B5',
+navajowhite: '#FFDEAD',
+navy: '#000080',
+oldlace: '#FDF5E6',
+olive: '#808000',
+olivedrab: '#6B8E23',
+orange: '#FFA500',
+orangered: '#FF4500',
+orchid: '#DA70D6',
+palegoldenrod: '#EEE8AA',
+palegreen: '#98FB98',
+paleturquoise: '#AFEEEE',
+palevioletred: '#D87093',
+papayawhip: '#FFEFD5',
+peachpuff: '#FFDAB9',
+peru: '#CD853F',
+pink: '#FFC0CB',
+plum: '#DDA0DD',
+powderblue: '#B0E0E6',
+purple: '#800080',
+red: '#FF0000',
+rosybrown: '#BC8F8F',
+royalblue: '#4169E1',
+saddlebrown: '#8B4513',
+salmon: '#FA8072',
+sandybrown: '#F4A460',
+seagreen: '#2E8B57',
+seashell: '#FFF5EE',
+sienna: '#A0522D',
+silver: '#C0C0C0',
+skyblue: '#87CEEB',
+slateblue: '#6A5ACD',
+slategray: '#708090',
+slategrey: '#708090',
+snow: '#FFFAFA',
+springgreen: '#00FF7F',
+steelblue: '#4682B4',
+tan: '#D2B48C',
+teal: '#008080',
+thistle: '#D8BFD8',
+tomato: '#FF6347',
+turquoise: '#40E0D0',
+violet: '#EE82EE',
+wheat: '#F5DEB3',
+white: '#FFFFFF',
+whitesmoke: '#F5F5F5',
+yellow: '#FFFF00',
+yellowgreen: '#9ACD32'
+};
+
 
 /*
   Blends the two colours by the fraction
@@ -935,6 +1085,15 @@ curvyObject.IntToHex = function(strNum) {
 */
 
 curvyObject.BlendColour = function(Col1, Col2, Col1Fraction) {
+  if (Col1 === 'transparent' || Col2 === 'transparent') throw this.newError('Cannot blend with transparent');
+  if (Col1.charAt(0) !== '#') {
+    curvyCorners.alert('Found colour1 ' + Col1 + ': please let us know you saw this report.');
+    Col1 = curvyObject.format_colour(Col1);
+  }
+  if (Col2.charAt(0) !== '#') {
+    curvyCorners.alert('Found colour2 ' + Col2 + ': please let us know you saw this report.');
+    Col2 = curvyObject.format_colour(Col2);
+  }
   var red1 = parseInt(Col1.substr(1, 2), 16);
   var green1 = parseInt(Col1.substr(3, 2), 16);
   var blue1 = parseInt(Col1.substr(5, 2), 16);
@@ -1120,7 +1279,7 @@ function addEvent(elm, evType, fn, useCapture) {
   return false;
 }
 
-// convert rgb() and #RGB to #RRGGBB
+// convert colour name, rgb() and #RGB to #RRGGBB
 
 curvyObject.format_colour = function(colour) {
   // Make sure colour is set and not transparent
@@ -1129,6 +1288,12 @@ curvyObject.format_colour = function(colour) {
     if (colour.substr(0, 3) === "rgb") {
       // Get HEX aquiv.
       colour = curvyObject.rgb2Hex(colour);
+    }
+    else if (colour.charAt(0) !== '#') {
+      colour = colour.toLowerCase();
+      if (colour in curvyObject.colourNames)
+        colour = curvyObject.colourNames[colour];
+      else throw this.newError("Don't recognize colour '" + colour + "'");
     }
     else if (colour.length === 4) {
       // 3 chr colour code add remainder
@@ -1173,91 +1338,96 @@ curvyCorners.getElementsByClass = function(searchClass, node) {
   return classElements;
 }
 
-// autoscan code
+if (curvyBrowser.isMoz || curvyBrowser.isWebkit)
+  curvyCornersNoAutoScan = true; // it won't do anything anyway.
+else {
 
-curvyCorners.scanStyles = function() {
-  function units(num) {
-    var matches = /^\d+(\w+)$/.exec(num);
-    return matches[1];
-  }
-  var t, i, j;
+  // autoscan code
 
-  if (curvyBrowser.isIE) {
-    function procIEStyles(rule) {
-      var style = rule.style;
+  curvyCorners.scanStyles = function() {
+    function units(num) {
+      var matches = /^\d+(\w+)$/.exec(num);
+      return matches[1];
+    }
+    var t, i, j;
 
-      if(curvyBrowser.ieVer > 6.0) {
-        var allR = style['-webkit-border-radius'] || 0;
-        var tR   = style['-webkit-border-top-right-radius'] || 0;
-        var tL   = style['-webkit-border-top-left-radius'] || 0;
-        var bR   = style['-webkit-border-bottom-right-radius'] || 0;
-        var bL   = style['-webkit-border-bottom-left-radius'] || 0;
-      }
-      else {
-        var allR = style['webkit-border-radius'] || 0;
-        var tR   = style['webkit-border-top-right-radius'] || 0;
-        var tL   = style['webkit-border-top-left-radius'] || 0;
-        var bR   = style['webkit-border-bottom-right-radius'] || 0;
-        var bL   = style['webkit-border-bottom-left-radius'] || 0;
-      }
-      if (allR || tL || tR || bR || bL) {
-        var settings = new curvyCnrSpec(rule.selectorText);
-        if (allR)
-          settings.setcorner(null, null, parseInt(allR), units(allR));
-        else {
-          if (tR) settings.setcorner('t', 'r', parseInt(tR), units(tR));
-          if (tL) settings.setcorner('t', 'l', parseInt(tL), units(tL));
-          if (bL) settings.setcorner('b', 'l', parseInt(bL), units(bL));
-          if (bR) settings.setcorner('b', 'r', parseInt(bR), units(bR));
+    if (curvyBrowser.isIE) {
+      function procIEStyles(rule) {
+        var style = rule.style;
+
+        if(curvyBrowser.ieVer > 6.0) {
+          var allR = style['-webkit-border-radius'] || 0;
+          var tR   = style['-webkit-border-top-right-radius'] || 0;
+          var tL   = style['-webkit-border-top-left-radius'] || 0;
+          var bR   = style['-webkit-border-bottom-right-radius'] || 0;
+          var bL   = style['-webkit-border-bottom-left-radius'] || 0;
         }
-        curvyCorners(settings);
+        else {
+          var allR = style['webkit-border-radius'] || 0;
+          var tR   = style['webkit-border-top-right-radius'] || 0;
+          var tL   = style['webkit-border-top-left-radius'] || 0;
+          var bR   = style['webkit-border-bottom-right-radius'] || 0;
+          var bL   = style['webkit-border-bottom-left-radius'] || 0;
+        }
+        if (allR || tL || tR || bR || bL) {
+          var settings = new curvyCnrSpec(rule.selectorText);
+          if (allR)
+            settings.setcorner(null, null, parseInt(allR), units(allR));
+          else {
+            if (tR) settings.setcorner('t', 'r', parseInt(tR), units(tR));
+            if (tL) settings.setcorner('t', 'l', parseInt(tL), units(tL));
+            if (bL) settings.setcorner('b', 'l', parseInt(bL), units(bL));
+            if (bR) settings.setcorner('b', 'r', parseInt(bR), units(bR));
+          }
+          curvyCorners(settings);
+        }
+      }
+      for (t = 0; t < document.styleSheets.length; ++t) {
+        if (document.styleSheets[t].imports) {
+          for (i = 0; i < document.styleSheets[t].imports.length; ++i)
+            for (j = 0; j < document.styleSheets[t].imports[i].rules.length; ++j)
+              procIEStyles(document.styleSheets[t].imports[i].rules[j]);
+        }
+        for (i = 0; i < document.styleSheets[t].rules.length; ++i)
+          procIEStyles(document.styleSheets[t].rules[i]);
       }
     }
-    for (t = 0; t < document.styleSheets.length; ++t) {
-      if (document.styleSheets[t].imports) {
-        for (i = 0; i < document.styleSheets[t].imports.length; ++i)
-          for (j = 0; j < document.styleSheets[t].imports[i].rules.length; ++j)
-            procIEStyles(document.styleSheets[t].imports[i].rules[j]);
-      }
-      for (i = 0; i < document.styleSheets[t].rules.length; ++i)
-        procIEStyles(document.styleSheets[t].rules[i]);
-    }
-  }
-  else if (curvyBrowser.isOp) {
-    for (t = 0; t < document.styleSheets.length; ++t) {
-      if (operasheet.contains_border_radius(t)) {
-        j = new operasheet(t);
-        for (i in j.rules) if (!isNaN(i))
-          curvyCorners(j.rules[i]);
+    else if (curvyBrowser.isOp) {
+      for (t = 0; t < document.styleSheets.length; ++t) {
+        if (operasheet.contains_border_radius(t)) {
+          j = new operasheet(t);
+          for (i in j.rules) if (!isNaN(i))
+            curvyCorners(j.rules[i]);
+        }
       }
     }
-  }
-  else alert('Wasting my time!');
-}
+    else alert('Wasting my time!');
+  };
 
-// Dean Edwards/Matthias Miller/John Resig
+  // Dean Edwards/Matthias Miller/John Resig
 
-curvyCorners.init = function() {
-  // quit if this function has already been called
-  if (arguments.callee.done) return;
+  curvyCorners.init = function() {
+    // quit if this function has already been called
+    if (arguments.callee.done) return;
 
-  // flag this function so we don't do the same thing twice
-  arguments.callee.done = true;
+    // flag this function so we don't do the same thing twice
+    arguments.callee.done = true;
 
-  // kill the timer
-  if (curvyBrowser.isWebKit && curvyCorners.init.timer) {
-    clearInterval(curvyCorners.init.timer);
-    curvyCorners.init.timer = null;
-  }
+    // kill the timer
+    if (curvyBrowser.isWebKit && curvyCorners.init.timer) {
+      clearInterval(curvyCorners.init.timer);
+      curvyCorners.init.timer = null;
+    }
 
-  // do stuff
-  curvyCorners.scanStyles();
+    // do stuff
+    curvyCorners.scanStyles();
+  };
 }
 
 if (typeof curvyCornersNoAutoScan === 'undefined' || curvyCornersNoAutoScan === false) {
   /* for Internet Explorer */
-  if(curvyBrowser.isIE) {
-    document.write("<script id=__ie_onload defer src=javascript:void(0)><\/script>");
+  if (curvyBrowser.isIE) {
+    document.write("<script id='__ie_onload' defer='defer' src='javascript:void(0)'><\/script>");
     var script = document.getElementById("__ie_onload");
     script.onreadystatechange = function() {
       if (this.readyState == "complete") {
