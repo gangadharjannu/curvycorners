@@ -505,7 +505,7 @@ function curvyObject() {
   this.box.innerHTML = "";
 
   if (boxPosition != "absolute") this.box.style.position = "relative";
-  this.box.style.top = this.box.style.left = this.box.style.padding = '0';
+  this.box.style.padding = '0';
   this.box.style.border = this.box.style.backgroundImage = 'none';
   this.box.style.backgroundColor = 'transparent';
 
