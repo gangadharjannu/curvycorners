@@ -5,7 +5,7 @@
   *                                                              *
   *  This script generates rounded corners for your boxes.       *
   *                                                              *
-  *  Version 2.0.3                                               *
+  *  Version 2.0.4pre0                                           *
   *  Copyright (c) 2009 Cameron Cooke                            *
   *  Contributors: Tim Hutchison, CPK Smithies, Terry Rigel      *
   *                                                              *
@@ -315,14 +315,14 @@ function curvyCorners() {
       var argbits = arg.split(' ');
       switch (arg.charAt(0)) {
         case '#' : // id
-          if (argbits.length === 1)
-            boxCol.push(document.getElementById(arg.substr(1)));
-          else {
-            var encloser = document.getElementById(argbits[0].substr(1));
-            if (encloser)
-              boxCol = boxCol.concat(curvyCorners.getElementsByClass(argbits[1], encloser));
-            else curvyCorners.alert("No object with ID " + arg + " exists yet.\nCall curvyCorners(settings, obj) when it is created.");
-          }
+          j = argbits.length === 1 ? arg : argbits[0];
+          j = document.getElementById(j.substr(1));
+          if (j === null)
+            curvyCorners.alert("No object with ID " + arg + " exists yet.\nCall curvyCorners(settings, obj) when it is created.");
+          else if (argbits.length === 1)
+            boxCol.push(j);
+          else
+            boxCol = boxCol.concat(curvyCorners.getElementsByClass(argbits[1], j));
         break;
         default :
           if (argbits.length === 1)
