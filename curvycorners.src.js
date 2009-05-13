@@ -870,7 +870,7 @@ function curvyObject() {
     contentContainer.style.left   = this.borderWidthL + "px";
     // Get padding amounts
     // Apply top padding
-    contentContainer.style.paddingTop = this.topPadding;
+    contentContainer.style.paddingTop = this.topPadding + "px";
     contentContainer.style.top = this.borderWidth + "px";
     // skip bottom padding - it doesn't show!
     // Apply left and right padding
