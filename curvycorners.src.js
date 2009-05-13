@@ -5,7 +5,7 @@
   *                                                              *
   *  This script generates rounded corners for your boxes.       *
   *                                                              *
-  *  Version 2.0.4pre0                                           *
+  *  Version 2.0.4pre1                                           *
   *  Copyright (c) 2009 Cameron Cooke                            *
   *  Contributors: Tim Hutchison, CPK Smithies, Terry Rigel      *
   *                                                              *
@@ -92,33 +92,10 @@ function browserdetect() {
     };
   }
   else {
-    if (this.isSafari) {
-      this.get_style = function(obj, prop) {
-        var returnVal, wasHidden = false;
-        prop = prop.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
-        /*
-        Safari does not expose any information for the object if display is
-        set to none is set so we temporarily enable it.
-        */
-        if (obj.style.display == "none") {
-          obj.style.display = "";
-          wasHidden = true;
-        }
-
-        returnVal = document.defaultView.getComputedStyle(obj, '').getPropertyValue(prop);
-
-        // Rehide the object
-        if (wasHidden) obj.style.display = "none";
-
-        return returnVal;
-      };
-    }
-    else {
-      this.get_style = function(obj, prop) {
-        prop = prop.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
-        return document.defaultView.getComputedStyle(obj, '').getPropertyValue(prop);
-      };
-    }
+    this.get_style = function(obj, prop) {
+      prop = prop.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
+      return document.defaultView.getComputedStyle(obj, '').getPropertyValue(prop);
+    };
   }
 }
 var curvyBrowser = new browserdetect;
@@ -305,6 +282,7 @@ function curvyCorners() {
     var args = settings.selectorText.replace(/\s+$/,'').split(/,\s*/); // handle comma-separated selector list
     boxCol = new Array;
 
+    // converts div#mybox to #mybox
     function idof(str) {
       var ret = str.split('#');
       return (ret.length === 2 ? "#" : "") + ret.pop();
@@ -360,7 +338,9 @@ function curvyCorners() {
     }
   }
 }
-curvyCorners.prototype.applyCornersToAll = function () {}; // now redundant
+curvyCorners.prototype.applyCornersToAll = function () { // now redundant
+  curvyCorners.alert('This function is now redundant. Just call curvyCorners(). See documentation.');
+};
 
 curvyCorners.redraw = function() {
   if (!curvyBrowser.isOp && !curvyBrowser.isIE) return;
@@ -445,8 +425,16 @@ function curvyObject() {
   var boxColour       = curvyBrowser.get_style(this.box, "backgroundColor");
   var backgroundImage = curvyBrowser.get_style(this.box, "backgroundImage");
   var backgroundRepeat= curvyBrowser.get_style(this.box, "backgroundRepeat");
+  if (this.box.currentStyle && this.box.currentStyle.backgroundPositionX) {
   var backgroundPosX  = curvyBrowser.get_style(this.box, "backgroundPositionX");
   var backgroundPosY  = curvyBrowser.get_style(this.box, "backgroundPositionY");
+  }
+  else {
+    var backgroundPosX = curvyBrowser.get_style(this.box, 'backgroundPosition');
+    backgroundPosX = backgroundPosX.split(' ');
+    var backgroundPosY = backgroundPosX[1];
+    backgroundPosX = backgroundPosX[0];
+  }
   var boxPosition     = curvyBrowser.get_style(this.box, "position");
   var topPadding      = curvyBrowser.get_style(this.box, "paddingTop");
   var bottomPadding   = curvyBrowser.get_style(this.box, "paddingBottom");
@@ -485,9 +473,6 @@ function curvyObject() {
     this.borderStringB   = this.borderWidthB + "px" + " solid " + this.borderColourB;
     this.backgroundImage = ((backgroundImage != "none")? backgroundImage : "");
     this.backgroundRepeat= backgroundRepeat;
-    this.backgroundPosX  = styleToNPx(backgroundPosX);
-    this.backgroundPosY  = styleToNPx(backgroundPosY);
-
     this.boxContent      = this.box.innerHTML;
   }
   catch(e) {
@@ -495,6 +480,20 @@ function curvyObject() {
   }
   var clientHeight = this.boxHeight;
   var clientWidth = boxWidth; // save it as it gets trampled on later
+  if (curvyBrowser.isOp) {
+    backgroundPosX = styleToNPx(backgroundPosX);
+    backgroundPosY = styleToNPx(backgroundPosY);
+    if (backgroundPosX) {
+      var t = clientWidth + this.borderWidthL + this.borderWidthR;
+      if (backgroundPosX > t) backgroundPosX = t;
+      backgroundPosX = (t / backgroundPosX * 100) + '%'; // convert to percentage 
+    }
+    if (backgroundPosY) {
+      var t = clientHeight + this.borderWidth + this.borderWidthB;
+      if (backgroundPosY > t) backgroundPosY = t;
+      backgroundPosY = (t / backgroundPosY * 100) + '%'; // convert to percentage 
+    }
+  }
   if (curvyBrowser.quirksMode) {
   }
   else {
@@ -539,7 +538,7 @@ function curvyObject() {
   this.shell = this.box.appendChild(newMainContainer);
 
   boxWidth = curvyBrowser.get_style(this.shell, "width");
-  if (boxWidth === "" || boxWidth === "auto" || boxWidth.indexOf("%") !== -1) alert('Shell width is ' + boxWidth);
+  if (boxWidth === "" || boxWidth === "auto" || boxWidth.indexOf("%") !== -1) throw this.newError('Shell width is ' + boxWidth);
   this.boxWidth = (boxWidth != "" && boxWidth != "auto" && boxWidth.indexOf("%") == -1) ? parseInt(boxWidth) : this.shell.clientWidth;
 
   /*
@@ -547,6 +546,26 @@ function curvyObject() {
     applies them to the div element.
   */
   this.applyCorners = function() {
+    /*
+      Set up background offsets. This may need to be delayed until
+      the background image is loaded.
+    */
+    if (this.backgroundObject) {
+      var bgOffset = function(style, imglen, boxlen) {
+        if (style === 0) return 0;
+        var retval;
+        if (style === 'right' || style === 'bottom') return boxlen - imglen;
+        if (style === 'center') return (boxlen - imglen) / 2;
+        if (style.indexOf('%') > 0) return (boxlen - imglen) * 100 / parseInt(style);
+        return styleToNPx(style);
+      }
+      this.backgroundPosX  = bgOffset(backgroundPosX, this.backgroundObject.width, clientWidth);
+      this.backgroundPosY  = bgOffset(backgroundPosY, this.backgroundObject.height, clientHeight);
+    }
+    else if (this.backgroundImage) {
+      this.backgroundPosX = styleToNPx(backgroundPosX);
+      this.backgroundPosY = styleToNPx(backgroundPosY);
+    }
     /*
       Create top and bottom containers.
       These will be used as a parent for the corners and bars.
@@ -815,10 +834,10 @@ function curvyObject() {
               var x_offset = this.spec.tlR ?
                 (this.backgroundPosX - (topMaxRadius - this.borderWidthL)) + "px " : "0 ";
               newFillerBar.style.backgroundPosition  = x_offset + this.backgroundPosY + "px";
+              // Reposition the box's background image
+              this.shell.style.backgroundPosition = this.backgroundPosX + "px " + (this.backgroundPosY - topMaxRadius + this.borderWidthL) + "px";
             }
             this.topContainer.appendChild(newFillerBar);
-            // Reposition the box's background image
-            this.shell.style.backgroundPosition = this.backgroundPosX + "px " + (this.backgroundPosY - topMaxRadius + this.borderWidthL) + "px";
           }
         break;
         case "b":
@@ -866,8 +885,39 @@ function curvyObject() {
     this.box.appendChild(contentContainer);
     if (boxDisp) boxDisp.style.display = 'none';
   }
+  if (this.backgroundImage) {
+    backgroundPosX = this.backgroundCheck(backgroundPosX);
+    backgroundPosY = this.backgroundCheck(backgroundPosY);
+    if (this.backgroundObject) {
+      this.backgroundObject.holdingElement = this;
+      this.dispatch = this.applyCorners;
+      this.applyCorners = function() {
+        if (this.backgroundObject.complete)
+          this.dispatch();
+        else this.backgroundObject.onload = new Function('curvyObject.dispatch(this.holdingElement);');
+      }
+    }
+  }
 }
 
+curvyObject.prototype.backgroundCheck = function(style) {
+  if (style === 'top' || style === 'left' || parseInt(style) === 0) return 0;
+  if (!(/^[-\d.]+px$/.test(style))  && !this.backgroundObject) {
+    this.backgroundObject = new Image;
+    var imgName = function(str) {
+      var matches = /url\("?([^'"]+)"?\)/.exec(str);
+      return (matches ? matches[1] : str);
+    }
+    this.backgroundObject.src = imgName(this.backgroundImage);
+  }
+  return style;
+}
+
+curvyObject.dispatch = function(obj) {
+  if ('dispatch' in obj)
+    obj.dispatch();
+  else throw obj.newError('No dispatch function');
+}
 
 // append a pixel DIV to newCorner
 
@@ -1273,7 +1323,7 @@ else {
         }
       }
     }
-    else alert('Wasting my time!');
+    else curvyCorners.alert('Scanstyles does nothing in Webkit/Firefox');
   };
 
   // Dean Edwards/Matthias Miller/John Resig
