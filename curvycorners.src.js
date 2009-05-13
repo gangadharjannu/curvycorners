@@ -473,7 +473,6 @@ function curvyObject() {
     this.borderStringB   = this.borderWidthB + "px" + " solid " + this.borderColourB;
     this.backgroundImage = ((backgroundImage != "none")? backgroundImage : "");
     this.backgroundRepeat= backgroundRepeat;
-    this.boxContent      = this.box.innerHTML;
   }
   catch(e) {
     throw this.newError('getMessage' in e ? e.getMessage() : e.message);
@@ -501,7 +500,9 @@ function curvyObject() {
     this.boxHeight -= this.topPadding + this.bottomPadding;
   }
 
-  this.box.innerHTML = "";
+  // Create content container
+  this.contentContainer = document.createElement("div");
+  while (this.box.firstChild) this.contentContainer.appendChild(this.box.removeChild(this.box.firstChild));
 
   if (boxPosition != "absolute") this.box.style.position = "relative";
   this.box.style.padding = '0';
@@ -861,28 +862,26 @@ function curvyObject() {
       }
     }
 
-    // Create content container
-    var contentContainer = document.createElement("div");
-    contentContainer.style.position = "absolute";
+    // style content container
+    this.contentContainer.style.position = "absolute";
     // contentContainer.style.border = "1px dotted #000"; // DEBUG, comment for production
-    contentContainer.innerHTML    = this.boxContent;
-    contentContainer.className    = "autoPadDiv";
-    contentContainer.style.left   = this.borderWidthL + "px";
+    this.contentContainer.className    = "autoPadDiv";
+    this.contentContainer.style.left   = this.borderWidthL + "px";
     // Get padding amounts
     // Apply top padding
-    contentContainer.style.paddingTop = this.topPadding + "px";
-    contentContainer.style.top = this.borderWidth + "px";
+    this.contentContainer.style.paddingTop = this.topPadding + "px";
+    this.contentContainer.style.top = this.borderWidth + "px";
     // skip bottom padding - it doesn't show!
     // Apply left and right padding
-    contentContainer.style.paddingLeft = this.leftPadding + "px";
-    contentContainer.style.paddingRight = this.rightPadding + "px";
+    this.contentContainer.style.paddingLeft = this.leftPadding + "px";
+    this.contentContainer.style.paddingRight = this.rightPadding + "px";
     z = clientWidth;
     if (!curvyBrowser.quirksMode) z -= this.leftPadding + this.rightPadding;
-    contentContainer.style.width = z + "px";
-    contentContainer.style.textAlign = curvyBrowser.get_style(this.box, 'textAlign');
+    this.contentContainer.style.width = z + "px";
+    this.contentContainer.style.textAlign = curvyBrowser.get_style(this.box, 'textAlign');
     this.box.style.textAlign = 'left'; // important otherwise layout goes wild
 
-    this.box.appendChild(contentContainer);
+    this.box.appendChild(this.contentContainer);
     if (boxDisp) boxDisp.style.display = 'none';
   }
   if (this.backgroundImage) {
