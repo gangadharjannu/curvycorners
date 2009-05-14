@@ -5,7 +5,7 @@
   *                                                              *
   *  This script generates rounded corners for your boxes.       *
   *                                                              *
-  *  Version 2.0.4pre1                                           *
+  *  Version 2.0.4pre2                                           *
   *  Copyright (c) 2009 Cameron Cooke                            *
   *  Contributors: Tim Hutchison, CPK Smithies, Terry Rigel      *
   *                                                              *
@@ -345,6 +345,8 @@ curvyCorners.prototype.applyCornersToAll = function () { // now redundant
 curvyCorners.redraw = function() {
   if (!curvyBrowser.isOp && !curvyBrowser.isIE) return;
   if (!curvyCorners.redrawList) throw curvyCorners.newError('curvyCorners.redraw() has nothing to redraw.');
+  var old_block_value = curvyCorners.bock_redraw;
+  curvyCorners.block_redraw = true;
   for (var i in curvyCorners.redrawList) {
     if (isNaN(i)) continue; // in case of added prototype methods
     var o = curvyCorners.redrawList[i];
@@ -352,12 +354,16 @@ curvyCorners.redraw = function() {
     var newchild = o.copy.cloneNode(false);
     for (var contents = o.node.firstChild; contents != null; contents = contents.nextSibling)
       if (contents.className === 'autoPadDiv') break;
-    if (!contents) throw curvyCorners.newError("Couldn't find autoPad div"); //DEBUG
+    if (!contents) {
+      curvyCorners.alert('Couldn\'t find autoPad DIV');
+      break;
+    }
     o.node.parentNode.replaceChild(newchild, o.node);
     while (contents.firstChild) newchild.appendChild(contents.removeChild(contents.firstChild));
     o = new curvyObject(o.spec, o.node = newchild);
     o.applyCorners();
   }
+  curvyCorners.block_redraw = old_block_value;
 }
 curvyCorners.adjust = function(obj, prop, newval) {
   if (curvyBrowser.isOp || curvyBrowser.isIE) {
@@ -370,6 +376,12 @@ curvyCorners.adjust = function(obj, prop, newval) {
   if (prop.indexOf('.') === -1)
     obj[prop] = newval;
   else eval('obj.' + prop + "='" + newval + "'");
+}
+curvyCorners.handleWinResize = function() {
+  if (!curvyCorners.block_redraw) curvyCorners.redraw();
+}
+curvyCorners.setWinResize = function(onoff) {
+  curvyCorners.block_redraw = !onoff;
 }
 curvyCorners.newError = function(errorMessage) {
   return new Error("curvyCorners Error:\n" + errorMessage)
