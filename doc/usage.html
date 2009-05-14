@@ -193,6 +193,30 @@ above. It returns no useful value.</p>
 <a href="http://www.curvycorners.net/includes/examples/demo5.html">demo
 5</a>.</p>
 
+<h4>Handling window resize events</h4>
+<p>curvyCorners supports redrawing curved boxes in response to a change
+in the browser window size. If you wish to take advantage of this,
+you can add an event handler to trigger a redraw. However, some
+DOM changes will fire spurious window resize events in some browsers.
+These can happen in the midst of DOM changes (including those that
+curvyCorners itself makes whilst redrawing). Therefore, do <strong>not</strong>
+make your handler call <code>curvyCorners.redraw()</code> directly.
+Instead, set your resize handler function to call
+<code>curvyCorners.handleWinResize()</code>.</p>
+
+<p>Next, if you find that some of your code is triggering window resize
+events (which will cause a noticeable delay!), surround the code with:</p>
+
+<p class="codeSample">
+curvyCorners.setWinResize(false); // block redraw on resize
+// ... your DOM-manipulating code here
+curvyCorners.setWinResize(true); // re-enable redraws on window resize
+</p>
+
+<p>An example of this technique is contained in
+<a href="http://www.curvycorners.net/includes/examples/demo5.html">demo
+5</a>.</p>
+
 <h4 id="delay">Delaying the CurvyCorners startup code</h4>
 
 <p>If it is planned to add a number of elements to the page after it has
