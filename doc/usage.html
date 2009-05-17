@@ -400,15 +400,15 @@ you should be mindful of the
 <a href="#borderlimits">limitations documented above</a>.)</p>
 
 <p>What about square corners? Say you did not want the top right and bottom left
-corners to be rounded at all and remain square, you replace the bracketed
-section to the right of each colon (:) with the keyword <code>false</code>.
+corners to be rounded at all and remain square: in this case, either specify
+a zero radius, or omit the corner specification entirely.
 See example below.</p>
 
 <div class="codeSample">
   &nbsp;&nbsp;&nbsp;&nbsp;var settings = {<br />
   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;tl: { radius: <b>20</b> },<br />
-  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;tr: false,<br />
-  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bl: false,<br />
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;tr: { radius: <b> 0</b> },<br />
+  &nbsp;&nbsp;&nbsp;// bl: { radius: <b> 0</b> },<br />
   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;br: { radius: <b>80</b> },<br />
   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;antiAlias: true<br />
   &nbsp;&nbsp;&nbsp;&nbsp;}
@@ -505,6 +505,9 @@ style, or migrate to the CSS style.</p>
 <em>must</em> be prefixed with a dot.</li>
 <li>The <var>autoPad</var> member of the <var>settings</var> object is
 no longer supported (it is always <code>true</code> in 2.x).</li>
+<li>Corners that are to be rendered square should either be specified
+with a zero radius, or omitted entirely. They should not be specified
+as <code>false</code>.</li>
 <li>The <code>applyCornersToAll()</code> function is now deprecated and will
 be removed in a future release. It is no longer necessary to create a
 curvyCorners object: simply call the curvyCorners function as before.</li>
@@ -521,7 +524,7 @@ things you should insert are <ins>shown like this</ins>.</p>
   &nbsp;&nbsp;&nbsp;&nbsp;<ins>var</ins> settings = {<br />
   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;tl: { radius: 20 },<br />
   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;tr: { radius: 20 },<br />
-  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bl: { radius: 20 },<br />
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<del>bl: false,</del><br />
   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;br: { radius: 20 },<br />
   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;antiAlias: true<del>,<br />
   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;autoPad: false</del><br />
