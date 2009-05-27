@@ -5,7 +5,7 @@
   *                                                              *
   *  This script generates rounded corners for your boxes.       *
   *                                                              *
-  *  Version 2.0.4pre2                                           *
+  *  Version 2.0.4pre3                                           *
   *  Copyright (c) 2009 Cameron Cooke                            *
   *  Contributors: Tim Hutchison, CPK Smithies, Terry Rigel      *
   *                                                              *
@@ -323,7 +323,7 @@ function curvyCorners() {
 
   // Loop through each argument
   for (i = startIndex, j = boxCol.length; i < j; ++i) {
-    if (!('IEborderRadius' in boxCol[i].style) || boxCol[i].style.IEborderRadius != 'set') {
+    if (boxCol[i] && (!('IEborderRadius' in boxCol[i].style) || boxCol[i].style.IEborderRadius != 'set')) {
       if (boxCol[i].className && boxCol[i].className.indexOf('curvyRedraw') !== -1) {
         if (typeof curvyCorners.redrawList === 'undefined') curvyCorners.redrawList = new Array;
         curvyCorners.redrawList.push({
@@ -497,12 +497,12 @@ function curvyObject() {
     if (backgroundPosX) {
       var t = clientWidth + this.borderWidthL + this.borderWidthR;
       if (backgroundPosX > t) backgroundPosX = t;
-      backgroundPosX = (t / backgroundPosX * 100) + '%'; // convert to percentage 
+      backgroundPosX = (t / backgroundPosX * 100) + '%'; // convert to percentage
     }
     if (backgroundPosY) {
       var t = clientHeight + this.borderWidth + this.borderWidthB;
       if (backgroundPosY > t) backgroundPosY = t;
-      backgroundPosY = (t / backgroundPosY * 100) + '%'; // convert to percentage 
+      backgroundPosY = (t / backgroundPosY * 100) + '%'; // convert to percentage
     }
   }
   if (curvyBrowser.quirksMode) {
