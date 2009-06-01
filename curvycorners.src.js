@@ -5,7 +5,7 @@
   *                                                              *
   *  This script generates rounded corners for your boxes.       *
   *                                                              *
-  *  Version 2.0.4pre3                                           *
+  *  Version 2.0.4pre4                                           *
   *  Copyright (c) 2009 Cameron Cooke                            *
   *  Contributors: Tim Hutchison, CPK Smithies, Terry Rigel      *
   *                                                              *
@@ -453,6 +453,7 @@ function curvyObject() {
   var leftPadding     = curvyBrowser.get_style(this.box, "paddingLeft");
   var rightPadding    = curvyBrowser.get_style(this.box, "paddingRight");
   var border          = curvyBrowser.get_style(this.box, "border");
+  filter = curvyBrowser.ieVer > 7 ? curvyBrowser.get_style(this.box, 'filter') : null; // IE8 bug fix
 
   var topMaxRadius    = this.spec.get('tR');
   var botMaxRadius    = this.spec.get('bR');
@@ -514,6 +515,7 @@ function curvyObject() {
 
   // Create content container
   this.contentContainer = document.createElement("div");
+  if (filter) this.contentContainer.style.filter = filter; // IE8 bug fix
   while (this.box.firstChild) this.contentContainer.appendChild(this.box.removeChild(this.box.firstChild));
 
   if (boxPosition != "absolute") this.box.style.position = "relative";
@@ -528,6 +530,7 @@ function curvyObject() {
 
   var newMainContainer = document.createElement("div");
   newMainContainer.style.position = "absolute";
+  if (filter) newMainContainer.style.filter = filter; // IE8 bug fix
   if (curvyBrowser.quirksMode) {
     newMainContainer.style.width  = (clientWidth + this.borderWidthL + this.borderWidthR) + 'px';
   } else {
@@ -643,6 +646,7 @@ function curvyObject() {
       // THE FOLLOWING BLOCK OF CODE CREATES A ROUNDED CORNER
       // ---------------------------------------------------- TOP
       var intx, inty, outsideColour;
+      var trans = filter ? parseInt(/alpha\(opacity.(\d+)\)/.exec(filter)[1]) : 100; // IE8 bug fix
       // Cycle the x-axis
       for (intx = 0; intx < specRadius; ++intx) {
         // Calculate the value of y1 which identifies the pixels inside the border
@@ -655,7 +659,7 @@ function curvyObject() {
         // Calculate y4
         var y4 = (intx >= specRadius) ? -1 : Math.ceil(Math.sqrt(Math.pow(specRadius, 2) - Math.pow(intx, 2)));
         // Draw bar on inside of the border with foreground colour
-        if (y1 > -1) this.drawPixel(intx, 0, this.boxColour, 100, (y1 + 1), newCorner, true, specRadius);
+        if (y1 > -1) this.drawPixel(intx, 0, this.boxColour, trans, (y1 + 1), newCorner, true, specRadius);
         // Draw border/foreground antialiased pixels and border only if there is a border defined
         if (borderRadius != specRadius) {
           // Cycle the y-axis
@@ -664,25 +668,25 @@ function curvyObject() {
               // For each of the pixels that need anti aliasing between the foreground and border colour draw single pixel divs
               if (this.backgroundImage != "") {
                 var borderFract = curvyObject.pixelFraction(intx, inty, borderRadius) * 100;
-                this.drawPixel(intx, inty, bcolor, 100, 1, newCorner, borderFract >= 30, specRadius);
+                this.drawPixel(intx, inty, bcolor, trans, 1, newCorner, borderFract >= 30, specRadius);
               }
               else if (this.boxColour !== 'transparent') {
                 var pixelcolour = curvyObject.BlendColour(this.boxColour, bcolor, curvyObject.pixelFraction(intx, inty, borderRadius));
-                this.drawPixel(intx, inty, pixelcolour, 100, 1, newCorner, false, specRadius);
+                this.drawPixel(intx, inty, pixelcolour, trans, 1, newCorner, false, specRadius);
               }
-              else this.drawPixel(intx, inty, bcolor, 50, 1, newCorner, false, specRadius);
+              else this.drawPixel(intx, inty, bcolor, trans >> 1, 1, newCorner, false, specRadius);
             }
             // Draw bar for the border
             if (y3 >= y2) {
               if (y2 == -1) y2 = 0;
-              this.drawPixel(intx, y2, bcolor, 100, (y3 - y2 + 1), newCorner, false, 0);
+              this.drawPixel(intx, y2, bcolor, trans, (y3 - y2 + 1), newCorner, false, 0);
             }
             outsideColour = bcolor;  // Set the colour for the outside AA curve
             inty = y3;               // start_pos - 1 for y-axis AA pixels
           }
           else { // no antiAlias
             if (y3 > y1) { // NB condition was >=, changed to avoid zero-height divs
-              this.drawPixel(intx, (y1 + 1), bcolor, 100, (y3 - y1), newCorner, false, 0);
+              this.drawPixel(intx, (y1 + 1), bcolor, trans, (y3 - y1), newCorner, false, 0);
             }
           }
         }
@@ -695,7 +699,7 @@ function curvyObject() {
           // Cycle the y-axis and draw the anti aliased pixels on the outside of the curve
           while (++inty < y4) {
             // For each of the pixels that need anti aliasing between the foreground/border colour & background draw single pixel divs
-            this.drawPixel(intx, inty, outsideColour, (curvyObject.pixelFraction(intx, inty , specRadius) * 100), 1, newCorner, borderWidthTB <= 0, specRadius);
+            this.drawPixel(intx, inty, outsideColour, (curvyObject.pixelFraction(intx, inty , specRadius) * trans), 1, newCorner, borderWidthTB <= 0, specRadius);
           }
         }
       }
@@ -824,6 +828,7 @@ function curvyObject() {
 
       // Create the bar to fill the gap between each corner horizontally
       var newFillerBar = document.createElement("div");
+      if (filter) newFillerBar.style.filter = filter; // IE8 bug fix
       newFillerBar.style.position = "relative";
       newFillerBar.style.fontSize = "1px";
       newFillerBar.style.overflow = "hidden";
@@ -1036,19 +1041,20 @@ curvyObject.BlendColour = function(Col1, Col2, Col1Fraction) {
 */
 
 curvyObject.pixelFraction = function(x, y, r) {
-  var fraction = 0;
+  var fraction;
+  var rsquared = r * r;
 
   /*
     determine the co-ordinates of the two points on the perimeter of the pixel that the
     circle crosses
   */
-  var xvalues = new Array(1);
-  var yvalues = new Array(1);
+  var xvalues = new Array(2);
+  var yvalues = new Array(2);
   var point = 0;
   var whatsides = "";
 
   // x + 0 = Left
-  var intersect = Math.sqrt(Math.pow(r, 2) - Math.pow(x, 2));
+  var intersect = Math.sqrt(rsquared - Math.pow(x, 2));
 
   if (intersect >= y && intersect < (y + 1)) {
     whatsides = "Left";
@@ -1057,28 +1063,28 @@ curvyObject.pixelFraction = function(x, y, r) {
     ++point;
   }
   // y + 1 = Top
-  intersect = Math.sqrt(Math.pow(r, 2) - Math.pow(y + 1, 2));
+  intersect = Math.sqrt(rsquared - Math.pow(y + 1, 2));
 
   if (intersect >= x && intersect < (x + 1)) {
-    whatsides = whatsides + "Top";
+    whatsides += "Top";
     xvalues[point] = intersect - x;
     yvalues[point] = 1;
     ++point;
   }
   // x + 1 = Right
-  intersect = Math.sqrt(Math.pow(r, 2) - Math.pow(x + 1, 2));
+  intersect = Math.sqrt(rsquared - Math.pow(x + 1, 2));
 
   if (intersect >= y && intersect < (y + 1)) {
-    whatsides = whatsides + "Right";
+    whatsides += "Right";
     xvalues[point] = 1;
     yvalues[point] = intersect - y;
     ++point;
   }
   // y + 0 = Bottom
-  intersect = Math.sqrt(Math.pow(r, 2) - Math.pow(y, 2));
+  intersect = Math.sqrt(rsquared - Math.pow(y, 2));
 
   if (intersect >= x && intersect < (x + 1)) {
-    whatsides = whatsides + "Bottom";
+    whatsides += "Bottom";
     xvalues[point] = intersect - x;
     yvalues[point] = 0;
   }
@@ -1171,7 +1177,7 @@ curvyObject.setOpacity = function(obj, opacity) {
     obj.style.MozOpacity = opacity / 100;
   }
   else if (typeof obj.style.filter != "undefined") { // IE
-    obj.style.filter = "alpha(opacity:" + opacity + ")";
+    obj.style.filter = "alpha(opacity=" + opacity + ")";
   }
   else if (typeof obj.style.KHTMLOpacity != "undefined") { // Older KHTML Based curvyBrowsers
     obj.style.KHTMLOpacity = opacity / 100;
