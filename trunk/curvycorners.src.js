@@ -5,7 +5,7 @@
   *                                                              *
   *  This script generates rounded corners for your boxes.       *
   *                                                              *
-  *  Version 2.0.4pre4                                           *
+  *  Version 2.0.4pre5                                           *
   *  Copyright (c) 2009 Cameron Cooke                            *
   *  Contributors: Tim Hutchison, CPK Smithies, Terry Rigel      *
   *                                                              *
@@ -1364,28 +1364,7 @@ else {
 }
 
 if (typeof curvyCornersNoAutoScan === 'undefined' || curvyCornersNoAutoScan === false) {
-  /* for Internet Explorer */
-  if (curvyBrowser.isIE) {
-    document.write("<script id='__ie_onload' defer='defer' src='javascript:void(0)'><\/script>");
-    var script = document.getElementById("__ie_onload");
-    script.onreadystatechange = function() {
-      if (this.readyState == "complete") {
-        curvyCorners.init(); // call the onload handler
-      }
-    };
-  }
-  else {
-
-    if (document.addEventListener) { // Mozilla/Opera9/FireFox/Safari 4/Chrome
-      if (curvyBrowser.isOp) document.addEventListener("DOMContentLoaded", curvyCorners.init, false);
-    }
-    else if (curvyBrowser.isWebKit) { // ? for old Safari?
-      curvyCorners.init.timer = setInterval(function() {
-        if (/loaded|complete/.test(document.readyState)) {
-          curvyCorners.init('WebKit'); // call the onload handler
-        }
-      }, 10);
-    }
-    else window.onload = curvyCorners.init; // other browsers inc. IE6
-  }
+  if (curvyBrowser.isOp)
+    document.addEventListener("DOMContentLoaded", curvyCorners.init, false);
+  else addEvent(window, 'load', curvyCorners.init, false);
 }
