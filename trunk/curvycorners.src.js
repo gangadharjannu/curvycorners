@@ -231,7 +231,7 @@ function operasheet(sheetnumber) {
   // [4] = top|bottom
   // [5] = left|right
   // .. but 3..5 are useless as they're only the first match.
-  var pat = new RegExp("^([\\w.#][-\\w.#, ]+)[\\n\\s]*\\{([^}]+border-((top|bottom)-(left|right)-)?radius[^}]*)\\}", "mg");
+  var pat = new RegExp("^\s*([\\w.#][-\\w.#, ]+)[\\n\\s]*\\{([^}]+border-((top|bottom)-(left|right)-)?radius[^}]*)\\}", "mg");
   var matches;
   this.rules = [];
   while ((matches = pat.exec(txt)) !== null) {
@@ -1285,7 +1285,7 @@ else {
 
   curvyCorners.scanStyles = function() {
     function units(num) {
-      var matches = /^\d+(\w+)$/.exec(num);
+      var matches = /^[\d.]+(\w+)$/.exec(num);
       return matches[1];
     }
     var t, i, j;
