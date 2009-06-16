@@ -5,7 +5,7 @@
   *                                                              *
   *  This script generates rounded corners for your boxes.       *
   *                                                              *
-  *  Version 2.0.4pre6                                           *
+  *  Version 2.0.4pre7                                           *
   *  Copyright (c) 2009 Cameron Cooke                            *
   *  Contributors: Tim Hutchison, CPK Smithies, Terry Rigel      *
   *                                                              *
@@ -1212,8 +1212,8 @@ curvyObject.getComputedColour = function(colour) {
   else { // IE
     var rng = document.body.createTextRange();
     rng.moveToElementText(d);
-    rng.execCommand('BackColor', false, colour);
-    var iClr = rng.queryCommandValue('BackColor');
+    rng.execCommand('ForeColor', false, colour);
+    var iClr = rng.queryCommandValue('ForeColor');
     var rgb = "rgb("+(iClr & 0xFF)+", "+((iClr & 0xFF00)>>8)+", "+((iClr & 0xFF0000)>>16)+")";
     d.parentNode.removeChild(d);
     rng = null;
@@ -1277,7 +1277,7 @@ curvyCorners.getElementsByClass = function(searchClass, node) {
   return classElements;
 }
 
-if (curvyBrowser.isMoz || curvyBrowser.isWebkit)
+if (curvyBrowser.isMoz || curvyBrowser.isWebKit)
   curvyCornersNoAutoScan = true; // it won't do anything anyway.
 else {
 
