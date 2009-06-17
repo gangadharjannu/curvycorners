@@ -43,21 +43,23 @@ samp:before {
 <h2>Navigation</h2>
 
 <ul class="anchorNav">
-  <li><a href="http://www.curvycorners.net/instructions/#source">Getting the source</a></li>
-  <li><a href="http://www.curvycorners.net/instructions/#newWay">Using CurvyCorners the new way &mdash; using CSS</a></li>
-  <li><a href="http://www.curvycorners.net/instructions/#manually">Using CurvyCorners manually</a></li>
-  <li><a href="http://www.curvycorners.net/instructions/#upgrading">Upgrading from version 1.x</a></li>
-  <li><a href="http://www.curvycorners.net/instructions/#options">CurvyCorners options and settings</a></li>
-  <li><a href="http://www.curvycorners.net/instructions/#further">Further information</a></li>
+  <li><a href="#source">Getting the source</a></li>
+  <li><a href="#newWay">Using CurvyCorners the new way &mdash; using CSS</a></li>
+  <li><a href="#manually">Using CurvyCorners manually</a></li>
+  <li><a href="#upgrading">Upgrading from version 1.x</a></li>
+  <li><a href="#options">CurvyCorners options and settings</a></li>
+  <li><a href="#further">Further information</a></li>
 </ul>
 
 <h2 id="source">Getting the source</h2>
-<dl><dt>For the latest stable version:</dt>
+<dl><dt>To check out the latest stable version:</dt>
 <dd><samp>svn co http://curvycorners.googlecode.com/svn/tags/2.0.x/stable [mydir]</samp></dd>
-<dt>For the latest (bleeding-edge) revision:</dt>
+<dt>To check out the latest (bleeding-edge) revision:</dt>
 <dd><samp>svn co http://curvycorners.googlecode.com/svn/trunk [mydir]</samp></dd>
 <dt>To browse the versions:</dt>
 <dd><a href="http://code.google.com/p/curvycorners/source/browse/#svn/tags">http://code.google.com/p/curvycorners/source/browse/#svn/tags</a></dd>
+<dt>To browse the latest revision:</dt>
+<dd><a href="http://code.google.com/p/curvycorners/source/browse/#svn/trunk">http://code.google.com/p/curvycorners/source/browse/#svn/trunk</a></dd>
 </dl>
 
 <p>You can also download the latest version of CurvyCorners from the
@@ -280,13 +282,13 @@ are not included in the DOM tree. CurvyCorners can detect them only if it has
 access to the CSS text.
 If the stylesheet
 is included using a <code>&lt;link href="mystyle.css" rel="stylesheet"/&gt;</code>
-element, Opera won't be able to access it.
+element, or using an <code>@import</code> rule, Opera won't be able to access it.
 It has access only if the style is included in the HTML page itself.
-We hope to address this limitation in the next release.
+We hope to address this limitation soon.
 </li>
 
 <li>Boxes styled by CurvyCorners cannot be resized dynamically except by
-using the <a href="http://www.curvycorners.net/instructions/#dyn">technique described above</a>.</li>
+using the <a href="#dyn">technique described above</a>.</li>
 
 <li id="borderlimits">If a box styled by CurvyCorners has borders,
 then for best results, the border width must be the
@@ -303,12 +305,9 @@ of different non-zero values, the box will not render correctly. Your
 top and bottom corner radii must be either equal, or one of them must be
 zero (square).</li>
 
-<li>A recent limitation, non-support of colour names such as "white",
-has recently been removed. In the next revisions, warning messages may
-(but should not) appear when these are used. Please let us know if you
-see these warnings occur. They can be suppressed: see
-<a href="#options">options</a> below. If an unrecognized colour name
-is used, curvyCorners will throw an informative error.</li>
+<li>&lt;img&gt; elements cannot be rounded using curvyCorners.
+Instead, use a &lt;div&gt; element and set the image as the
+background-image of the &lt;div&gt;.</li>
 
 <li>In legacy browsers, when using image backgrounds, the lower part
 of the box may be out by 1 pixel. We are investigating this issue,
@@ -490,7 +489,7 @@ rounded corners only to those DIVs with class name <var>rounded</var> that
 are contained <em>within</em> the DIV with ID <var>myDiv</var>.</p>
 
 <p>For further details on <abbr>CSS</abbr> selectors, see
-<a href="http://www.curvycorners.net/instructions/#cssLimits">CSS Selector Limitations</a> above.</p>
+<a href="#cssLimits">CSS Selector Limitations</a> above.</p>
 
 <h2 id="upgrading">Upgrading from version 1.x</h2>
 
@@ -570,7 +569,7 @@ var curvyCornersVerbose = false;<br/>
 
 <p>To delay or prevent execution of the CurvyCorners startup code, set
 <var>curvyCornersNoAutoScan</var> <code>true</code> in the same way: see
-<a href="http://www.curvycorners.net/instructions/#delay">the explanation above</a>.</p>
+<a href="#delay">the explanation above</a>.</p>
 
 <h2 id="further">Further information</h2>
 
@@ -580,7 +579,10 @@ the script's source</a>, it's well commented.</p>
 
 <p>If you find a bug in CurvyCorners, please use the
 <a href="http://code.google.com/p/curvycorners/issues/list">issue tracking system</a>
-at <a href="http://code.google.com/p/curvycorners/">Google Code</a>.</p>
+at <a href="http://code.google.com/p/curvycorners/">Google Code</a>. When
+providing sample pages for us to investigate, please use the uncompressed version
+of the script, curvycorners.src.js. It is not possible to debug using the
+script in its compressed form.</p>
 
 <p>If you have any questions, comments or ideas, then please use the
 <a href="http://groups.google.com/group/curvycorners">forum</a><span class="cameronOnly">
