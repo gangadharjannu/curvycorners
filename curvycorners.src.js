@@ -5,7 +5,7 @@
   *                                                              *
   *  This script generates rounded corners for your boxes.       *
   *                                                              *
-  *  Version 2.0.4pre7                                           *
+  *  Version 2.0.4pre8                                           *
   *  Copyright (c) 2009 Cameron Cooke                            *
   *  Contributors: Tim Hutchison, CPK Smithies, Terry Rigel      *
   *                                                              *
@@ -465,6 +465,9 @@ function curvyObject() {
     if (isNaN(val = parseInt(val))) val = 0;
     return val;
   }
+  var min0Px = function(val) {
+    return val <= 0 ? "0" : val + "px";
+  }
 
   // Set formatting properties
   try {
@@ -536,7 +539,7 @@ function curvyObject() {
   } else {
     newMainContainer.style.width  = clientWidth + 'px';
   }
-  newMainContainer.style.height = (clientHeight + this.borderWidth + this.borderWidthB - topMaxRadius - botMaxRadius) + 'px';
+  newMainContainer.style.height = min0Px(clientHeight + this.borderWidth + this.borderWidthB - topMaxRadius - botMaxRadius);
   newMainContainer.style.padding  = "0";
   newMainContainer.style.top    = topMaxRadius + "px";
   newMainContainer.style.left   = "0";
