@@ -161,7 +161,11 @@ may change the contents of a box and have the box re-sized (re-drawn) to fit.
 However, because of the technique CurvyCorners uses to draw the corners, this
 cannot happen automatically. Instead, you must do the following:</p>
 
-<ol><li>Give the box elements to be re-drawn the (additional) special class-name
+<ol>
+<li>Specify the corners using the
+<a href="#newway">new CSS style</a> and <em>not</em> the old
+onload-function style;</li>
+<li>Give the box elements to be re-drawn the (additional) special class-name
 <code>curvyRedraw</code>; and</li>
 <li>in your JavaScript, explicitly call the function
 <code>curvyCorners.redraw()</code>.</li>
@@ -263,6 +267,11 @@ this may cause a brief flicker as the page is loaded.</p>
 <li>If you wish to invoke curvyCorners in a browser that supports rounded
 corners natively, e.g. Firefox, Chrome or Safari, you must use the
 <a href="#manually">manual</a> method described below.</li>
+<li>If you wish to use
+<a href="#dyn">dynamic features</a> (e.g. resizing) on a box
+rounded by curvyCorners, you <em>must</em> use the <a href="#newway">CSS
+style</a> of specifying the corners, <em>not</em> the
+<a href="#manually">old manual style</a>.</li>
 
 <li>In some circumstances, a browser may not compute a display width for a
 box that you wish to style with rounded corners. This may either be because
