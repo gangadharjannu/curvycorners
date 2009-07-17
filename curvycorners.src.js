@@ -5,7 +5,7 @@
   *                                                              *
   *  This script generates rounded corners for your boxes.       *
   *                                                              *
-  *  Version 2.0.4pre8                                           *
+  *  Version 2.0.4pre9                                           *
   *  Copyright (c) 2009 Cameron Cooke                            *
   *  Contributors: Tim Hutchison, CPK Smithies, Terry Rigel      *
   *                                                              *
@@ -70,7 +70,7 @@ function browserdetect() {
   this.isMoz     = agent.indexOf('firefox') != -1;
   this.isSafari  = agent.indexOf('safari') != -1;
   this.quirksMode= this.isIE && (!document.compatMode || document.compatMode.indexOf("BackCompat") > -1);
-  this.isOp      = window.opera ? true : false;
+  this.isOp      = 'opera' in window;
   this.isWebKit  = agent.indexOf('webkit') != -1;
   if (this.isIE) {
     this.get_style = function(obj, prop) {
@@ -1281,7 +1281,7 @@ curvyCorners.getElementsByClass = function(searchClass, node) {
 }
 
 if (curvyBrowser.isMoz || curvyBrowser.isWebKit)
-  curvyCornersNoAutoScan = true; // it won't do anything anyway.
+  var curvyCornersNoAutoScan = true; // it won't do anything anyway.
 else {
 
   // autoscan code
