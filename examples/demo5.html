@@ -183,7 +183,7 @@ function tabclick(n) {
   curvyCorners.setWinResize(true); // OK, allow genuine resize events now
 }
 
-addEvent(window, 'resize', new Function('curvyCorners.handleWinResize();'));
+curvyCorners.addEvent(window, 'resize', new Function('curvyCorners.handleWinResize();'));
 //]]>
 </script>
 </head>
