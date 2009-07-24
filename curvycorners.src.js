@@ -5,7 +5,7 @@
   *                                                              *
   *  This script generates rounded corners for your boxes.       *
   *                                                              *
-  *  Version 2.0.5pre1                                           *
+  *  Version 2.0.5pre2                                           *
   *  Copyright (c) 2009 Cameron Cooke                            *
   *  Contributors: Tim Hutchison, CPK Smithies, Terry Rigel      *
   *                                                              *
@@ -67,7 +67,7 @@ function browserdetect() {
   var agent = navigator.userAgent.toLowerCase();
   this.isIE      = agent.indexOf("msie") > -1;
   this.ieVer = this.isIE ? /msie\s(\d\.\d)/.exec(agent)[1] : 0;
-  this.isMoz     = agent.indexOf('firefox') != -1;
+  this.isMoz     = agent.indexOf('firefox') !== -1 || agent.indexOf('gecko') !== -1;
   this.isSafari  = agent.indexOf('safari') != -1;
   this.quirksMode= this.isIE && (!document.compatMode || document.compatMode.indexOf("BackCompat") > -1);
   this.isOp      = 'opera' in window;
