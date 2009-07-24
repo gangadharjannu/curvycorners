@@ -1199,7 +1199,7 @@ curvyCorners.addEvent = function(elm, evType, fn, useCapture) {
   elm['on' + evType] = fn;
   return false;
 }
-if (typeOf addEvent === 'undefined') addEvent = curvyCorners.addEvent; // only if necessary
+if (typeof addEvent === 'undefined') addEvent = curvyCorners.addEvent; // only if necessary
 
 // Gets the computed colour.
 curvyObject.getComputedColour = function(colour) {
