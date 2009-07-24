@@ -5,7 +5,7 @@
   *                                                              *
   *  This script generates rounded corners for your boxes.       *
   *                                                              *
-  *  Version 2.0.4                                               *
+  *  Version 2.0.5pre1                                           *
   *  Copyright (c) 2009 Cameron Cooke                            *
   *  Contributors: Tim Hutchison, CPK Smithies, Terry Rigel      *
   *                                                              *
@@ -1179,10 +1179,10 @@ curvyObject.setOpacity = function(obj, opacity) {
   else if (typeof obj.style.MozOpacity !== "undefined") { // Older Mozilla
     obj.style.MozOpacity = opacity / 100;
   }
-  else if (typeof obj.style.filter != "undefined") { // IE
+  else if (typeof obj.style.filter !== "undefined") { // IE
     obj.style.filter = "alpha(opacity=" + opacity + ")";
   }
-  else if (typeof obj.style.KHTMLOpacity != "undefined") { // Older KHTML Based curvyBrowsers
+  else if (typeof obj.style.KHTMLOpacity !== "undefined") { // Older KHTML Based curvyBrowsers
     obj.style.KHTMLOpacity = opacity / 100;
   }
 }
@@ -1190,7 +1190,7 @@ curvyObject.setOpacity = function(obj, opacity) {
 
 // Cross browser add event wrapper
 
-function addEvent(elm, evType, fn, useCapture) {
+curvyCorners.addEvent = function(elm, evType, fn, useCapture) {
   if (elm.addEventListener) {
     elm.addEventListener(evType, fn, useCapture);
     return true;
@@ -1199,6 +1199,7 @@ function addEvent(elm, evType, fn, useCapture) {
   elm['on' + evType] = fn;
   return false;
 }
+if (typeOf addEvent === 'undefined') addEvent = curvyCorners.addEvent; // only if necessary
 
 // Gets the computed colour.
 curvyObject.getComputedColour = function(colour) {
@@ -1369,5 +1370,5 @@ else {
 if (typeof curvyCornersNoAutoScan === 'undefined' || curvyCornersNoAutoScan === false) {
   if (curvyBrowser.isOp)
     document.addEventListener("DOMContentLoaded", curvyCorners.init, false);
-  else addEvent(window, 'load', curvyCorners.init, false);
+  else curvyCorners.addEvent(window, 'load', curvyCorners.init, false);
 }
