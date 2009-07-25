@@ -5,7 +5,7 @@
   *                                                              *
   *  This script generates rounded corners for your boxes.       *
   *                                                              *
-  *  Version 2.0.5pre2                                           *
+  *  Version 2.0.5pre4                                           *
   *  Copyright (c) 2009 Cameron Cooke                            *
   *  Contributors: Tim Hutchison, CPK Smithies, Terry Rigel      *
   *                                                              *
@@ -339,7 +339,7 @@ function curvyCorners() {
   }
 }
 curvyCorners.prototype.applyCornersToAll = function () { // now redundant
-  curvyCorners.alert('This function is now redundant. Just call curvyCorners(). See documentation.');
+  throw curvyCorners.newError('This function is now redundant. Just call curvyCorners(). See documentation.');
 };
 
 curvyCorners.redraw = function() {
@@ -404,6 +404,11 @@ function curvyObject() {
   if (!boxWidth && curvyBrowser.isIE) {
     this.box.style.zoom = 1; // can force IE to calculate width
     boxWidth = this.box.clientWidth;
+    if (!boxWidth && this.box.style.display === 'inline') {
+      this.box.style.display = 'inline-block';
+      curvyCorners.alert(this.errmsg("Cannot round corners of inline element: converting to inline-block", "warning"));
+      boxWidth = this.box.clientWidth;
+    }
   }
   if (!boxWidth) {
     if (!this.box.parentNode) throw this.newError("box has no parent!"); // unlikely...
@@ -554,6 +559,7 @@ function curvyObject() {
   newMainContainer.style.backgroundColor    = boxColour;
   newMainContainer.style.backgroundImage    = this.backgroundImage;
   newMainContainer.style.backgroundRepeat   = this.backgroundRepeat;
+  newMainContainer.style.direction = 'ltr';
   this.shell = this.box.appendChild(newMainContainer);
 
   boxWidth = curvyBrowser.get_style(this.shell, "width");
