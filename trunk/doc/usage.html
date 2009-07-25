@@ -62,7 +62,7 @@ samp:before {
 <dd><a href="http://code.google.com/p/curvycorners/source/browse/#svn/trunk">http://code.google.com/p/curvycorners/source/browse/#svn/trunk</a></dd>
 </dl>
 
-<p>You can also download the latest version of CurvyCorners from the
+<p>You can also download the latest stable version of CurvyCorners from the
 <a href="http://www.curvycorners.net/downloads/">downloads section</a>.</p>
 
 <p>Some earlier versions are also available from the
@@ -119,7 +119,7 @@ what is supported:</p>
 selector <em>or</em> a single selector followed by a comma and an optional space,
 followed by a selector-list.</li>
 <li>A single selector may be <em>either</em> a simple-selector <em>or</em> a
-simple-selector followed by a space followed by another simple-selector.</li>
+simple-selector followed by a space followed by a tag-class-selector.</li>
 <li>A simple-selector may be <em>either</em> an ID of the form
 <code>#myID</code>, <em>or</em> a tag-class-selector.</li>
 <li>A tag-class-selector may be any one of:
@@ -146,7 +146,7 @@ boxes you wish to round, the following selector will reliably <em>not</em> work:
 within the element whose ID is <code>myBox</code>, but also to the DIVs inserted
 by CurvyCorners.</p>
 
-<p>The following selectors may not work as expected:</p>
+<p>The following unsupported selectors may not work as expected:</p>
 <ul><li>div #mybox</li><li>div.rounded #mybox</li></ul>
 
 <p>Because an ID identifies a page element uniquely, qualifying it with an
@@ -265,7 +265,7 @@ this may cause a brief flicker as the page is loaded.</p>
 
 <ul>
 <li>If you wish to invoke curvyCorners in a browser that supports rounded
-corners natively, e.g. Firefox, Chrome or Safari, you must use the
+corners natively, e.g. Firefox, Chrome or Safari, you <em>must</em> use the
 <a href="#manually">manual</a> method described below.</li>
 <li>If you wish to use
 <a href="#dyn">dynamic features</a> (e.g. resizing) on a box
@@ -361,11 +361,13 @@ HEAD section of your webpage add the following:</p>
   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bl: { radius: 20 },<br />
   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;br: { radius: 20 },<br />
   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;antiAlias: true<br />
-  &nbsp;&nbsp;&nbsp;&nbsp;}
-  <br /><br />
-  &nbsp;&nbsp;&nbsp;&nbsp;var divObj = document.getElementById("myDiv");
-  <br /><br />
+  &nbsp;&nbsp;&nbsp;&nbsp;}<br />
+  <br />
+  &nbsp;&nbsp;&nbsp;&nbsp;var divObj = document.getElementById("myDiv");<br />
   &nbsp;&nbsp;&nbsp;&nbsp;curvyCorners(settings, divObj);<br />
+  <br />
+  &nbsp;&nbsp;&nbsp;&nbsp;// or, equivalently:<br />
+  &nbsp;&nbsp;&nbsp;&nbsp;curvyCorners(settings, '#myDiv');<br />
   &nbsp;&nbsp;}<br />
   <br />
   &lt;/script&gt;
