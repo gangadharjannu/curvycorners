@@ -425,6 +425,7 @@ function curvyObject() {
       if (curvyBrowser.get_style(boxDisp, 'display') === 'none') break;
     }
     // here, we've found the box whose display is set to 'none'.
+    var boxDispSave = boxDisp.style.display;
     boxDisp.style.display = 'block'; // display in order to get browser to calculate clientWidth
     boxWidth = this.box.clientWidth;
   }
@@ -920,7 +921,7 @@ function curvyObject() {
     this.box.style.textAlign = 'left'; // important otherwise layout goes wild
 
     this.box.appendChild(this.contentContainer);
-    if (boxDisp) boxDisp.style.display = 'none';
+    if (boxDisp) boxDisp.style.display = boxDispSave;
   }
   if (this.backgroundImage) {
     backgroundPosX = this.backgroundCheck(backgroundPosX);
