@@ -5,7 +5,7 @@
   *                                                              *
   *  This script generates rounded corners for your boxes.       *
   *                                                              *
-  *  Version 2.0.5pre4                                           *
+  *  Version 2.0.5pre5                                           *
   *  Copyright (c) 2009 Cameron Cooke                            *
   *  Contributors: Tim Hutchison, CPK Smithies, Terry Rigel      *
   *                                                              *
@@ -399,17 +399,21 @@ function curvyObject() {
   this.topContainer = this.bottomContainer = this.shell = boxDisp = null;
   var boxWidth = this.box.clientWidth; // browser-independent IE-emulation (NB includes padding)
 
-  // if no client width, maybe the box or a parent has 'display:none'.
-
   if (!boxWidth && curvyBrowser.isIE) {
     this.box.style.zoom = 1; // can force IE to calculate width
     boxWidth = this.box.clientWidth;
-    if (!boxWidth && this.box.style.display === 'inline') {
-      this.box.style.display = 'inline-block';
-      curvyCorners.alert(this.errmsg("Cannot round corners of inline element: converting to inline-block", "warning"));
-      boxWidth = this.box.clientWidth;
-    }
   }
+
+  // try to handle attempts to style inline elements
+
+  if (!boxWidth && curvyBrowser.get_style(this.box, 'display') === 'inline') {
+    this.box.style.display = 'inline-block';
+    curvyCorners.alert(this.errmsg("Converting inline element to inline-block", "warning"));
+    boxWidth = this.box.clientWidth;
+  }
+
+  // if still no clientWidth, maybe the box or a parent has 'display:none'.
+
   if (!boxWidth) {
     if (!this.box.parentNode) throw this.newError("box has no parent!"); // unlikely...
     for (boxDisp = this.box; ; boxDisp = boxDisp.parentNode) {
@@ -418,11 +422,19 @@ function curvyObject() {
         curvyCorners.alert(this.errmsg("zero-width box with no accountable parent", "warning"));
         return;
       }
-      if (boxDisp.style.display === 'none') break;
+      if (curvyBrowser.get_style(boxDisp, 'display') === 'none') break;
     }
     // here, we've found the box whose display is set to 'none'.
     boxDisp.style.display = 'block'; // display in order to get browser to calculate clientWidth
     boxWidth = this.box.clientWidth;
+  }
+
+  // all attempts have failed
+
+  if (!boxWidth) {
+    curvyCorners.alert(this.errmsg("zero-width box, cannot display", "error"));
+    this.applyCorners = function() {} // make the error harmless
+    return;
   }
   if (arguments[0] instanceof curvyCnrSpec)
     this.spec = arguments[0].cloneOn(this.box); // convert non-pixel units
