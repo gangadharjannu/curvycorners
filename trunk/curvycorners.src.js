@@ -399,6 +399,8 @@ function curvyObject() {
   this.topContainer = this.bottomContainer = this.shell = boxDisp = null;
   var boxWidth = this.box.clientWidth; // browser-independent IE-emulation (NB includes padding)
 
+  if (!this.box.canHaveChildren || this.box.tagName === 'TABLE')
+    throw new Error(this.errmsg("You cannot apply corners to " + this.box.tagName + " elements.", "Error"));
   if (!boxWidth && curvyBrowser.isIE) {
     this.box.style.zoom = 1; // can force IE to calculate width
     boxWidth = this.box.clientWidth;
