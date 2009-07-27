@@ -246,8 +246,8 @@ curvyCorners.init();
 
 <p>If you specify in CSS the ID of an element with rounded corners that is
 not yet added to the page, CurvyCorners will warn of the problem by using
-alert(). To suppress this message, include the following script in your page
-before including the CurvyCorners script:</p>
+alert(). See below under <a href="#options">options and settings</a> for
+how to suppress this message.</p>
 
 <p class="codeSample">
 &lt;script type="text/javascript"&gt;<br/>
@@ -264,14 +264,19 @@ this may cause a brief flicker as the page is loaded.</p>
 <h3>Other limitations</h3>
 
 <ul>
+<li>&lt;img&gt; elements cannot be rounded using curvyCorners.
+Instead, use a &lt;div&gt; element and set the image as the
+background-image of the &lt;div&gt;.</li>
+
+<li>&lt;table&gt; elements and most inline elements (e.g. &lt;input&gt;)
+can likewise not be rounded using curvyCorners. This is because curvyCorners
+obtains works by appending DIV elements to the box. So if it isn't legal in
+HTML to append a DIV to an element, we recommend against trying to round
+that element with curvyCorners.</li>
+
 <li>If you wish to invoke curvyCorners in a browser that supports rounded
 corners natively, e.g. Firefox, Chrome or Safari, you <em>must</em> use the
 <a href="#manually">manual</a> method described below.</li>
-<li>If you wish to use
-<a href="#dyn">dynamic features</a> (e.g. resizing) on a box
-rounded by curvyCorners, you <em>must</em> use the <a href="#newway">CSS
-style</a> of specifying the corners, <em>not</em> the
-<a href="#manually">old manual style</a>.</li>
 
 <li>In some circumstances, a browser may not compute a display width for a
 box that you wish to style with rounded corners. This may either be because
@@ -313,10 +318,6 @@ supported. The first dimension will be understood as the only dimension.</li>
 of different non-zero values, the box will not render correctly. Your
 top and bottom corner radii must be either equal, or one of them must be
 zero (square).</li>
-
-<li>&lt;img&gt; elements cannot be rounded using curvyCorners.
-Instead, use a &lt;div&gt; element and set the image as the
-background-image of the &lt;div&gt;.</li>
 
 <li>In legacy browsers, when using image backgrounds, the lower part
 of the box may be out by 1 pixel. We are investigating this issue,
