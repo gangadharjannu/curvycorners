@@ -5,7 +5,7 @@
   *                                                              *
   *  This script generates rounded corners for your boxes.       *
   *                                                              *
-  *  Version 2.0.5pre6                                           *
+  *  Version 2.0.5pre7                                           *
   *  Copyright (c) 2009 Cameron Cooke                            *
   *  Contributors: Tim Hutchison, CPK Smithies, Terry Rigel      *
   *                                                              *
@@ -345,7 +345,7 @@ curvyCorners.prototype.applyCornersToAll = function () { // now redundant
 curvyCorners.redraw = function() {
   if (!curvyBrowser.isOp && !curvyBrowser.isIE) return;
   if (!curvyCorners.redrawList) throw curvyCorners.newError('curvyCorners.redraw() has nothing to redraw.');
-  var old_block_value = curvyCorners.bock_redraw;
+  var old_block_value = curvyCorners.block_redraw;
   curvyCorners.block_redraw = true;
   for (var i in curvyCorners.redrawList) {
     if (isNaN(i)) continue; // in case of added prototype methods
