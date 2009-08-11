@@ -5,7 +5,7 @@
   *                                                              *
   *  This script generates rounded corners for your boxes.       *
   *                                                              *
-  *  Version 2.0.5pre7                                           *
+  *  Version 2.0.5pre9                                           *
   *  Copyright (c) 2009 Cameron Cooke                            *
   *  Contributors: Tim Hutchison, CPK Smithies, Terry Rigel      *
   *                                                              *
@@ -403,7 +403,7 @@ function curvyObject() {
   this.topContainer = this.bottomContainer = this.shell = boxDisp = null;
   var boxWidth = this.box.clientWidth; // browser-independent IE-emulation (NB includes padding)
 
-  if (!this.box.canHaveChildren || this.box.tagName === 'TABLE')
+  if (('canHaveChildren' in this.box && !this.box.canHaveChildren) || this.box.tagName === 'TABLE')
     throw new Error(this.errmsg("You cannot apply corners to " + this.box.tagName + " elements.", "Error"));
   if (!boxWidth && curvyBrowser.isIE) {
     this.box.style.zoom = 1; // can force IE to calculate width
@@ -477,7 +477,7 @@ function curvyObject() {
   var leftPadding     = curvyBrowser.get_style(this.box, "paddingLeft");
   var rightPadding    = curvyBrowser.get_style(this.box, "paddingRight");
   var border          = curvyBrowser.get_style(this.box, "border");
-  filter = curvyBrowser.ieVer > 7 ? curvyBrowser.get_style(this.box, 'filter') : null; // IE8 bug fix
+  var filter = curvyBrowser.ieVer > 7 ? curvyBrowser.get_style(this.box, 'filter') : null; // IE8 bug fix
 
   var topMaxRadius    = this.spec.get('tR');
   var botMaxRadius    = this.spec.get('bR');
