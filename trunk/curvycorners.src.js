@@ -1306,8 +1306,10 @@ curvyCorners.getElementsByClass = function(searchClass, node) {
   return classElements;
 }
 
-if (curvyBrowser.isMoz || curvyBrowser.isWebKit)
+if (curvyBrowser.isMoz || curvyBrowser.isWebKit) {
   var curvyCornersNoAutoScan = true; // it won't do anything anyway.
+  curvyCorners.init = function() {}; // make it harmless
+}
 else {
 
   // autoscan code
