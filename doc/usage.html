@@ -284,12 +284,10 @@ the box is not currently displayed, or because of a peculiarity in the
 browser. In this circumstance, CurvyCorners will output an error message and
 continue; but it will not be able to apply corners to the box in question.
 It may be possible to correct this by applying a width or min-width style
-to the affected box element. You can suppress the display of the error message
-by including the following in the &lt;head&gt; section of the page before
-the script tag that includes the CurvyCorners script:<p class="codeSample">
-&lt;script type="text/javascript"&gt;<br/>
-var curvyCornersVerbose = false;<br/>
-&lt;/script&gt;</p></li>
+to the affected box element.
+If you cannot correct the problem in any other way, it is possible to
+suppress the display of the error message: see <a href="#options">options</a>
+below.</li>
 
 <li>In Opera v9.x, unrecognized styles (including rounded corner styles)
 are not included in the DOM tree. CurvyCorners can detect them only if it has
@@ -323,6 +321,12 @@ zero (square).</li>
 of the box may be out by 1 pixel. We are investigating this issue,
 which seems unpredictable and may be an artifact of certain ancient
 rendering engines.</li>
+
+<li>Again in legacy browsers, form elements enclosed in a rounded
+box will lose the focus during curvyCorners startup. Therefore,
+setting the focus in a <code>document.body.onload</code> function
+will not work. Instead, it is necessary to delay curvyCorners
+startup <a href="#delay">as described above</a>.</li>
 </ul>
 
 <h2 id="manually">Using CurvyCorners manually</h2>
