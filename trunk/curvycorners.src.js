@@ -5,7 +5,7 @@
   *                                                              *
   *  This script generates rounded corners for your boxes.       *
   *                                                              *
-  *  Version 2.0.5pre9                                           *
+  *  Version 2.0.5pre10                                          *
   *  Copyright (c) 2009 Cameron Cooke                            *
   *  Contributors: Tim Hutchison, CPK Smithies, Terry Rigel      *
   *                                                              *
@@ -824,6 +824,7 @@ function curvyObject() {
         newFiller.style.fontSize = "1px";
         newFiller.style.overflow = "hidden";
         newFiller.style.backgroundColor = this.boxColour;
+        if (filter) newFiller.style.filter = filter; // IE8 bug fix
 
         // Position filler
         switch (smallerCornerType) {
@@ -1207,7 +1208,7 @@ curvyObject.setOpacity = function(obj, opacity) {
   else if (typeof obj.style.filter !== "undefined") { // IE
     obj.style.filter = "alpha(opacity=" + opacity + ")";
   }
-  else if (typeof obj.style.KHTMLOpacity !== "undefined") { // Older KHTML Based curvyBrowsers
+  else if (typeof obj.style.KHTMLOpacity !== "undefined") { // Older KHTML-based browsers
     obj.style.KHTMLOpacity = opacity / 100;
   }
 }
