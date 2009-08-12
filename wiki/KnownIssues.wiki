@@ -7,7 +7,9 @@ If CurvyCorners isn't doing what you expect, check the list below.
 
 == Details ==
 
- * If you wish to use DynamicFeatures (e.g. resizing) on a box rounded by CurvyCorners, you _must_ use the CSS style of specifying the corners, _not_ the old manual style. Boxes styled by CurvyCorners cannot be resized dynamically except by using the technique described on the DynamicFeatures page.
+ * CurvyCorners can get perplexed by certain CSS selectors. The symptom is that the box(es) just don't get rounded. See the SelectorSupport page for details.
+
+ * CurvyCorners has to use absolute sizing and positioning to draw the corners. If you want cornered boxes to resize, or to change their attributes, in response to script events, you _must_ use the CSS style of specifying the corners, _not_ the old manual style. Boxes styled by CurvyCorners cannot be resized dynamically except by using the technique described on the DynamicFeatures page.
 
  * When rounding a bordered box, the border style must always be `solid`: other styles are not supported. For best results, the border width must be the same on both sides adjacent to the rounded corner.
 
