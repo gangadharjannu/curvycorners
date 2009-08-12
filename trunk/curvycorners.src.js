@@ -5,7 +5,7 @@
   *                                                              *
   *  This script generates rounded corners for your boxes.       *
   *                                                              *
-  *  Version 2.0.5pre10                                          *
+  *  Version 2.0.5pre11                                          *
   *  Copyright (c) 2009 Cameron Cooke                            *
   *  Contributors: Tim Hutchison, CPK Smithies, Terry Rigel      *
   *                                                              *
@@ -231,7 +231,7 @@ function operasheet(sheetnumber) {
   // [4] = top|bottom
   // [5] = left|right
   // .. but 3..5 are useless as they're only the first match.
-  var pat = new RegExp("^\s*([\\w.#][-\\w.#, ]+)[\\n\\s]*\\{([^}]+border-((top|bottom)-(left|right)-)?radius[^}]*)\\}", "mg");
+  var pat = new RegExp("^\\s*([\\w.#][-\\w.#, ]+)[\\n\\s]*\\{([^}]+border-((top|bottom)-(left|right)-)?radius[^}]*)\\}", "mg");
   var matches;
   this.rules = [];
   while ((matches = pat.exec(txt)) !== null) {
