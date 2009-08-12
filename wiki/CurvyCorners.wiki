@@ -35,9 +35,13 @@ You can download the latest version from the Downloads tab above. Make sure you 
 
 We have a Google Group! If you need help then I recommend you visit the Google group at http://groups.google.com/group/curvyCorners .
 
-== Issues and Bugs ==
+== Known Issues ==
 
-If you have an issue or have found a bug with the software please click on the Issues tab above and report it.
+See the KnownIssues page.
+
+== New Issues and Bugs ==
+
+If you have found a new issue or bug with the software please click on the [http://code.google.com/p/curvycorners/issues/list Issues tab] above and report it.
 
 == Members ==
 
