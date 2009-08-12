@@ -8,7 +8,7 @@ CurvyCorners now has limited support for dynamic HTML. In particular, you may ch
 
  # Specify the corners using the new CSS style and not the old onload-function style;
  # Give the box elements to be re-drawn the (additional) special class-name `curvyRedraw`; and
- # in your JavaScript, explicitly call the function `curvyCorners.redraw()`.
+ # in your !JavaScript, explicitly call the function `curvyCorners.redraw()`.
 
 `curvyCorners.redraw()` takes no parameters and returns no usable value.
 
