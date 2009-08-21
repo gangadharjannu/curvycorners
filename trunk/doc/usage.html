@@ -255,6 +255,29 @@ var curvyCornersVerbose = false;<br/>
 &lt;/script&gt;
 </p>
 
+<h4>Using ASP.net</h4>
+
+<p>If you use ASP.Net Validator Controls with the Display Property set to Dynamic 
+within a rounded box, client-side error messages within an element using 
+curvycorners will not display correctly, as the containing element needs to be 
+redrawn to accommodate the message. It is necessary to hook the client side 
+validation by overloading the validation to callcurvyCorners.Redraw whenever client 
+side error messages are shown by these controls. This can be done by including 
+something like the following after the validator markup (e.g. at the end of the aspx 
+file):</p>
+
+<p class="codeSample">
+&lt;script type="text/javascript"&gt;<br/>
+ValidatorUpdateIsValid = function() {<br/>
+&nbsp;&nbsp;if (!AllValidatorsValid(Page_Validators)) curvyCorners.redraw();<br/>
+}<br/>
+&lt;/script&gt;
+</p>
+
+<p>Similar action should be taken where an ASP.Net UpdatePanel resides within a box 
+rounded by curvyCorners, to ensure that the element (and thus the corners) are 
+redrawn after the partial postback.</p>
+
 <h3>Hidden Boxes</h3>
 <p>CurvyCorners supports the styling of boxes that are not currently
 displayed, i.e. which have the style <code>display:none</code>. In such cases,
