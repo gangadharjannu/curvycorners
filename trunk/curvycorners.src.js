@@ -5,7 +5,7 @@
   *                                                              *
   *  This script generates rounded corners for your boxes.       *
   *                                                              *
-  *  Version 2.0.5pre12                                          *
+  *  Version 2.0.5pre13                                          *
   *  Copyright (c) 2009 Cameron Cooke                            *
   *  Contributors: Tim Hutchison, CPK Smithies, Terry Rigel      *
   *                                                              *
@@ -65,14 +65,10 @@ the page itself.
 
 function browserdetect() {
   var agent = navigator.userAgent.toLowerCase();
-  this.isIE      = agent.indexOf("msie") > -1;
-  this.ieVer = this.isIE ? /msie\s(\d\.\d)/.exec(agent)[1] : 0;
-  this.isMoz     = agent.indexOf('firefox') !== -1 || agent.indexOf('gecko') !== -1;
-  this.isSafari  = agent.indexOf('safari') != -1;
-  this.quirksMode= this.isIE && (!document.compatMode || document.compatMode.indexOf("BackCompat") > -1);
-  this.isOp      = 'opera' in window;
-  this.isWebKit  = agent.indexOf('webkit') != -1;
+  this.isIE = agent.indexOf("msie") > -1;
   if (this.isIE) {
+    this.ieVer = /msie\s(\d\.\d)/.exec(agent)[1];
+    this.quirksMode = !document.compatMode || document.compatMode.indexOf("BackCompat") > -1;
     this.get_style = function(obj, prop) {
       if (!(prop in obj.currentStyle)) return "";
       var matches = /^([\d.]+)(\w*)/.exec(obj.currentStyle[prop]);
@@ -92,6 +88,11 @@ function browserdetect() {
     };
   }
   else {
+    this.ieVer = this.quirksMode = 0;
+    this.isMoz     = agent.indexOf('firefox') !== -1 || ('style' in document.childNodes[1] && 'MozBorderRadius' in document.childNodes[1].style);
+    this.isSafari  = agent.indexOf('safari') != -1;
+    this.isOp      = 'opera' in window;
+    this.isWebKit  = agent.indexOf('webkit') != -1;
     this.get_style = function(obj, prop) {
       prop = prop.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
       return document.defaultView.getComputedStyle(obj, '').getPropertyValue(prop);
