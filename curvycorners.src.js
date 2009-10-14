@@ -516,7 +516,7 @@ function curvyObject() {
     this.backgroundRepeat= backgroundRepeat;
   }
   catch(e) {
-    throw this.newError('getMessage' in e ? e.getMessage() : e.message);
+    throw this.newError(e.message);
   }
   var clientHeight = this.boxHeight;
   var clientWidth = boxWidth; // save it as it gets trampled on later
@@ -1355,13 +1355,19 @@ else {
         }
       }
       for (t = 0; t < document.styleSheets.length; ++t) {
-        if (document.styleSheets[t].imports) {
-          for (i = 0; i < document.styleSheets[t].imports.length; ++i)
-            for (j = 0; j < document.styleSheets[t].imports[i].rules.length; ++j)
-              procIEStyles(document.styleSheets[t].imports[i].rules[j]);
+        try {
+          if (document.styleSheets[t].imports) {
+            for (i = 0; i < document.styleSheets[t].imports.length; ++i)
+              for (j = 0; j < document.styleSheets[t].imports[i].rules.length; ++j)
+                procIEStyles(document.styleSheets[t].imports[i].rules[j]);
+          }
+          for (i = 0; i < document.styleSheets[t].rules.length; ++i)
+            procIEStyles(document.styleSheets[t].rules[i]);
         }
-        for (i = 0; i < document.styleSheets[t].rules.length; ++i)
-          procIEStyles(document.styleSheets[t].rules[i]);
+        catch (e) {
+          if (typeof curvyCornersVerbose !== 'undefined' && curvyCornersVerbose)
+            alert(e.message + " - ignored");
+        } // catch but ignore any permission error
       }
     }
     else if (curvyBrowser.isOp) {
