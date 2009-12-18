@@ -312,7 +312,7 @@ If you cannot correct the problem in any other way, it is possible to
 suppress the display of the error message: see <a href="#options">options</a>
 below.</li>
 
-<li>In Opera v9.x, unrecognized styles (including rounded corner styles)
+<li>In Opera v9.x and v10.x, unrecognized styles (including rounded corner styles)
 are not included in the DOM tree. CurvyCorners can detect them only if it has
 access to the CSS text.
 If the stylesheet
@@ -334,11 +334,6 @@ same on both sides adjacent to a round corner.</li>
 
 <li>Elliptical radii (e.g. <code>border-radius:1em 2em;</code>) are not
 supported. The first dimension will be understood as the only dimension.</li>
-
-<li>If a box has an image background, and the two top or bottom radii are
-of different non-zero values, the box will not render correctly. Your
-top and bottom corner radii must be either equal, or one of them must be
-zero (square).</li>
 
 <li>In legacy browsers, when using image backgrounds, the lower part
 of the box may be out by 1 pixel. We are investigating this issue,

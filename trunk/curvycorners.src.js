@@ -5,9 +5,10 @@
   *                                                              *
   *  This script generates rounded corners for your boxes.       *
   *                                                              *
-  *  Version 2.0.5pre13                                          *
+  *  Version 2.0.5pre14                                          *
   *  Copyright (c) 2009 Cameron Cooke                            *
-  *  Contributors: Tim Hutchison, CPK Smithies, Terry Rigel      *
+  *  Contributors: Tim Hutchison, CPK Smithies, Terry Rigel,     *
+  *                Simó Albert.                                  *
   *                                                              *
   *  Website: http://www.curvycorners.net                        *
   *  SVN:     http://curvycorners.googlecode.com/                *
@@ -459,6 +460,12 @@ function curvyObject() {
   var borderColour    = curvyBrowser.get_style(this.box, "borderTopColor");
   var borderColourB   = curvyBrowser.get_style(this.box, "borderBottomColor");
   var borderColourL   = curvyBrowser.get_style(this.box, "borderLeftColor");
+  var borderColourR   = curvyBrowser.get_style(this.box, "borderRightColor");
+  var borderStyle     = curvyBrowser.get_style(this.box, "borderTopStyle");
+  var borderStyleB    = curvyBrowser.get_style(this.box, "borderBottomStyle");
+  var borderStyleL    = curvyBrowser.get_style(this.box, "borderLeftStyle");
+  var borderStyleR    = curvyBrowser.get_style(this.box, "borderRightStyle");
+
   var boxColour       = curvyBrowser.get_style(this.box, "backgroundColor");
   var backgroundImage = curvyBrowser.get_style(this.box, "backgroundImage");
   var backgroundRepeat= curvyBrowser.get_style(this.box, "backgroundRepeat");
@@ -510,8 +517,11 @@ function curvyObject() {
     this.borderColour    = curvyObject.format_colour(borderColour);
     this.borderColourB   = curvyObject.format_colour(borderColourB);
     this.borderColourL   = curvyObject.format_colour(borderColourL);
-    this.borderString    = this.borderWidth + "px" + " solid " + this.borderColour;
-    this.borderStringB   = this.borderWidthB + "px" + " solid " + this.borderColourB;
+    this.borderColourR   = curvyObject.format_colour(borderColourR);
+    this.borderString    = this.borderWidth + "px" + " " + borderStyle + " " + this.borderColour;
+    this.borderStringB   = this.borderWidthB + "px" + " " + borderStyleB + " " + this.borderColourB;
+    this.borderStringL   = this.borderWidthL + "px" + " " + borderStyleL + " " + this.borderColourL;
+    this.borderStringR   = this.borderWidthR + "px" + " " + borderStyleR + " " + this.borderColourR;
     this.backgroundImage = ((backgroundImage != "none")? backgroundImage : "");
     this.backgroundRepeat= backgroundRepeat;
   }
@@ -569,13 +579,13 @@ function curvyObject() {
   newMainContainer.style.top    = topMaxRadius + "px";
   newMainContainer.style.left   = "0";
   if (this.borderWidthL)
-    newMainContainer.style.borderLeft = this.borderWidthL + "px solid " + this.borderColourL;
+    newMainContainer.style.borderLeft = this.borderStringL;
   if (this.borderWidth && !topMaxRadius)
-    newMainContainer.style.borderTop = this.borderWidth + "px solid " + this.borderColour;
+    newMainContainer.style.borderTop = this.borderString;
   if (this.borderWidthR)
-    newMainContainer.style.borderRight = this.borderWidthR + "px solid " + this.borderColourL;
+    newMainContainer.style.borderRight = this.borderStringR;
   if (this.borderWidthB && !botMaxRadius)
-    newMainContainer.style.borderBottom = this.borderWidthB + "px solid " + this.borderColourB;
+    newMainContainer.style.borderBottom = this.borderStringB;
   newMainContainer.style.backgroundColor    = boxColour;
   newMainContainer.style.backgroundImage    = this.backgroundImage;
   newMainContainer.style.backgroundRepeat   = this.backgroundRepeat;
@@ -595,6 +605,7 @@ function curvyObject() {
       Set up background offsets. This may need to be delayed until
       the background image is loaded.
     */
+    this.backgroundPosX = this.backgroundPosY = 0;
     if (this.backgroundObject) {
       var bgOffset = function(style, imglen, boxlen) {
         if (style === 0) return 0;
@@ -761,14 +772,14 @@ function curvyObject() {
             pixelBar.style.backgroundPosition = (this.backgroundPosX - this.borderWidthL + specRadius - clientWidth - pixelBarLeft) + "px " + (this.backgroundPosY + pixelBarHeight + pixelBarTop + this.borderWidth - specRadius) + "px";
           break;
           case "tl":
-            pixelBar.style.backgroundPosition = (this.backgroundPosX - specRadius + pixelBarLeft + this.borderWidthL) + "px " + (this.backgroundPosY - specRadius + pixelBarHeight + pixelBarTop + this.borderWidth) + "px";
+            pixelBar.style.backgroundPosition = (this.backgroundPosX - specRadius + pixelBarLeft + 1 + this.borderWidthL) + "px " + (this.backgroundPosY - specRadius + pixelBarHeight + pixelBarTop + this.borderWidth) + "px";
           break;
           case "bl":
             pixelBar.style.backgroundPosition = (this.backgroundPosX - specRadius + pixelBarLeft + 1 + this.borderWidthL) + "px " + (this.backgroundPosY - clientHeight - this.borderWidth + (curvyBrowser.quirksMode ? pixelBarTop : -pixelBarTop) + specRadius) + "px";
           break;
           case "br":
             if (curvyBrowser.quirksMode) {
-              pixelBar.style.backgroundPosition = (this.backgroundPosX + this.borderWidthL - clientWidth + specRadius - pixelBarLeft) + "px " + (this.backgroundPosY - clientHeight - this.borderWidth + pixelBarTop + specRadius) + "px";
+              pixelBar.style.backgroundPosition = (this.backgroundPosX - this.borderWidthL - clientWidth + specRadius - pixelBarLeft) + "px " + (this.backgroundPosY - clientHeight - this.borderWidth + pixelBarTop + specRadius) + "px";
             } else {
               pixelBar.style.backgroundPosition = (this.backgroundPosX - this.borderWidthL - clientWidth + specRadius - pixelBarLeft) + "px " + (this.backgroundPosY - clientHeight - this.borderWidth + specRadius - pixelBarTop) + "px";
             }
@@ -811,9 +822,6 @@ function curvyObject() {
       if (typeof z === 'function') continue; // for prototype, mootools frameworks
       if (!this.spec.get(z + 'R')) continue; // no need if no corners
       if (radiusDiff[z]) {
-        // check unsupported feature and warn if necessary
-        if (this.backgroundImage && this.spec.radiusSum(z) !== radiusDiff[z])
-          curvyCorners.alert(this.errmsg('Not supported: unequal non-zero top/bottom radii with background image'));
         // Get the type of corner that is the smaller one
         var smallerCornerType = (this.spec[z + "lR"] < this.spec[z + "rR"]) ? z + "l" : z + "r";
 
@@ -826,31 +834,42 @@ function curvyObject() {
         newFiller.style.overflow = "hidden";
         newFiller.style.backgroundColor = this.boxColour;
         if (filter) newFiller.style.filter = filter; // IE8 bug fix
+        // Set background image with original features
+        newFiller.style.backgroundImage = this.backgroundImage;
+        newFiller.style.backgroundRepeat = this.backgroundRepeat;
 
         // Position filler
         switch (smallerCornerType) {
           case "tl":
             newFiller.style.bottom =
             newFiller.style.left   = "0";
-            newFiller.style.borderLeft = this.borderString;
+            newFiller.style.borderLeft = this.borderStringL;
+            // Set background image in original position
+            newFiller.style.backgroundPosition = this.backgroundPosX + "px " + (this.borderWidth + this.backgroundPosY - this.spec.tlR) + "px";
             this.topContainer.appendChild(newFiller);
           break;
           case "tr":
             newFiller.style.bottom =
             newFiller.style.right  = "0";
-            newFiller.style.borderRight = this.borderString;
+            newFiller.style.borderRight = this.borderStringR;
+            // Set background image in original position
+            newFiller.style.backgroundPosition = (this.backgroundPosX - this.boxWidth + this.spec.trR) + "px " + (this.borderWidth + this.backgroundPosY - this.spec.trR) + "px";
             this.topContainer.appendChild(newFiller);
           break;
           case "bl":
             newFiller.style.top    =
             newFiller.style.left   = "0";
-            newFiller.style.borderLeft = this.borderStringB;
+            newFiller.style.borderLeft = this.borderStringL;
+            // Set background image in original position
+            newFiller.style.backgroundPosition = this.backgroundPosX + "px " + (this.backgroundPosY - this.borderWidth - this.boxHeight + radiusDiff[z] + this.spec.blR) + "px";
             this.bottomContainer.appendChild(newFiller);
           break;
           case "br":
             newFiller.style.top    =
             newFiller.style.right  = "0";
-            newFiller.style.borderRight = this.borderStringB;
+            newFiller.style.borderRight = this.borderStringR;
+            // Set background image in original position.
+            newFiller.style.backgroundPosition = (this.borderWidthL + this.backgroundPosX - this.boxWidth + this.spec.brR) + "px " + (this.backgroundPosY - this.borderWidth - this.boxHeight + radiusDiff[z] + this.spec.brR) + "px";
             this.bottomContainer.appendChild(newFiller);
           //break;
         }
@@ -880,7 +899,7 @@ function curvyObject() {
             newFillerBar.style.borderTop   = this.borderString;
             if (this.backgroundImage) {
               var x_offset = this.spec.tlR ?
-                (this.backgroundPosX - (topMaxRadius - this.borderWidthL)) + "px " : "0 ";
+                (this.borderWidthL + this.backgroundPosX - this.spec.tlR) + "px " : this.backgroundPosX + "px ";
               newFillerBar.style.backgroundPosition  = x_offset + this.backgroundPosY + "px";
               // Reposition the box's background image
               this.shell.style.backgroundPosition = this.backgroundPosX + "px " + (this.backgroundPosY - topMaxRadius + this.borderWidthL) + "px";
@@ -900,7 +919,7 @@ function curvyObject() {
             newFillerBar.style.borderBottom = this.borderStringB;
             if (this.backgroundImage) {
               var x_offset = this.spec.blR ?
-                (this.backgroundPosX + this.borderWidthL - botMaxRadius) + "px " : this.backgroundPosX + "px ";
+                (this.backgroundPosX + this.borderWidthL - this.spec.blR) + "px " : this.backgroundPosX + "px ";
               newFillerBar.style.backgroundPosition = x_offset + (this.backgroundPosY - clientHeight - this.borderWidth + botMaxRadius) + "px";
             }
             this.bottomContainer.appendChild(newFillerBar);
@@ -991,8 +1010,11 @@ curvyObject.prototype.drawPixel = function(intx, inty, colour, transAmount, heig
 }
 
 curvyObject.prototype.fillerWidth = function(tb) {
-  var bWidth = curvyBrowser.quirksMode ? 0 : this.spec.radiusCount(tb) * this.borderWidthL;
-  return (this.boxWidth - this.spec.radiusSum(tb) + bWidth) + 'px';
+  var b_width, f_width;
+  b_width = curvyBrowser.quirksMode ? 0 : this.spec.radiusCount(tb) * this.borderWidthL;
+  if ((f_width = this.boxWidth - this.spec.radiusSum(tb) + b_width) < 0)
+    throw this.newError("Radius exceeds box width");
+  return f_width + 'px';
 }
 
 curvyObject.prototype.errmsg = function(msg, gravity) {
@@ -1234,10 +1256,10 @@ curvyObject.getComputedColour = function(colour) {
   d.style.backgroundColor = colour;
   document.body.appendChild(d);
 
-  if(window.getComputedStyle) { // Mozilla, Opera, Chrome, Safari
+  if (window.getComputedStyle) { // Mozilla, Opera, Chrome, Safari
     var rtn = document.defaultView.getComputedStyle(d, null).getPropertyValue('background-color');
     d.parentNode.removeChild(d);
-    if(rtn.substr(0, 3) === "rgb") rtn = curvyObject.rgb2Hex(rtn);
+    if (rtn.substr(0, 3) === "rgb") rtn = curvyObject.rgb2Hex(rtn);
     return rtn;
   }
   else { // IE
@@ -1318,6 +1340,7 @@ else {
 
   curvyCorners.scanStyles = function() {
     function units(num) {
+      if (!parseInt(num)) return 'px'; // '0' becomes '0px' for simplicity's sake
       var matches = /^[\d.]+(\w+)$/.exec(num);
       return matches[1];
     }
@@ -1327,7 +1350,7 @@ else {
       function procIEStyles(rule) {
         var style = rule.style;
 
-        if(curvyBrowser.ieVer > 6.0) {
+        if (curvyBrowser.ieVer > 6.0) {
           var allR = style['-webkit-border-radius'] || 0;
           var tR   = style['-webkit-border-top-right-radius'] || 0;
           var tL   = style['-webkit-border-top-left-radius'] || 0;
