@@ -5,7 +5,7 @@
   *                                                              *
   *  This script generates rounded corners for your boxes.       *
   *                                                              *
-  *  Version 2.0.5pre14                                          *
+  *  Version 2.0.5pre15                                          *
   *  Copyright (c) 2009 Cameron Cooke                            *
   *  Contributors: Tim Hutchison, CPK Smithies, Terry Rigel,     *
   *                Simó Albert.                                  *
@@ -87,13 +87,16 @@ function browserdetect() {
       }
       return matches[0];
     };
+    this.supportsCorners = false;
   }
   else {
     this.ieVer = this.quirksMode = 0;
     this.isMoz     = agent.indexOf('firefox') !== -1 || ('style' in document.childNodes[1] && 'MozBorderRadius' in document.childNodes[1].style);
     this.isSafari  = agent.indexOf('safari') != -1;
-    this.isOp      = 'opera' in window;
     this.isWebKit  = agent.indexOf('webkit') != -1;
+    this.supportsCorners = this.isWebKit || this.isMoz;
+    this.isOp      = 'opera' in window;
+    if (this.isOp) this.supportsCorners = window.opera.version() >= 10.5;
     this.get_style = function(obj, prop) {
       prop = prop.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
       return document.defaultView.getComputedStyle(obj, '').getPropertyValue(prop);
@@ -345,7 +348,7 @@ curvyCorners.prototype.applyCornersToAll = function () { // now redundant
 };
 
 curvyCorners.redraw = function() {
-  if (!curvyBrowser.isOp && !curvyBrowser.isIE) return;
+  if (curvyBrowser.supportsCorners) return;
   if (!curvyCorners.redrawList) throw curvyCorners.newError('curvyCorners.redraw() has nothing to redraw.');
   var old_block_value = curvyCorners.block_redraw;
   curvyCorners.block_redraw = true;
@@ -372,7 +375,7 @@ curvyCorners.redraw = function() {
   curvyCorners.block_redraw = old_block_value;
 }
 curvyCorners.adjust = function(obj, prop, newval) {
-  if (curvyBrowser.isOp || curvyBrowser.isIE) {
+  if (!curvyBrowser.supportsCorners) {
     if (!curvyCorners.redrawList) throw curvyCorners.newError('curvyCorners.adjust() has nothing to adjust.');
     var i, j = curvyCorners.redrawList.length;
     for (i = 0; i < j; ++i) if (curvyCorners.redrawList[i].node === obj) break;
@@ -1330,7 +1333,7 @@ curvyCorners.getElementsByClass = function(searchClass, node) {
   return classElements;
 }
 
-if (curvyBrowser.isMoz || curvyBrowser.isWebKit) {
+if (curvyBrowser.supportsCorners) {
   var curvyCornersNoAutoScan = true; // it won't do anything anyway.
   curvyCorners.init = function() {}; // make it harmless
 }
@@ -1402,7 +1405,7 @@ else {
         }
       }
     }
-    else curvyCorners.alert('Scanstyles does nothing in Webkit/Firefox');
+    else curvyCorners.alert('Scanstyles does nothing in Webkit/Firefox/Opera');
   };
 
   // Dean Edwards/Matthias Miller/John Resig

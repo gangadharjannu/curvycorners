@@ -73,7 +73,8 @@ Downloads page</a>.</p>
 <p>As from 2.0.x, CurvyCorners allows you to put rounded corners on your
 page elements using <abbr title="Cascading Style Sheets">CSS</abbr>. At
 present, there are two proprietary CSS syntaxes, one for Mozilla/Firefox
-and one for the Webkit browsers, Safari and Google Chrome.</p>
+and one for the WebKit browsers, Safari and Google Chrome. Opera 10.5
+supports the standard CSS3 syntax.</p>
 
 <p>All you need to do is to put the appropriate rounded corner styles
 into the appropriate rules, and CurvyCorners will automatically draw corners
@@ -88,8 +89,9 @@ The following CSS will accomplish this:</p>
 
 <div class="codeSample">
 .rounded {<br/>
-&nbsp;&nbsp;-moz-border-radius:3ex;<br/>
+&nbsp;&nbsp;border-radius:3ex;<br/>
 &nbsp;&nbsp;-webkit-border-radius:3ex;<br/>
+&nbsp;&nbsp;-moz-border-radius:3ex;<br/>
 }
 </div>
 
@@ -98,16 +100,21 @@ then you can do it like this:</p>
 
 <div class="codeSample">
 .rounded {<br/>
-&nbsp;&nbsp;-moz-border-radius-topleft:3ex;<br/>
-&nbsp;&nbsp;-moz-border-radius-bottomright:3ex;<br/>
+&nbsp;&nbsp;border-top-left-radius:3ex;<br/>
+&nbsp;&nbsp;border-bottom-right-radius:3ex;<br/>
 &nbsp;&nbsp;-webkit-border-top-left-radius:3ex;<br/>
 &nbsp;&nbsp;-webkit-border-bottom-right-radius:3ex;<br/>
+&nbsp;&nbsp;-moz-border-radius-topleft:3ex;<br/>
+&nbsp;&nbsp;-moz-border-radius-bottomright:3ex;<br/>
 }
 </div>
 
-<p>(Note that the CSS3 proposed syntax is similar to the Webkit version, but
+<p>(Note that the CSS3 syntax, listed first, is similar to the WebKit version, but
 of course without the "-webkit-" prefix. Internally, CurvyCorners looks for the
-Webkit syntax and ignores the Mozilla version.)</p>
+WebKit syntax and ignores the Mozilla version.
+This is because support for the CSS3 syntax (in Opera 10.5) is
+only a recent phenomenon.
+<strong>In a later version, curvyCorners will look for the CSS3 standard syntax.</strong>)</p>
 
 <h3 id="cssLimits">CSS Selector Limitations</h3>
 
@@ -198,6 +205,33 @@ above. It returns no useful value.</p>
 <p>An extensive example of this technique is contained in
 <a href="http://www.curvycorners.net/includes/examples/demo5.html">demo
 5</a>.</p>
+
+<p>To change the child elements of a resizable cornered box, you should
+not attempt to do this by using the <var>innerHTML</var> "property" of
+the rounded box itself (not even using <code>curvyCorners.adjust()</code>).
+Instead, nest an inner div inside the cornered box, and apply the changes
+directly to that inner div before calling <code>curvyCorners.adjust()</code>.
+For example:</p>
+
+<p class="codeSample">
+&lt;div class="curvy curvyRedraw"&gt;&lt;-- the rounded DIV --&gt;<br/>
+&nbsp;&lt;div id="nested1"&gt;&lt;!-- the nested DIV --&gt;<br/>
+&nbsp;&nbsp;&nbsp;&lt;p&gt;Initial contents here&lt;/p&gt;<br/>
+&nbsp;&lt;/div&gt;<br/>
+&lt;/div&gt;<br/><br/>
+
+&lt;script type="text/javascript"&gt;&lt;[CDATA[<br/>
+// ...<br/>
+// new box contents in HTML string <var>str</var><br/>
+document.getElementById('nested1').innerHTML = str;<br/>
+curvyCorners.redraw();<br/>
+// ...<br/>
+//]]&gt;&lt;/script&gt;<br/>
+</p>
+
+<p>(Of course, it is likely to be more efficient to
+use the DOM to add or change child elements, but the above
+illustration uses innerHTML for the sake of simplicity.)</p>
 
 <h4>Handling window resize events</h4>
 <p>curvyCorners supports redrawing curved boxes in response to a change
@@ -298,7 +332,7 @@ HTML to append a DIV to an element, we recommend against trying to round
 that element with curvyCorners.</li>
 
 <li>If you wish to invoke curvyCorners in a browser that supports rounded
-corners natively, e.g. Firefox, Chrome or Safari, you <em>must</em> use the
+corners natively, e.g. Opera &gt;= 10.5, Firefox, Chrome or Safari, you <em>must</em> use the
 <a href="#manually">manual</a> method described below.</li>
 
 <li>In some circumstances, a browser may not compute a display width for a
@@ -312,12 +346,12 @@ If you cannot correct the problem in any other way, it is possible to
 suppress the display of the error message: see <a href="#options">options</a>
 below.</li>
 
-<li>In Opera v9.x and v10.x, unrecognized styles (including rounded corner styles)
+<li>In Opera v9.x and v10.2, unrecognized styles (including rounded corner styles)
 are not included in the DOM tree. CurvyCorners can detect them only if it has
 access to the CSS text.
 If the stylesheet
 is included using a <code>&lt;link href="mystyle.css" rel="stylesheet"/&gt;</code>
-element, or using an <code>@import</code> rule, Opera won't be able to access it.
+element, or using an <code>@import</code> rule, old versions of Opera won't be able to access it.
 It has access only if the style is included in the HTML page itself.
 We hope to address this limitation soon.
 </li>
