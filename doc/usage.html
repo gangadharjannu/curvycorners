@@ -353,7 +353,6 @@ If the stylesheet
 is included using a <code>&lt;link href="mystyle.css" rel="stylesheet"/&gt;</code>
 element, or using an <code>@import</code> rule, old versions of Opera won't be able to access it.
 It has access only if the style is included in the HTML page itself.
-We hope to address this limitation soon.
 </li>
 
 <li>Boxes styled by CurvyCorners cannot be resized dynamically except by
@@ -611,6 +610,7 @@ replicate the example immediately above, do this:</p>
 
 <div class="codeSample">
 .myClassName {<br/>
+&nbsp;&nbsp;border-radius:20px;<br/>
 &nbsp;&nbsp;-webkit-border-radius:20px;<br/>
 &nbsp;&nbsp;-moz-border-radius:20px;<br/>
 }
