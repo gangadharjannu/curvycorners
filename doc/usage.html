@@ -73,8 +73,9 @@ Downloads page</a>.</p>
 <p>As from 2.0.x, CurvyCorners allows you to put rounded corners on your
 page elements using <abbr title="Cascading Style Sheets">CSS</abbr>. At
 present, there are two proprietary CSS syntaxes, one for Mozilla/Firefox
-and one for the WebKit browsers, Safari and Google Chrome. Opera 10.5
-supports the standard CSS3 syntax.</p>
+and one for Safari and the older WebKit browsers. Opera 10.5 and Chrome
+now support the <a
+href="http://www.w3.org/TR/2009/CR-css3-background-20091217/#the-border-radius">standard CSS3 syntax</a>.</p>
 
 <p>All you need to do is to put the appropriate rounded corner styles
 into the appropriate rules, and CurvyCorners will automatically draw corners
@@ -100,21 +101,23 @@ then you can do it like this:</p>
 
 <div class="codeSample">
 .rounded {<br/>
-&nbsp;&nbsp;border-top-left-radius:3ex;<br/>
-&nbsp;&nbsp;border-bottom-right-radius:3ex;<br/>
+&nbsp;&nbsp;border-radius:3ex 0;<br/>
+&nbsp;&nbsp;-moz-border-radius:3ex 0;<br/>
 &nbsp;&nbsp;-webkit-border-top-left-radius:3ex;<br/>
 &nbsp;&nbsp;-webkit-border-bottom-right-radius:3ex;<br/>
-&nbsp;&nbsp;-moz-border-radius-topleft:3ex;<br/>
-&nbsp;&nbsp;-moz-border-radius-bottomright:3ex;<br/>
 }
 </div>
 
 <p>(Note that the CSS3 syntax, listed first, is similar to the WebKit version, but
-of course without the "-webkit-" prefix. Internally, CurvyCorners looks for the
-WebKit syntax and ignores the Mozilla version.
-This is because support for the CSS3 syntax (in Opera 10.5) is
-only a recent phenomenon.
-<strong>In a later version, curvyCorners will look for the CSS3 standard syntax.</strong>)</p>
+of course without the "-webkit-" prefix.
+On start-up, curvyCorners looks for the
+Mozilla syntax and ignores the Webkit version.
+This is because support for the CSS3 syntax (in Chrome and Opera 10.5) is
+only recent, the "-webkit-" syntax is laborious and obsolescent,
+and the Mozilla syntax is likely to be needed for some time yet.
+<strong>In a later version, curvyCorners will look for the <a
+href="http://www.w3.org/TR/2009/CR-css3-background-20091217/#the-border-radius">CSS3
+standard syntax</a>.</strong>)</p>
 
 <h3 id="cssLimits">CSS Selector Limitations</h3>
 
@@ -610,9 +613,10 @@ replicate the example immediately above, do this:</p>
 
 <div class="codeSample">
 .myClassName {<br/>
-&nbsp;&nbsp;border-radius:20px;<br/>
+&nbsp;&nbsp;border-radius:20px 20px 20px 0;<br/>
+&nbsp;&nbsp;-moz-border-radius:20px 20px 20px 0;<br/>
 &nbsp;&nbsp;-webkit-border-radius:20px;<br/>
-&nbsp;&nbsp;-moz-border-radius:20px;<br/>
+&nbsp;&nbsp;-webkit-border-bottom-left-radius:0;<br/>
 }
 </div>
 
