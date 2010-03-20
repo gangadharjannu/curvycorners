@@ -5,7 +5,7 @@
   *                                                              *
   *  This script generates rounded corners for your boxes.       *
   *                                                              *
-  *  Version 2.0.5pre15                                          *
+  *  Version 2.0.5pre16                                          *
   *  Copyright (c) 2009 Cameron Cooke                            *
   *  Contributors: Tim Hutchison, CPK Smithies, Terry Rigel,     *
   *                Simó Albert.                                  *
@@ -39,29 +39,32 @@
 
 /*
 Version 2.x now autoMagically applies borders via CSS rules.
-Safari, Chrome and Mozilla support rounded borders via
+
+Opera and Chrome support rounded corners via
+
+border-radius
+
+Safari and Mozilla support rounded borders via
 
 -webkit-border-radius, -moz-border-radius
 
 We let these browsers render their borders natively.
 Firefox for Windows renders non-antialiased
 borders so they look a bit ugly. Google's Chrome will render its "ugly"
-borders as well. So if we let FireFox, Safari, and Chrome render their
-borders natively, then we only have to support IE and Opera
+borders as well. So if we let FireFox, Safari, Opera and Chrome render
+their borders natively, then we only have to support IE
 for rounded borders. Fortunately IE reads CSS properties
 that it doesn't understand (Opera, Firefox and Safari discard them);
-so for IE and Opera we find and apply -webkit-border-radius and friends.
+so for IE we find and apply -moz-border-radius and friends.
 
-So to make curvycorners work with any major browser simply add the following
-CSS declarations and it should be good to go...
+So to make curvycorners work with any major browser simply add the
+following CSS declarations and it should be good to go...
 
 .round {
+  border-radius: 3ex;
   -webkit-border-radius: 3ex;
   -moz-border-radius: 3ex;
 }
-
-NB at present you must (for Opera's sake) include these styles in
-the page itself.
 */
 
 function browserdetect() {
@@ -1354,18 +1357,47 @@ else {
         var style = rule.style;
 
         if (curvyBrowser.ieVer > 6.0) {
-          var allR = style['-webkit-border-radius'] || 0;
-          var tR   = style['-webkit-border-top-right-radius'] || 0;
-          var tL   = style['-webkit-border-top-left-radius'] || 0;
-          var bR   = style['-webkit-border-bottom-right-radius'] || 0;
-          var bL   = style['-webkit-border-bottom-left-radius'] || 0;
+          var allR = style['-moz-border-radius'] || 0;
+          var tR   = style['-moz-border-radius-topright'] || 0;
+          var tL   = style['-moz-border-radius-topleft'] || 0;
+          var bR   = style['-moz-border-radius-bottomright'] || 0;
+          var bL   = style['-moz-border-radius-bottomleft'] || 0;
         }
         else {
-          var allR = style['webkit-border-radius'] || 0;
-          var tR   = style['webkit-border-top-right-radius'] || 0;
-          var tL   = style['webkit-border-top-left-radius'] || 0;
-          var bR   = style['webkit-border-bottom-right-radius'] || 0;
-          var bL   = style['webkit-border-bottom-left-radius'] || 0;
+          var allR = style['moz-border-radius'] || 0;
+          var tR   = style['moz-border-radius-topright'] || 0;
+          var tL   = style['moz-border-radius-topleft'] || 0;
+          var bR   = style['moz-border-radius-bottomright'] || 0;
+          var bL   = style['moz-border-radius-bottomleft'] || 0;
+        }
+        if (allR) {
+          var t = allR.split('/'); // ignore elliptical spec.
+          t = t[0].split(/\s/);
+          if (t[t.length - 1] === '') t.pop();
+          switch (t.length) {
+            case 3:
+              tL = t[0];
+              tR = bL = t[1];
+              bR = t[2];
+              allR = false;
+            break;
+            case 2:
+              tL = bR = t[0];
+              tR = bL = t[1];
+              allR = false;
+            case 1:
+            break;
+            case 4:
+              tL = t[0];
+              tR = t[1];
+              bR = t[2];
+              bL = t[3];
+              allR = false;
+            break;
+            default:
+              curvyCorners.alert('Illegal corners specification: ' + allR);
+            //break;
+          }
         }
         if (allR || tL || tR || bR || bL) {
           var settings = new curvyCnrSpec(rule.selectorText);
