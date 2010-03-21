@@ -293,7 +293,7 @@ function curvyCorners() {
     for (i = 0; i < args.length; ++i) {
       if ((j = args[i].indexOf('#')) !== -1)
         args[i] = args[i].substr(j); // ignore everything on LHS of ID
-      boxCol = boxCol.concat(curvyCorners.getElementsBySelector(args[i].split(/\s/)));
+      boxCol = boxCol.concat(curvyCorners.getElementsBySelector(args[i].split(/\s+/)));
     }
   }
   else {
@@ -1361,7 +1361,7 @@ else {
         }
         if (allR) {
           var t = allR.split('/'); // ignore elliptical spec.
-          t = t[0].split(/\s/);
+          t = t[0].split(/\s+/);
           if (t[t.length - 1] === '') t.pop();
           switch (t.length) {
             case 3:
