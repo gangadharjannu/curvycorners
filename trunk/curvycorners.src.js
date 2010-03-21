@@ -5,7 +5,7 @@
   *                                                              *
   *  This script generates rounded corners for your boxes.       *
   *                                                              *
-  *  Version 2.0.5pre16                                          *
+  *  Version 2.0.5pre17                                          *
   *  Copyright (c) 2009 Cameron Cooke                            *
   *  Contributors: Tim Hutchison, CPK Smithies, Terry Rigel,     *
   *                Simó Albert.                                  *
@@ -290,37 +290,10 @@ function curvyCorners() {
     var args = settings.selectorText.replace(/\s+$/,'').split(/,\s*/); // handle comma-separated selector list
     boxCol = new Array;
 
-    // converts div#mybox to #mybox
-    function idof(str) {
-      var ret = str.split('#');
-      return (ret.length === 2 ? "#" : "") + ret.pop();
-    }
-
     for (i = 0; i < args.length; ++i) {
-      var arg = idof(args[i]);
-      var argbits = arg.split(' ');
-      switch (arg.charAt(0)) {
-        case '#' : // id
-          j = argbits.length === 1 ? arg : argbits[0];
-          j = document.getElementById(j.substr(1));
-          if (j === null)
-            curvyCorners.alert("No object with ID " + arg + " exists yet.\nCall curvyCorners(settings, obj) when it is created.");
-          else if (argbits.length === 1)
-            boxCol.push(j);
-          else
-            boxCol = boxCol.concat(curvyCorners.getElementsByClass(argbits[1], j));
-        break;
-        default :
-          if (argbits.length === 1)
-            boxCol = boxCol.concat(curvyCorners.getElementsByClass(arg));
-          else {
-            var encloser = curvyCorners.getElementsByClass(argbits[0]);
-            for (j = 0; j < encloser.length; ++j) {
-              boxCol = boxCol.concat(curvyCorners.getElementsByClass(argbits[1], encloser[j]));
-            }
-          }
-        //break;
-      }
+      if ((j = args[i].indexOf('#')) !== -1)
+        args[i] = args[i].substr(j); // ignore everything on LHS of ID
+      boxCol = boxCol.concat(curvyCorners.getElementsBySelector(args[i].split(/\s/)));
     }
   }
   else {
@@ -741,7 +714,7 @@ function curvyObject() {
           inty = y1;               // start_pos - 1 for y-axis AA pixels
         }
         // Draw aa pixels?
-        if (this.spec.antiAlias) {
+        if (this.spec.antiAlias && this.boxColour !== 'transparent') {
           // Cycle the y-axis and draw the anti aliased pixels on the outside of the curve
           while (++inty < y4) {
             // For each of the pixels that need anti aliasing between the foreground/border colour & background draw single pixel divs
@@ -1011,7 +984,6 @@ curvyObject.prototype.drawPixel = function(intx, inty, colour, transAmount, heig
   // Set position
   pixel.style.top = inty + "px";
   pixel.style.left = intx + "px";
-  //pixel.nodeValue = ' ';
   newCorner.appendChild(pixel);
 }
 
@@ -1334,6 +1306,23 @@ curvyCorners.getElementsByClass = function(searchClass, node) {
     else for (i = 0; i < elsLen; ++i) classElements.push(els[i]);
   }
   return classElements;
+}
+
+curvyCorners.getElementsBySelector = function(selectors, parent) {
+  var ret;
+  var sel = selectors[0];
+  if (parent === undefined) parent = document;
+  if (sel.indexOf('#') !== -1)
+    ret = [parent.getElementById(sel.substr(1))];
+  else
+    ret = curvyCorners.getElementsByClass(sel, parent);
+  if (selectors.length > 1) {
+    var subret = [];
+    for (var i = ret.length; --i >= 0; )
+      subret = subret.concat(curvyCorners.getElementsBySelector(selectors.slice(1), ret[i]));
+    ret = subret;
+  }
+  return ret;
 }
 
 if (curvyBrowser.supportsCorners) {
