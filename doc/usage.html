@@ -125,12 +125,12 @@ standard syntax</a>.</strong>)</p>
 the CSS selector syntax supported is necessarily limited. This sets out
 what is supported:</p>
 
-<ul><li>a selector-list, where a selector-list is <em>either</em> a single
-selector <em>or</em> a single selector followed by a comma and an optional space,
+<ul><li>a selector-list, where a selector-list is <em>either</em> a
+selector <em>or</em> a selector followed by a comma and an optional space,
 followed by a selector-list.</li>
-<li>A single selector may be <em>either</em> a simple-selector <em>or</em> a
-simple-selector followed by a space followed by a tag-class-selector.</li>
-<li>A simple-selector may be <em>either</em> an ID of the form
+<li>A selector is <em>either</em> a simple-selector <em>or</em> a
+simple-selector followed by a space followed by a selector.</li>
+<li>A simple-selector is <em>either</em> an ID of the form
 <code>#myID</code>, <em>or</em> a tag-class-selector.</li>
 <li>A tag-class-selector may be any one of:
  <ol><li>a tag name (e.g. <code>div</code>);</li>
@@ -143,7 +143,7 @@ simple-selector followed by a space followed by a tag-class-selector.</li>
 <p>The following are examples of supported selectors:</p>
 
 <ul><li>.myclass</li>
-<li>#mydiv frameset.myclass</li>
+<li>#mydiv frameset.myclass .rounded</li>
 <li>form.rounded frameset,div.rounded</li>
 </ul>
 
@@ -163,7 +163,12 @@ by CurvyCorners.</p>
 enclosing scope may cause the selector to fail (e.g. if <var>#mybox</var> is
 a top-level DIV, or if it is not located within a DIV of class <var>rounded</var>).
 However, CurvyCorners assumes that the element is to be referenced anyway and
-will apply the appropriate rounding styles.</p>
+will apply the appropriate rounding styles. To put it another way,
+if there is an ID of the form <var>#id</var> anywhere in a selector,
+then CurvyCorners ignores everything to the left.</p>
+
+<p>CurvyCorners does not support sibling ('+'), child ('&gt;') or
+attribute ([]) selectors.</p>
 
 <h3 id="dyn">Dynamic HTML</h3>
 <p>CurvyCorners now has limited support for dynamic HTML. In particular, you
