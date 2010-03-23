@@ -5,7 +5,7 @@
   *                                                              *
   *  This script generates rounded corners for your boxes.       *
   *                                                              *
-  *  Version 2.0.5pre17                                          *
+  *  Version 2.0.5pre18                                          *
   *  Copyright (c) 2009 Cameron Cooke                            *
   *  Contributors: Tim Hutchison, CPK Smithies, Terry Rigel,     *
   *                Simó Albert.                                  *
@@ -94,16 +94,26 @@ function browserdetect() {
   }
   else {
     this.ieVer = this.quirksMode = 0;
-    this.isMoz     = agent.indexOf('firefox') !== -1 || ('style' in document.childNodes[1] && 'MozBorderRadius' in document.childNodes[1].style);
-    this.isSafari  = agent.indexOf('safari') != -1;
-    this.isWebKit  = agent.indexOf('webkit') != -1;
-    this.supportsCorners = this.isWebKit || this.isMoz;
-    this.isOp      = 'opera' in window;
-    if (this.isOp) this.supportsCorners = window.opera.version() >= 10.5;
     this.get_style = function(obj, prop) {
       prop = prop.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
       return document.defaultView.getComputedStyle(obj, '').getPropertyValue(prop);
     };
+    this.isSafari  = agent.indexOf('safari') != -1;
+    this.isWebKit  = agent.indexOf('webkit') != -1;
+    this.isOp      = 'opera' in window;
+    if (this.isOp)
+      this.supportsCorners =  (this.isOp = window.opera.version()) >= 10.5;
+    else {
+      if (!this.isWebkit) { // firefox check
+        if (!(this.isMoz = agent.indexOf('firefox') !== -1)) {
+          for (var i = document.childNodes.length; --i >= 0; ) if ('style' in document.childNodes[i]) {
+            this.isMoz = 'MozBorderRadius' in document.childNodes[i];
+            break;
+          }
+        }
+      }
+      this.supportsCorners = this.isWebKit || this.isMoz;
+    }
   }
 }
 var curvyBrowser = new browserdetect;
@@ -291,30 +301,36 @@ function curvyCorners() {
     boxCol = new Array;
 
     for (i = 0; i < args.length; ++i) {
-      if ((j = args[i].indexOf('#')) !== -1)
+      if ((j = args[i].lastIndexOf('#')) !== -1)
         args[i] = args[i].substr(j); // ignore everything on LHS of ID
       boxCol = boxCol.concat(curvyCorners.getElementsBySelector(args[i].split(/\s+/)));
     }
   }
   else {
-    // Get objects
     startIndex = 1;
     boxCol = arguments;
   }
 
-  // Loop through each argument
+  // Loop through each object
   for (i = startIndex, j = boxCol.length; i < j; ++i) {
-    if (boxCol[i] && (!('IEborderRadius' in boxCol[i].style) || boxCol[i].style.IEborderRadius != 'set')) {
-      if (boxCol[i].className && boxCol[i].className.indexOf('curvyRedraw') !== -1) {
+    var theBox = boxCol[i];
+    var skipCorners = false;
+    if (!theBox.className)
+      theBox.className = 'curvyIgnore'; // don't do it twice
+    else {
+      skipCorners = theBox.className.indexOf('curvyIgnore') !== -1;
+      if (!skipCorners) theBox.className += ' curvyIgnore'; // prevent repeats
+    }
+    if (!skipCorners) {
+      if (theBox.className.indexOf('curvyRedraw') !== -1) {
         if (typeof curvyCorners.redrawList === 'undefined') curvyCorners.redrawList = new Array;
         curvyCorners.redrawList.push({
-          node : boxCol[i],
+          node : theBox,
           spec : settings,
-          copy : boxCol[i].cloneNode(false)
+          copy : theBox.cloneNode(false)
         });
       }
-      boxCol[i].style.IEborderRadius = 'set';
-      var obj = new curvyObject(settings, boxCol[i]);
+      var obj = new curvyObject(settings, theBox);
       obj.applyCorners();
     }
   }
@@ -448,14 +464,15 @@ function curvyObject() {
   var boxColour       = curvyBrowser.get_style(this.box, "backgroundColor");
   var backgroundImage = curvyBrowser.get_style(this.box, "backgroundImage");
   var backgroundRepeat= curvyBrowser.get_style(this.box, "backgroundRepeat");
+  var backgroundPosX, backgroundPosY;
   if (this.box.currentStyle && this.box.currentStyle.backgroundPositionX) {
-  var backgroundPosX  = curvyBrowser.get_style(this.box, "backgroundPositionX");
-  var backgroundPosY  = curvyBrowser.get_style(this.box, "backgroundPositionY");
+    backgroundPosX  = curvyBrowser.get_style(this.box, "backgroundPositionX");
+    backgroundPosY  = curvyBrowser.get_style(this.box, "backgroundPositionY");
   }
   else {
-    var backgroundPosX = curvyBrowser.get_style(this.box, 'backgroundPosition');
+    backgroundPosX = curvyBrowser.get_style(this.box, 'backgroundPosition');
     backgroundPosX = backgroundPosX.split(' ');
-    var backgroundPosY = backgroundPosX[1];
+    backgroundPosY = backgroundPosX.length === 2 ? backgroundPosX[1] : 0;
     backgroundPosX = backgroundPosX[0];
   }
   var boxPosition     = curvyBrowser.get_style(this.box, "position");
