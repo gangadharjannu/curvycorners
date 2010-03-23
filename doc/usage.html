@@ -85,7 +85,7 @@ using their native methods.</p>
 <h3>Example</h3>
 
 <p>Suppose that you have a DIV in your page with class <var>rounded</var>. You
-want all four corners rounded, with a radius of one and a half ems.
+want all four corners rounded, with a radius of 3 ex.
 The following CSS will accomplish this:</p>
 
 <div class="codeSample">
@@ -326,6 +326,14 @@ displayed, i.e. which have the style <code>display:none</code>. In such cases,
 it may be necessary for CurvyCorners temporarily to display the box, and
 this may cause a brief flicker as the page is loaded.</p>
 
+<h3>Forcing curvyCorners to ignore some elements</h3>
+
+<p>Instead of targeting your styles more precisely, it may be
+convenient to force curvyCorners to skip certain elements in the page.
+This can be done by giving them the special <code>curvyIgnore</code>
+class. Once curvyCorners has added rounded corners to a box,
+it automatically adds the <code>curvyIgnore</code> class to that box.</p>
+
 <h3>Other limitations</h3>
 
 <ul>
@@ -354,13 +362,15 @@ If you cannot correct the problem in any other way, it is possible to
 suppress the display of the error message: see <a href="#options">options</a>
 below.</li>
 
-<li>In Opera v9.x and v10.2, unrecognized styles (including rounded corner styles)
+<li>In Opera versions &lt;= v10.5, unrecognized styles (including rounded corner styles)
 are not included in the DOM tree. CurvyCorners can detect them only if it has
 access to the CSS text.
 If the stylesheet
 is included using a <code>&lt;link href="mystyle.css" rel="stylesheet"/&gt;</code>
 element, or using an <code>@import</code> rule, old versions of Opera won't be able to access it.
 It has access only if the style is included in the HTML page itself.
+Also, old versions of Opera still parse -webkit- style declarations
+(whereas IE now uses the -moz- declarations).
 </li>
 
 <li>Boxes styled by CurvyCorners cannot be resized dynamically except by
@@ -373,7 +383,7 @@ same on both sides adjacent to a round corner.</li>
 <li>When rounding a bordered box, the border style must always be
 <code>solid</code>: other styles are not supported.</li>
 
-<li>Elliptical radii (e.g. <code>border-radius:1em 2em;</code>) are not
+<li>Elliptical radii (e.g. <code>border-radius:1em/2em;</code>) are not
 supported. The first dimension will be understood as the only dimension.</li>
 
 <li>In legacy browsers, when using image backgrounds, the lower part
@@ -386,6 +396,8 @@ box will lose the focus during curvyCorners startup. Therefore,
 setting the focus in a <code>document.body.onload</code> function
 will not work. Instead, it is necessary to delay curvyCorners
 startup <a href="#delay">as described above</a>.</li>
+
+<li>CurvyCorners cannot detect :hover events.</li>
 </ul>
 
 <h2 id="manually">Using CurvyCorners manually</h2>
