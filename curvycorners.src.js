@@ -5,8 +5,8 @@
   *                                                              *
   *  This script generates rounded corners for your boxes.       *
   *                                                              *
-  *  Version 2.0.5pre18                                          *
-  *  Copyright (c) 2009 Cameron Cooke                            *
+  *  Version 2.1 BETA                                            *
+  *  Copyright (c) 2010 Cameron Cooke                            *
   *  Contributors: Tim Hutchison, CPK Smithies, Terry Rigel,     *
   *                Simó Albert.                                  *
   *                                                              *
