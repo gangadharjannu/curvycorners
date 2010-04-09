@@ -5,7 +5,7 @@
   *                                                              *
   *  This script generates rounded corners for your boxes.       *
   *                                                              *
-  *  Version 2.1 BETA                                            *
+  *  Version 2.1pre2                                            *
   *  Copyright (c) 2010 Cameron Cooke                            *
   *  Contributors: Tim Hutchison, CPK Smithies, Terry Rigel,     *
   *                Simó Albert.                                  *
@@ -350,7 +350,7 @@ curvyCorners.redraw = function() {
     if (!o.node.clientWidth) continue; // don't resize hidden boxes
     var newchild = o.copy.cloneNode(false);
     for (var contents = o.node.firstChild; contents != null; contents = contents.nextSibling)
-      if (contents.className === 'autoPadDiv') break;
+      if (contents.className.indexOf('autoPadDiv') !== -1) break;
     if (!contents) {
       curvyCorners.alert('Couldn\'t find autoPad DIV');
       break;
@@ -1329,10 +1329,13 @@ curvyCorners.getElementsBySelector = function(selectors, parent) {
   var ret;
   var sel = selectors[0];
   if (parent === undefined) parent = document;
-  if (sel.indexOf('#') !== -1)
-    ret = [parent.getElementById(sel.substr(1))];
-  else
+  if (sel.indexof('#') === -1)
     ret = curvyCorners.getElementsByClass(sel, parent);
+  else {
+    var t = parent.getElementById(sel.substr(1));
+    if (!t) return [];
+    ret = [t];
+  }
   if (selectors.length > 1) {
     var subret = [];
     for (var i = ret.length; --i >= 0; )
