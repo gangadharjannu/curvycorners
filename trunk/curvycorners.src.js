@@ -5,7 +5,7 @@
   *                                                              *
   *  This script generates rounded corners for your boxes.       *
   *                                                              *
-  *  Version 2.1pre2                                            *
+  *  Version 2.1pre3                                            *
   *  Copyright (c) 2010 Cameron Cooke                            *
   *  Contributors: Tim Hutchison, CPK Smithies, Terry Rigel,     *
   *                Simó Albert.                                  *
@@ -1329,7 +1329,7 @@ curvyCorners.getElementsBySelector = function(selectors, parent) {
   var ret;
   var sel = selectors[0];
   if (parent === undefined) parent = document;
-  if (sel.indexof('#') === -1)
+  if (sel.indexOf('#') === -1)
     ret = curvyCorners.getElementsByClass(sel, parent);
   else {
     var t = parent.getElementById(sel.substr(1));
