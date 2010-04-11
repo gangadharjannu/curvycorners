@@ -5,7 +5,7 @@
   *                                                              *
   *  This script generates rounded corners for your boxes.       *
   *                                                              *
-  *  Version 2.1pre3                                            *
+  *  Version 2.1pre4                                             *
   *  Copyright (c) 2010 Cameron Cooke                            *
   *  Contributors: Tim Hutchison, CPK Smithies, Terry Rigel,     *
   *                Simó Albert.                                  *
@@ -107,7 +107,7 @@ function browserdetect() {
       if (!this.isWebkit) { // firefox check
         if (!(this.isMoz = agent.indexOf('firefox') !== -1)) {
           for (var i = document.childNodes.length; --i >= 0; ) if ('style' in document.childNodes[i]) {
-            this.isMoz = 'MozBorderRadius' in document.childNodes[i];
+            this.isMoz = 'MozBorderRadius' in document.childNodes[i].style;
             break;
           }
         }
