@@ -5,7 +5,7 @@
   *                                                              *
   *  This script generates rounded corners for your boxes.       *
   *                                                              *
-  *  Version 2.1pre4                                             *
+  *  Version 2.1pre5                                             *
   *  Copyright (c) 2010 Cameron Cooke                            *
   *  Contributors: Tim Hutchison, CPK Smithies, Terry Rigel,     *
   *                Simó Albert.                                  *
@@ -1171,7 +1171,7 @@ curvyObject.rgb2Array = function(rgbColour) {
   var rgbValues = rgbColour.substring(4, rgbColour.indexOf(")"));
 
   // Split RGB into array
-  return rgbValues.split(", ");
+  return rgbValues.split(/,\s*/);
 }
 
 // This function converts CSS rgb(x, x, x) to hexadecimal
