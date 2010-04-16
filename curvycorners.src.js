@@ -7,7 +7,7 @@
   *                                                              *
   *  Version 2.1pre5                                             *
   *  Copyright (c) 2010 Cameron Cooke                            *
-  *  Contributors: Tim Hutchison, CPK Smithies, Terry Rigel,     *
+  *  Contributors: Tim Hutchison, CPK Smithies, Terry Riegel,    *
   *                Simó Albert.                                  *
   *                                                              *
   *  Website: http://www.curvycorners.net                        *
