@@ -1,0 +1,1 @@
+Because most browsers suppress box background styles when printing, pages styled with CurvyCorners will not print out as expected. We therefore recommend placing all border radius styles within an `@media screen {}` block.
